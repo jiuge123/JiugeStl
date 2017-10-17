@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="CppFile">
+      <UniqueIdentifier>{1d79dffe-cff0-43be-96d6-fdbbf7c6829b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HeadFile">
+      <UniqueIdentifier>{00585b52-f56e-42f4-9e39-d16e211af10a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\CppFile\源.cpp">
+      <Filter>CppFile</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\HeadFile\alloactor.h">
+      <Filter>HeadFile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HeadFile\util.h">
+      <Filter>HeadFile</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
