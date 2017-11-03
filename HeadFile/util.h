@@ -2,7 +2,7 @@
 #define  JIUGESTL_HEADFILE_UTIL
 #include<type_traits>
 #include<cstddef>
-//定义一些函数类
+//工具类
 namespace JiugeStl
 {
 
