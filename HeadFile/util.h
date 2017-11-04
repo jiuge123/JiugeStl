@@ -1,19 +1,23 @@
 #ifndef  JIUGESTL_HEADFILE_UTIL
 #define  JIUGESTL_HEADFILE_UTIL
-#include<type_traits>
+
 #include<cstddef>
+#include<type_traits>
+
 //工具类
-namespace JiugeStl
+namespace JStl
 {
 
 //move
 template <typename T>	inline
 typename std::remove_reference<T>::type&& move(T a) _NOEXCEPT
 {
+	//去除引用后转化为右值
 	return static_cast<typename std::remove_reference<T>::type&&>(a);
 }
 
 //forward
+//只能显示调用模板，否则无法判断类型，int，int&, int &&都识别为int
 template <typename T>	inline
 T&& forward(typename std::remove_reference<T>::type& arg) _NOEXCEPT
 {
@@ -31,9 +35,9 @@ T&& forward(typename std::remove_reference<T>::type&& arg) _NOEXCEPT
 template <typename T>
 void swap(T& lhs, T& rhs)
 {
-	auto temp(JiugeStl::move(lhs));
-	lhs = JiugeStl::move(rhs);
-	rhs = JiugeStl::move(temp);
+	auto temp(Jl::move(lhs));
+	lhs = JStl::move(rhs);
+	rhs = JStl::move(temp);
 }
 
 }//namespace JiugeStl
