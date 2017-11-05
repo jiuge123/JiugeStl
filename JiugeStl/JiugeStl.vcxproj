@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\HeadFile\alloactor.h" />
+    <ClInclude Include="..\HeadFile\iterator.h" />
     <ClInclude Include="..\HeadFile\util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,10 +1,12 @@
 #ifndef  JIUGESTL_HEADFILE_UTIL
 #define  JIUGESTL_HEADFILE_UTIL
 
+//工具类
+
 #include<cstddef>
 #include<type_traits>
 
-//工具类
+
 namespace JStl
 {
 

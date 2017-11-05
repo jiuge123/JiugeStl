@@ -24,5 +24,8 @@
     <ClInclude Include="..\HeadFile\util.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
+    <ClInclude Include="..\HeadFile\iterator.h">
+      <Filter>HeadFile</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
