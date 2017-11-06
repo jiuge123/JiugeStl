@@ -72,6 +72,15 @@ template <class Iterator>
 struct iterator_traits
 	:public iterator_traits_helper<Iterator, has_iterator_cat<Iterator>::value>{};
 
-
+//针对原生指针的模板部分特例化
+template <typename T>
+struct iterator_traits<T*>
+{
+	typedef random_access_iterator_tag          iterator_category;
+	typedef T														 value_type;
+	typedef T*														 pointer;
+	typedef T&														 reference;
+	typedef ptrdiff_t										     difference_type;
+};
 }//namespace JStl
 #endif
