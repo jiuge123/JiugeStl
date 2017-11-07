@@ -62,7 +62,7 @@ struct iterator_traits_helper{};
 template<class Iterator>
 struct iterator_traits_helper<Iterator, true>
 	:public iterator_traits_impl<Iterator,
-	//是否可以改变
+	//是否可从1变为2
 	std::is_convertible<typename Iterator::iterator_category, input_iterator_tag>::value ||
 	std::is_convertible<typename Iterator::iterator_category, output_iterator_tag>::value>
 {};
