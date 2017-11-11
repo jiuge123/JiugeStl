@@ -3,7 +3,7 @@
 
 //内存分配
 
-#include "util.h"
+#include "construct.h"
 
 namespace JStl
 {
@@ -11,7 +11,7 @@ template <typename T>
 class allocator
 {
 public:
-	typedef	T						value_type;
+    typedef	T						value_type;
 	typedef	T*						pointer;
 	typedef	const T*			const_pointer;
 	typedef    T&					reference;
@@ -42,9 +42,21 @@ public:
 	void destroy(T *first, T *last);
 
 	//释放内存
-	void deAllocate(T *p);
-	void deAllocate(T *p, size_t n);
+	void deallocate(T *p);
+	void deallocate(T *p, size_t n);
 
+	template<typename U>
+	struct rebind{
+		typedef allocator<U> other;
+	};
+
+	//返回地址
+	T* address(T& x){
+		return (T*)&x;
+	}
+	const T* const_address(const T& x){
+		return (const T*)&x;
+	}
 };
 
 template <typename T>
@@ -65,24 +77,25 @@ T* allocator<T>::allocate(size_t n){
 
 template <typename T>
 void allocator<T>::construct(T *p){
-	//定位new,可以在p上直接构造
-	::new ((void*)p) T();
+	JStl::construct(p);
 }
 
-template <typename T>
-void allocator<T>::construct(T *p,const T &rhs){
-	::new ((void*)p) T(rhs);
+template <class T>
+void allocator<T>::construct(T* ptr, const T& value)
+{
+	JStl::construct(ptr, value);
 }
 
-template <typename T>
-void allocator<T>::construct(T *p,T &&rhs){
-	::new ((void*)p) T(JStl::move(rhs));
+template <class T>
+void allocator<T>::construct(T* ptr, T&& value)
+{
+	JStl::construct(ptr,JStl::move(value));
 }
 
 template <typename T>
 template <typename... Args>
 void allocator<T>::construct(T *p, Args&&... args){
-	::new ((void*)p) T(JStl::forward<Args>(args)...);
+	JStl::construct(p, JStl::forward<Args>(args)...);
 }
 
 template <typename T>
@@ -104,14 +117,14 @@ void allocator<T>::destroy(T *first, T *last){
 }
 
 template <typename T>
-void allocator<T>::deAllocate(T *p){
+void allocator<T>::deallocate(T *p){
 	if (p != nullptr){
 		::operator delete(p);
 	}
 }
 
 template <typename T>
-void allocator<T>::deAllocate(T *p,size_t n){
+void allocator<T>::deallocate(T *p,size_t n){
 	if (p != nullptr){
 		::operator delete(p);
 	}

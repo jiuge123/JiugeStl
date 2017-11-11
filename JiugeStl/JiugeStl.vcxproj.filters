@@ -27,5 +27,8 @@
     <ClInclude Include="..\HeadFile\iterator.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
+    <ClInclude Include="..\HeadFile\construct.h">
+      <Filter>HeadFile</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
