@@ -62,7 +62,7 @@ public:
 template <typename T>
 T* allocator<T>::allocate(){
 	//自定义new运算符功能是分配内存
-	return static<T*>(::operator new(sizeof(T)));
+	return static_cast<T*>(::operator new(sizeof(T)));
 }
 
 template <typename T>
@@ -98,22 +98,16 @@ void allocator<T>::construct(T *p, Args&&... args){
 	JStl::construct(p, JStl::forward<Args>(args)...);
 }
 
-template <typename T>
-void allocator<T>::destroy(T *p){
-	//判断是否有默认构造函数或是基本类型，如果不是就显式调用析构函数
-	if (!std::is_trivially_destructible<T>{} && p != nullptr){
-		p->~T();
-	}
+template <class T>
+void allocator<T>::destroy(T* ptr)
+{
+	JStl::destroy(ptr);
 }
 
-template <typename T>
-void allocator<T>::destroy(T *first, T *last){
-	if (!std::is_trivially_destructible<typename iterator_traits<T*>::value_type>{}){
-		while (first != last){
-			destroy(&*first);
-			++first;
-		}
-	}
+template <class T>
+void allocator<T>::destroy(T* first, T* last)
+{
+	JStl::destroy(first, last);
 }
 
 template <typename T>

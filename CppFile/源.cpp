@@ -3,11 +3,16 @@
 #include<iostream>
 #include<vector>
 using namespace std;
+struct  aa
+{
+	aa() = default;
+	aa(int a, int b){}
+};
 int main()
 {
-	JStl::allocator<int> a;
-	auto p = a.allocate(3);
-	int aa = 3;
-	a.construct(p,aa);
+	JStl::allocator<aa> a;
+	const aa aaa, bbb;
+	auto p = a.allocate();
+	a.construct(p,aaa);
 	system("pause"); 
 }

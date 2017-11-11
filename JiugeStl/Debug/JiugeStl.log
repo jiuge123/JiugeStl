@@ -1,8 +1,9 @@
-﻿生成启动时间为 2017/11/11 19:46:22。
+﻿生成启动时间为 2017/11/11 23:21:13。
      1>项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\CppFile\源.cpp"
          源.cpp
+     1>f:\github\jiugestl\cppfile\源.cpp(14): warning C4101: “bbb”: 未引用的局部变量
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\github\JiugeStl\Debug\JiugeStl.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\github\JiugeStl\Debug\JiugeStl.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\github\JiugeStl\Debug\JiugeStl.lib" /MACHINE:X86 "Debug\源.obj"
          JiugeStl.vcxproj -> F:\github\JiugeStl\Debug\JiugeStl.exe
@@ -10,4 +11,4 @@
 
 生成成功。
 
-已用时间 00:00:01.16
+已用时间 00:00:02.08
