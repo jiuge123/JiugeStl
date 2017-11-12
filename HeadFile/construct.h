@@ -7,7 +7,8 @@
 namespace JStl{
 //construct
 template<typename T>
-void construct(T *p){
+void construct(T *p)
+{
 	//定位new,可以在p上直接构造
 	::new ((void*)p) T();
 }
@@ -39,7 +40,7 @@ void destroy_one(Ty* pointer, std::false_type)
 
 template <class Ty>
 void destroy(Ty* pointer)
-{	////判断是否有默认构造函数或是基本类型，如果不是就显式调用析构函数
+{	////判断是否有默认析构函数或是基本类型，如果不是就显式调用析构函数
 	destroy_one(pointer, std::is_trivially_destructible<Ty>{});
 }
 
@@ -51,7 +52,7 @@ template <class ForwardIter>
 void destroy_cat(ForwardIter first, ForwardIter last, std::false_type)
 {
 	for (; first != last; ++first)
-		destroy(first);
+		destroy(&*first);
 }
 
 template <class ForwardIter>

@@ -51,22 +51,26 @@ public:
 	};
 
 	//返回地址
-	T* address(T& x){
+	T* address(T& x)
+	{
 		return (T*)&x;
 	}
-	const T* const_address(const T& x){
+	const T* const_address(const T& x)
+	{
 		return (const T*)&x;
 	}
 };
 
 template <typename T>
-T* allocator<T>::allocate(){
+T* allocator<T>::allocate()
+{
 	//自定义new运算符功能是分配内存
 	return static_cast<T*>(::operator new(sizeof(T)));
 }
 
 template <typename T>
-T* allocator<T>::allocate(size_t n){
+T* allocator<T>::allocate(size_t n)
+{
 	if (n == 0){
 		return nullptr;
 	}	
@@ -76,7 +80,8 @@ T* allocator<T>::allocate(size_t n){
 }
 
 template <typename T>
-void allocator<T>::construct(T *p){
+void allocator<T>::construct(T *p)
+{
 	JStl::construct(p);
 }
 
@@ -94,7 +99,8 @@ void allocator<T>::construct(T* ptr, T&& value)
 
 template <typename T>
 template <typename... Args>
-void allocator<T>::construct(T *p, Args&&... args){
+void allocator<T>::construct(T *p, Args&&... args)
+{
 	JStl::construct(p, JStl::forward<Args>(args)...);
 }
 
@@ -111,14 +117,16 @@ void allocator<T>::destroy(T* first, T* last)
 }
 
 template <typename T>
-void allocator<T>::deallocate(T *p){
+void allocator<T>::deallocate(T *p)
+{
 	if (p != nullptr){
 		::operator delete(p);
 	}
 }
 
 template <typename T>
-void allocator<T>::deallocate(T *p,size_t n){
+void allocator<T>::deallocate(T *p,size_t n)
+{
 	if (p != nullptr){
 		::operator delete(p);
 	}
