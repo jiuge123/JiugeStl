@@ -64,7 +64,7 @@ public:
 template <typename T>
 T* allocator<T>::allocate()
 {
-	//自定义new运算符功能是分配内存
+	//自定义new运算符功能是分配内存,不构造
 	return static_cast<T*>(::operator new(sizeof(T)));
 }
 
