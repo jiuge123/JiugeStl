@@ -30,7 +30,7 @@
     <ClInclude Include="..\HeadFile\construct.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
-    <ClInclude Include="alloc.h">
+    <ClInclude Include="..\HeadFile\alloc.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
   </ItemGroup>

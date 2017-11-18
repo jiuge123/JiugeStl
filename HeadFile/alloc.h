@@ -22,8 +22,8 @@ private:
 		return (n + k_align_ - 1) / k_align_ - 1 ;
 	}
 	static void* refill(size_t n);
-	static char* chunk_Alloc(size_t size, int &nobjs);
-	static char *start_;
+	static char* chunk_Alloc(size_t size, int *nobjs);
+	static char *start_free_;
 	static char *end_free_;
 	static char *heap_size_;
 public:
@@ -35,9 +35,12 @@ public:
 
 	Alloc_Poor& operator=(const  Alloc_Poor&) = delete;
 
+	static void* allocate(size_t n);
+	static void deallocate(void* p, size_t n);
+	static void* reallocate(void *p, size_t old_n, size_t new_n);
 };
 
-char* Alloc_Poor::start_ = nullptr;
+char* Alloc_Poor::start_free_ = nullptr;
 char* Alloc_Poor::end_free_ = nullptr;
 char* Alloc_Poor::heap_size_ = nullptr;
 
@@ -49,8 +52,81 @@ Alloc_Poor::free_list_[Alloc_Poor::k_list_number_] =
 	nullptr, nullptr, nullptr, nullptr,
 	nullptr, nullptr, nullptr, nullptr
 };
+void* Alloc_Poor::allocate(size_t n)
+{
+	if (n > k_max_bytes_){
+        return ::operator new(n);
+	}
+	Free_Node *my_free_node = *(free_list_ + free_List_Index(n));
+	Free_Node *result = my_free_node;
+	if(result == nullptr){
+        void *r = refill(round_Up(n));
+        return r;
+	}
+    *my_free_node = *my_free_node->next;
+    return result;
+}
 
+void Alloc_Poor::deallocate(void* p,size_t n)
+{
+    if(n > k_max_bytes_){
+        ::operator delete(p);
+        return;
+    }
+    Free_Node *my_free_node = *(free_list_ + free_List_Index(n));
+    Free_Node *q = reinterpret_cast<Free_Node*>(p);
+    q->next = my_free_node;
+    my_free_node = q;
+}
 
+void* Alloc_Poor::reallocate(void *p,size_t old_n,size_t new_n)
+{
+    deallocate(p,old_n);
+    return allocate(new_n);
+}
+
+void* Alloc_Poor::refill(size_t n)
+{
+    int nodjs = 20;
+    char *chunk = chunk_Alloc(n,&nodjs);
+    if(nodjs == 1)
+        return chunk;
+    Free_Node *my_free_node = *(free_list_ + free_List_Index(n));
+    Free_Node *result = (Free_Node*)chunk;
+    Free_Node *next_node = nullptr,*current_node = nullptr;
+    my_free_node = next_node =  (Free_Node*)(chunk + n);
+    for(int i = 1;;i++){
+        current_node = next_node;
+        next_node = (Free_Node*)((char*)next_node + n);
+        if(i + 1 == nodjs){
+            current_node->next = nullptr;
+            break;
+        }else{
+            current_node->next = next_node;
+        }
+    }
+    return result;
+}
+
+char* Alloc_Poor::chunk_Alloc(size_t n,int *nodjs)
+{
+    size_t total_bytes = n * (*nodjs);//要求分配的内存
+    size_t left_bytes = end_free_ - start_free_;//内存池所剩
+    char *result;
+    if(left_bytes > total_bytes){//够了就直接分配
+        result = start_free_;
+        start_free_ += total_bytes;
+        return result;
+    } else if(left_bytes >= n){
+        *nodjs = left_bytes / n;
+        total_bytes = n * (*nodjs);
+        result = start_free_;
+        start_free_ += total_bytes;
+        return result;
+    }else{
+    }
+
+}
 
 }//namespace JStl
 #endif
