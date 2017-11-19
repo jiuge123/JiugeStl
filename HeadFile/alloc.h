@@ -1,6 +1,6 @@
 #ifndef  JIUGESTL_HEADFILE_ALLOC
 #define  JIUGESTL_HEADFILE_ALLOC
-//内存池实现
+//内存池实现（放弃使用）
 namespace JStl{
 class Alloc_Poor
 {
@@ -12,8 +12,9 @@ private:
 	{//8的倍数
 		return (bytes + k_align_ - 1) & ~(k_align_ - 1);
 	}
-	struct Free_Node
+	union Free_Node
 	{
+		char* c;
 		Free_Node *next;
 	};
 	static Free_Node *free_list_[k_list_number_];
@@ -25,7 +26,7 @@ private:
 	static char* chunk_Alloc(size_t size, int *nobjs);
 	static char *start_free_;
 	static char *end_free_;
-	static char *heap_size_;
+	static size_t heap_size_;
 public:
 	Alloc_Poor() = default;
 
@@ -42,7 +43,7 @@ public:
 
 char* Alloc_Poor::start_free_ = nullptr;
 char* Alloc_Poor::end_free_ = nullptr;
-char* Alloc_Poor::heap_size_ = nullptr;
+size_t Alloc_Poor::heap_size_ = 0;
 
 Alloc_Poor::Free_Node*
 Alloc_Poor::free_list_[Alloc_Poor::k_list_number_] =
@@ -124,8 +125,18 @@ char* Alloc_Poor::chunk_Alloc(size_t n,int *nodjs)
         start_free_ += total_bytes;
         return result;
     }else{
-    }
+		size_t  byte_to_get = 2 * total_bytes + round_Up(heap_size_ >> 4);
+		if (left_bytes > 0){
+			Free_Node *my_free_list = *(free_list_ + free_List_Index(left_bytes));
+			((Free_Node *)start_free_)->next = my_free_list;
+			my_free_list = (Free_Node*)start_free_;
+		}	
+		start_free_ = (char*)::operator new(byte_to_get);
+		if (start_free_ == 0){
+			
+		}
 
+	}
 }
 
 }//namespace JStl
