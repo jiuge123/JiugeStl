@@ -33,5 +33,6 @@
     <ClInclude Include="..\HeadFile\alloc.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
+    <ClInclude Include="..\HeadFile\uninitialized.h" />
   </ItemGroup>
 </Project>

@@ -121,15 +121,15 @@ char* Alloc_Poor::chunk_Alloc(size_t n,int *nodjs)
         result = start_free_;
         start_free_ += total_bytes;
         return result;
-    } else if(left_bytes >= n){
+    } else if(left_bytes >= n){//够一个以上
         *nodjs = left_bytes / n;
         total_bytes = n * (*nodjs);
         result = start_free_;
         start_free_ += total_bytes;
         return result;
-    }else{
-		size_t  byte_to_get = 2 * total_bytes + round_Up(heap_size_ >> 4);
-		if (left_bytes > 0){
+    }else{//一个也不够
+		size_t  byte_to_get = 2 * total_bytes + round_Up(heap_size_ >> 4);//分配2*所需
+		if (left_bytes > 0){//把内存池剩余的都分配出去
 			Free_Node *my_free_list = *(free_list_ + free_List_Index(left_bytes));
 			((Free_Node *)start_free_)->next = my_free_list;
 			my_free_list = (Free_Node*)start_free_;

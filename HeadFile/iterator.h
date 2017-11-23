@@ -23,11 +23,11 @@ template <typename Category,
 				  typename Reference = T&>
 struct iterator
 {
-	typedef Category			iterator_category;  //迭代器类型，五种之一
-	typedef T						value_type;//指向的元素
+	typedef Category		iterator_category;  //迭代器类型，五种之一
+	typedef T				value_type;//指向的元素
 	typedef Pointer			pointer;//原始指针
 	typedef Reference       reference;//所指元素的引用
-	typedef Distance         difference_type;//迭代器之差
+	typedef Distance        difference_type;//迭代器之差
 };
 
 //iterator traits
@@ -38,7 +38,7 @@ struct has_iterator_cat
 private:
 	struct two{ char a; char b; };
 	template <class U> static two test(...);
-	template <class U>static char test(typename U::iterator_catelory* = 0);
+	template <class U> static char test(typename U::iterator_catelory* = 0);
 public:
 	static const bool value = sizeof(test<T>(0)) == sizeof(char);
 };
@@ -51,9 +51,9 @@ struct iterator_traits_impl<Iterator, true>
 {
 	typedef typename Iterator::iterator_category		 iterator_category;
 	typedef typename Iterator::value_type				 value_type;
-	typedef typename Iterator::pointer						 pointer;
-	typedef typename Iterator::reference					 reference;
-	typedef typename Iterator::difference_type		 difference_type;
+	typedef typename Iterator::pointer					 pointer;
+	typedef typename Iterator::reference				 reference;
+	typedef typename Iterator::difference_type			 difference_type;
 };
 
 template <class Iterator,bool>
@@ -77,20 +77,20 @@ template <typename T>
 struct iterator_traits<T*>
 {
 	typedef random_access_iterator_tag          iterator_category;
-	typedef T														 value_type;
-	typedef T*														 pointer;
-	typedef T&														 reference;
-	typedef ptrdiff_t										     difference_type;
+	typedef T									value_type;
+	typedef T*									pointer;
+	typedef T&									reference;
+	typedef ptrdiff_t							difference_type;
 };
 
 template <typename T>
 struct iterator_traits<const T*>
 {
 	typedef random_access_iterator_tag          iterator_category;
-	typedef T														 value_type;
-	typedef const T*											 pointer;
-	typedef const T&														 reference;
-	typedef ptrdiff_t										     difference_type;
+	typedef T									value_type;
+	typedef const T*							pointer;
+	typedef const T&							reference;
+	typedef ptrdiff_t							difference_type;
 };
 }//namespace JStl
 #endif
