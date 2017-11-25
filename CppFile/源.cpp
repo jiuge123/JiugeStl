@@ -3,14 +3,16 @@
 #include"../HeadFile/construct.h"
 #include<iostream>
 #include<vector>
+#include<iterator>
 using namespace std;
-struct a{
-	a(int c){
+template <typename T,typename U>
+struct iter :public JStl::iterator<T, U>
+{
 
-	}
 };
 int main()
 {	
-	JStl::iterator_traits<a*>::value_type c = 3;
+	iter<JStl::bidrection_iterator_tag, int> i;
+	JStl::distance(i, i);
 	system("pause");
 }

@@ -9,18 +9,18 @@
 namespace JStl{
 
 //五种迭代器
-struct input_iterator_tag{};//输入
-struct output_iterator_tag{};//输出
+struct input_iterator_tag{};//只读
+struct output_iterator_tag{};//只写
 struct forward_iterator_tag :public input_iterator_tag{};//前向
 struct bidrection_iterator_tag :public forward_iterator_tag {};//双向
 struct random_access_iterator_tag :public bidrection_iterator_tag{};//随机
 
 //iterator 模板
 template <typename Category,
-				  typename T,
-	              typename Distance = ptrdiff_t,
-				  typename Pointer = T*,
-				  typename Reference = T&>
+		  typename T,
+	      typename Distance = ptrdiff_t,
+		  typename Pointer = T*,
+		  typename Reference = T&>
 struct iterator
 {
 	typedef Category		iterator_category;  //迭代器类型，五种之一
@@ -31,23 +31,9 @@ struct iterator
 };
 
 //iterator traits
-
-template <typename T>
-struct has_iterator_cat
-{
-private:
-	struct two{ char a; char b; };
-	template <class U> static two test(...);
-	template <class U> static char test(typename U::iterator_catelory* = 0);
-public:
-	static const bool value = sizeof(test<T>(0)) == sizeof(char);
-};
-
-template <class Iterator,bool>
-struct iterator_traits_impl{};
-
+//萃取迭代器的特性
 template<class Iterator>
-struct iterator_traits_impl<Iterator, true>
+struct iterator_traits
 {
 	typedef typename Iterator::iterator_category		 iterator_category;
 	typedef typename Iterator::value_type				 value_type;
@@ -55,22 +41,6 @@ struct iterator_traits_impl<Iterator, true>
 	typedef typename Iterator::reference				 reference;
 	typedef typename Iterator::difference_type			 difference_type;
 };
-
-template <class Iterator,bool>
-struct iterator_traits_helper{};
-
-template<class Iterator>
-struct iterator_traits_helper<Iterator, true>
-	:public iterator_traits_impl<Iterator,
-	//是否可从1变为2
-	std::is_convertible<typename Iterator::iterator_category, input_iterator_tag>::value ||
-	std::is_convertible<typename Iterator::iterator_category, output_iterator_tag>::value>
-{};
-
-//萃取迭代器的特性
-template <class Iterator>
-struct iterator_traits
-	:public iterator_traits_helper<Iterator, has_iterator_cat<Iterator>::value>{};
 
 //针对原生指针的模板部分特例化
 template <typename T>
@@ -92,5 +62,59 @@ struct iterator_traits<const T*>
 	typedef const T&							reference;
 	typedef ptrdiff_t							difference_type;
 };
+	
+//萃取iterator的category
+template <typename Iterator>
+inline typename iterator_traits<Iterator>::iterator_category
+iterator_category(const Iterator&)
+{
+	typedef typename iterator_traits<Iterator>::iterator_category category;
+	return category();
+}
+
+//萃取iterator的distance_type
+template <typename Iterator>
+inline typename iterator_traits<Iterator>::difference_type*
+distance_type(const Iterator&)
+{
+	return static_cast<typename iterator_traits<Iterator>::difference_type*>(0);
+}
+
+//萃取iterator的value_type
+template <typename Iterator>
+inline typename iterator_traits<Iterator>::value_type*
+value_type(const Iterator&)
+{
+	return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
+}
+
+//计算iterator的距离
+template <typename InputIterator>
+inline typename iterator_traits<InputIterator>::difference_type
+_distance(InputIterator first,InputIterator last,input_iterator_tag)
+{
+	typename iterator_traits<InputIterator>::difference_type n;
+	while (first != last){
+		++first;
+		++n;
+	}
+	return n;
+}
+
+template <typename RandomAccessIterator>
+inline typename iterator_traits<RandomAccessIterator>::difference_type
+_distance(RandomAccessIterator first, RandomAccessIterator last, random_access_iterator_tag)
+{
+	return last - first;
+}
+
+template <typename InputIterator>
+inline typename iterator_traits<InputIterator>::difference_type
+distance(InputIterator first, InputIterator last)
+{
+	return _distance(first, last, typename iterator_traits<InputIterator>::iterator_category());
+}
+
+
 }//namespace JStl
 #endif
