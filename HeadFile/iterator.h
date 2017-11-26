@@ -88,10 +88,12 @@ value_type(const Iterator&)
 	return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
 }
 
-//计算iterator的距离
+/**************************************************************************************/
+//计算两个iterator的距离
+/**************************************************************************************/
 template <typename InputIterator>
 inline typename iterator_traits<InputIterator>::difference_type
-_distance(InputIterator first,InputIterator last,input_iterator_tag)
+__distance(InputIterator first, InputIterator last, input_iterator_tag)
 {
 	typename iterator_traits<InputIterator>::difference_type n;
 	while (first != last){
@@ -103,7 +105,7 @@ _distance(InputIterator first,InputIterator last,input_iterator_tag)
 
 template <typename RandomAccessIterator>
 inline typename iterator_traits<RandomAccessIterator>::difference_type
-_distance(RandomAccessIterator first, RandomAccessIterator last, random_access_iterator_tag)
+__distance(RandomAccessIterator first, RandomAccessIterator last, random_access_iterator_tag)
 {
 	return last - first;
 }
@@ -112,9 +114,47 @@ template <typename InputIterator>
 inline typename iterator_traits<InputIterator>::difference_type
 distance(InputIterator first, InputIterator last)
 {
-	return _distance(first, last, typename iterator_traits<InputIterator>::iterator_category());
+	return __distance(first, last, typename iterator_traits<InputIterator>::iterator_category());
 }
 
+/**************************************************************************************/
+//用于迭代器前进或后退n个位置
+/**************************************************************************************/
+
+template <typename InputIterator,class Distance>
+inline void __advance(InputIterator &i, Distance n, input_iterator_tag)
+{
+	while (n--){
+		++i;
+	}		
+}
+
+template <typename BidirectionalIterator,class Distance>
+inline void __advance(BidirectionalIterator &i,Distance n,bidrection_iterator_tag)
+{
+	if (n > 0){
+		while (n--){
+			++i;
+		}
+	}
+	else {
+		while (n--){
+			--i;
+		}
+	}
+}
+
+template <typename RandomAccessIterator, class Distance>
+inline void __advance(RandomAccessIterator &i, Distance n, random_access_iterator_tag)
+{
+	i += n;
+}
+
+template <typename InputIterator, class Distance>
+inline void advance(InputIterator &i, Distance n)
+{
+	__advance(i, n, typename iterator_traits<InputIterator>::iterator_category());
+}
 
 }//namespace JStl
 #endif

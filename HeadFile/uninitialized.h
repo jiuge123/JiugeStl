@@ -3,27 +3,105 @@
 //包括三个范围构造函数
 
 #include "iterator.h"
+#include "construct.h"
+#include "algobase.h"
 namespace JStl{
-//从迭代器result开始连续构造last-first个对象
+/**************************************************************************************/
+////从迭代器result开始连续构造last-first个对象，返回last的iter
+/**************************************************************************************/
 template<typename InputIterator, typename ForwardIterator>
-ForwardIterator uninitialized_copy(InputIterator first, InputIterator last, ForwardIterator result)
+ForwardIterator __uninitialized_copy(InputIterator first, InputIterator last, 
+									 ForwardIterator result, std::true_type)
 {
-	
+	copy(first, last, result);
 }
 
-//在[first,last)上copy构造。
+template<typename InputIterator, typename ForwardIterator>
+ForwardIterator __uninitialized_copy(InputIterator first, InputIterator last, 
+									 ForwardIterator result, std::false_type)
+{
+
+}
+
+template<typename InputIterator, typename ForwardIterator>
+ForwardIterator uninitialized_copy(InputIterator first, InputIterator last, 
+								   ForwardIterator result)
+{
+	return __uninitialized_copy(first, last, result, std::is_pod<
+		typename iterator_traits<ForwardIterator>::value_type>{});
+}
+
+/**************************************************************************************/
+//在[first,last)上copy构造,无返回值
+/**************************************************************************************/
 template<typename ForwardIterator, typename T>
-ForwardIterator uninitialized_fill(ForwardIterator first, ForwardIterator last, const T& x)
+void __uninitialized_fill(ForwardIterator first, ForwardIterator last, 
+						  const T& x, std::true_type)
 {
-
+	fill(first, last, x);
 }
 
-//从first开始copy构造n个
+template<typename ForwardIterator, typename T>
+void __uninitialized_fill(ForwardIterator first, ForwardIterator last, 
+						  const T& x, std::false_type)
+{
+	auto p = first;
+	//要么全部成功，要么全部失败
+	try{
+		while (p != last){
+			construct(&*p, x);
+			++p;		
+		}
+	}
+	catch(...){
+		while (first != p){
+			destroy(&first);
+			++first;
+		}
+	}
+}
+
+template<typename ForwardIterator, typename T>
+void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T& x)
+{
+	__uninitialized_fill(first, last, x, std::is_pod<
+							  typename iterator_traits<ForwardIterator>::value_type>{});
+}
+
+/**************************************************************************************/
+//从first开始copy构造n个,返回最后的iter
+/**************************************************************************************/
+template<typename ForwardIterator, typename Size, typename T>
+ForwardIterator uninitialized_fill_n(ForwardIterator first, Size n, 
+									 const T& x, std::true_type)
+{
+	return fill_n(first, n, x);
+}
+
+template<typename ForwardIterator, typename Size, typename T>
+ForwardIterator uninitialized_fill_n(ForwardIterator first, Size n, 
+								     const T& x, std::false_type)
+{
+	auto p = first;
+	try{
+		while (n--){
+			construct(&*p, x);
+			++p;
+		}
+	}
+	catch (...){
+		while (first != p){
+			destroy(&*first)
+		}
+	}
+	return p;
+}
+
 template<typename ForwardIterator, typename Size, typename T>
 ForwardIterator uninitialized_fill_n(ForwardIterator first, Size n, const T& x)
 {
-
+	return __uninitialized_fill_n(first, n, x, std::is_pod<
+						   typename iterator_traits<ForwardIterator>::value_type>{});
 }
 }//namespace JStl
-
 #endif

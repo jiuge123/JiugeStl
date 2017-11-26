@@ -36,5 +36,8 @@
     <ClInclude Include="..\HeadFile\uninitialized.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
+    <ClInclude Include="..\HeadFile\algobase.h">
+      <Filter>HeadFile</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

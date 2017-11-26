@@ -61,6 +61,9 @@ public:
 	}
 };
 
+/**************************************************************************************/
+//new分配内存
+/**************************************************************************************/
 template <typename T>
 T* allocator<T>::allocate()
 {
@@ -79,6 +82,9 @@ T* allocator<T>::allocate(size_t n)
 	}
 }
 
+/**************************************************************************************/
+//调用construct构造
+/**************************************************************************************/
 template <typename T>
 void allocator<T>::construct(T *p)
 {
@@ -104,6 +110,9 @@ void allocator<T>::construct(T *p, Args&&... args)
 	JStl::construct(p, JStl::forward<Args>(args)...);
 }
 
+/**************************************************************************************/
+//调用destroy析构
+/**************************************************************************************/
 template <class T>
 void allocator<T>::destroy(T* ptr)
 {
@@ -116,10 +125,13 @@ void allocator<T>::destroy(T* first, T* last)
 	JStl::destroy(first, last);
 }
 
+/**************************************************************************************/
+//delete释放内存
+/**************************************************************************************/
 template <typename T>
 void allocator<T>::deallocate(T *p)
 {
-	if (p != nullptr){
+	if (p){
 		::operator delete(p);
 	}
 }
@@ -127,7 +139,7 @@ void allocator<T>::deallocate(T *p)
 template <typename T>
 void allocator<T>::deallocate(T *p,size_t n)
 {
-	if (p != nullptr){
+	if (p){
 		::operator delete(p);
 	}
 }

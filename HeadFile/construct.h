@@ -2,10 +2,14 @@
 #define  JIUGESTL_HEADFILE_CONSTRUCT
 //¹¹Ôìº¯Êý
 #include <new>
+
 #include "util.h"
 
 namespace JStl{
+/**************************************************************************************/
 //construct
+/**************************************************************************************/
+
 template<typename T>
 void construct(T *p)
 {
@@ -25,7 +29,10 @@ void construct(T* ptr, Args&&... args)
 	::new ((void*)ptr) T(JStl::forward<Args>(args)...);
 }
 
+/**************************************************************************************/
 //destory
+/**************************************************************************************/
+
 template <class Ty>
 void destroy_one(Ty*, std::true_type) {}
 
@@ -44,19 +51,18 @@ void destroy(Ty* pointer)
 	destroy_one(pointer, std::is_trivially_destructible<Ty>{});
 }
 
+template <class ForwardIterator>
+void destroy_cat(ForwardIterator, ForwardIterator, std::true_type) {}
 
-template <class ForwardIter>
-void destroy_cat(ForwardIter, ForwardIter, std::true_type) {}
-
-template <class ForwardIter>
-void destroy_cat(ForwardIter first, ForwardIter last, std::false_type)
+template <class ForwardIterator>
+void destroy_cat(ForwardIterator first, ForwardIterator last, std::false_type)
 {
 	for (; first != last; ++first)
 		destroy(&*first);
 }
 
-template <class ForwardIter>
-void destroy(ForwardIter first, ForwardIter last)
+template <class ForwardIterator>
+void destroy(ForwardIterator first, ForwardIterator last)
 {
 	destroy_cat(first, last, std::is_trivially_destructible<typename iterator_traits<ForwardIter>::value_type>{});
 }
