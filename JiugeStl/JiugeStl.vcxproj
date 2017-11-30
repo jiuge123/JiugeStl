@@ -74,6 +74,7 @@
     <ClInclude Include="..\HeadFile\iterator.h" />
     <ClInclude Include="..\HeadFile\uninitialized.h" />
     <ClInclude Include="..\HeadFile\util.h" />
+    <ClInclude Include="..\HeadFile\vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

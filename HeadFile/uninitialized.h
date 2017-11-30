@@ -72,14 +72,14 @@ void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T& x)
 //从first开始copy构造n个,返回最后的iter
 /**************************************************************************************/
 template<typename ForwardIterator, typename Size, typename T>
-ForwardIterator uninitialized_fill_n(ForwardIterator first, Size n, 
+ForwardIterator __uninitialized_fill_n(ForwardIterator first, Size n,
 									 const T& x, std::true_type)
 {
 	return fill_n(first, n, x);
 }
 
 template<typename ForwardIterator, typename Size, typename T>
-ForwardIterator uninitialized_fill_n(ForwardIterator first, Size n, 
+ForwardIterator __uninitialized_fill_n(ForwardIterator first, Size n,
 								     const T& x, std::false_type)
 {
 	auto p = first;
@@ -91,7 +91,7 @@ ForwardIterator uninitialized_fill_n(ForwardIterator first, Size n,
 	}
 	catch (...){
 		while (first != p){
-			destroy(&*first)
+			destroy(&*first);
 		}
 	}
 	return p;
