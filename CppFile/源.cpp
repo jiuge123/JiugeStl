@@ -5,13 +5,16 @@
 #include<iostream>
 #include<vector>
 #include<iterator>
+#include<cassert>
 using namespace std;
 struct a{
-	a(int s) :as(s){}
+	a(int s) :as(s){}	
 	int as;
 };
 int main()
-{	
-	JStl::vector<a> b(5, a(5));
+{
+	int aa[] = { 3, 4, 5, 6 };
+	const JStl::vector<a> b(aa,aa+4),c(b);
+	c.empty();
 	system("pause");
 }

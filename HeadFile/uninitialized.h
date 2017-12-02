@@ -13,14 +13,27 @@ template<typename InputIterator, typename ForwardIterator>
 ForwardIterator __uninitialized_copy(InputIterator first, InputIterator last, 
 									 ForwardIterator result, std::true_type)
 {
-	copy(first, last, result);
+	return copy(first, last, result);
 }
 
 template<typename InputIterator, typename ForwardIterator>
 ForwardIterator __uninitialized_copy(InputIterator first, InputIterator last, 
 									 ForwardIterator result, std::false_type)
 {
-
+	auto p = result;
+	try{
+		while (first != last){
+			construct(&*p, *first);
+			++first;
+			++p;
+		}
+	}
+	catch (...){
+		while (result != p)
+			destroy(result);
+			++result;
+	}
+	return p;
 }
 
 template<typename InputIterator, typename ForwardIterator>

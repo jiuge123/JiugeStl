@@ -58,13 +58,13 @@ template <class ForwardIterator>
 void destroy_cat(ForwardIterator first, ForwardIterator last, std::false_type)
 {
 	for (; first != last; ++first)
-		destroy(&*first);
+		destroy_one(&*first);
 }
 
 template <class ForwardIterator>
 void destroy(ForwardIterator first, ForwardIterator last)
 {
-	destroy_cat(first, last, std::is_trivially_destructible<typename iterator_traits<ForwardIter>::value_type>{});
+	destroy_cat(first, last, std::is_trivially_destructible<typename iterator_traits<ForwardIterator>::value_type>{});
 }
 
 }//namespace JStl
