@@ -8,7 +8,8 @@
 
 namespace JStl{
 template<typename T,typename Alloc = allocator<T>>
-class vector{ 
+class vector{
+public:
 	Alloc data_allocator;
 	typedef		T					value_type;
 	typedef		T*					iterator;
@@ -18,6 +19,7 @@ class vector{
 	typedef		size_t			    size_type;
 	typedef		ptrdiff_t			difference_type;
 private:
+
 	T *begin_;  //可用的首地址
  	T *end_;	//可用的尾地址
 	T *cap_;	//容量地址
@@ -46,17 +48,30 @@ public:
 
 	vector& operator=(vector&&) _NOEXCEPT;
 
-
+	vector& operator=(std::initializer_list<value_type>);
 public:	
-	T* begin() const
+	//迭代器相关操作
+	iterator begin()
 	{
 		return begin_;
 	}
 
-	T* end() const
+	const_iterator begin() const
+	{
+		return begin_;
+	}
+
+	iterator end()
 	{
 		return end_;
 	}
+
+	const_iterator end() const
+	{
+		return end_;
+	}
+
+public:
 
 	//返回vector长度
 	size_t size() const
@@ -118,7 +133,6 @@ vector<T, Alloc>::vector(Iter first, Iter last)
 	}	
 }
 
-//error
 template<typename T, typename Alloc = allocator<T>>
 vector<T, Alloc>::vector(const vector &rhs)
 {
@@ -127,9 +141,11 @@ vector<T, Alloc>::vector(const vector &rhs)
 }
 
 template<typename T, typename Alloc = allocator<T>>
-vector<T, Alloc>::vector(vector &&rhs)
+vector<T, Alloc>::vector(vector &&rhs) :begin_(rhs.begin_), end_(rhs.end_), cap_(rhs.cap_) _NOEXCEPT
 {
-
+	rhs.begin_ = nullptr;
+	rhs.end_ = nullptr;
+	rhs.cap_ = nullptr;
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -145,13 +161,38 @@ vector<T, Alloc>::~vector()
 template<typename T, typename Alloc = allocator<T>>
 vector<T, Alloc>& vector<T, Alloc>::operator=(const vector &rhs)
 {
-
+	if (begin_ == rhs.begin_){
+		return *this;
+	}
+	else{
+		this->~vector();
+		init_Space(rhs.size());
+		JStl::uninitialized_copy(rhs.begin_, rhs.end_, begin_);
+		return *this;
+	}	
 }
 
 template<typename T, typename Alloc = allocator<T>>
-vector<T, Alloc>& vector<T, Alloc>::operator=(vector &&rhs)
+vector<T, Alloc>& vector<T, Alloc>::operator=(vector &&rhs) _NOEXCEPT
 {
+	if (begin_ == rhs.begin_){
+		return *this;
+	}
+	else{
+		begin_ = rhs.begin_;
+		end_ = rhs.end_;
+		cap_ = rhs.cap_;
+		rhs.begin_ = nullptr;
+		rhs.end_ = nullptr;
+		rhs.cap_ = nullptr;
+		return *this;
+	}
+}
 
+template<typename T, typename Alloc = allocator<T>>
+vector<T, Alloc>& vector<T, Alloc>::operator=(std::initializer_list<value_type> l)
+{
+	init_Space(l.size());
 }
 
 

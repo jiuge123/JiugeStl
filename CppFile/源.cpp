@@ -14,7 +14,8 @@ struct a{
 int main()
 {
 	int aa[] = { 3, 4, 5, 6 };
-	const JStl::vector<a> b(aa,aa+4),c(b);
-	c.empty();
+	JStl::vector<a> b(aa, aa + 4);
+	JStl::vector<a>	c=b;
+	cout << c.begin()->as << b.begin();
 	system("pause");
 }

@@ -12,7 +12,7 @@ namespace JStl
 
 //move
 template <typename T>	inline
-typename std::remove_reference<T>::type&& move(T a) _NOEXCEPT
+typename std::remove_reference<T>::type&& move(T&& a) _NOEXCEPT
 {
 	//去除引用后转化为右值
 	return static_cast<typename std::remove_reference<T>::type&&>(a);
