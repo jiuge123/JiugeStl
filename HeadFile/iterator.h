@@ -88,6 +88,41 @@ value_type(const Iterator&)
 	return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
 }
 
+//判断是否为迭代器
+//通过模板偏特化来进行判断，如果表达式为真，则继承下面第二个函数，
+//那个函数继承的constant_integral的value是false；
+using std::true_type;
+using std::false_type;
+
+template <typename Iter, bool b>
+struct cat_Iter:false_type
+{};
+
+template <typename Iter>
+struct cat_Iter<Iter,true>:true_type
+{};
+
+//如果能够转化为inputIter或者是个指针
+template <typename Iter>
+struct is_input_iterator:cat_Iter<Iter,std::is_convertible<Iter,input_iterator_tag>
+							  ::value||std::is_pointer<Iter>::value>{};
+
+template <typename Iter>
+struct is_forward_iterator:cat_Iter<Iter, std::is_convertible<Iter, forward_iterator_tag>
+							   ::value || std::is_pointer<Iter>::value>{};
+
+template <typename Iter>
+struct is_bidrection_iterator:cat_Iter<Iter, std::is_convertible<Iter, bidrection_iterator_tag>
+								  ::value || std::is_pointer<Iter>::value>{};
+
+template <typename Iter>
+struct is_random_access_iterator:cat_Iter<Iter, std::is_convertible<Iter, random_access_iterator_tag>
+									 ::value || std::is_pointer<Iter>::value>{};
+
+template <typename Iter>
+struct is_iterator :cat_Iter<Iter, std::is_convertible<Iter, input_iterator_tag>::value 
+								|| std::is_convertible<Iter, output_iterator_tag>::value 
+								|| std::is_pointer<Iter>::value>{};
 /**************************************************************************************/
 //计算两个iterator的距离
 /**************************************************************************************/
@@ -155,6 +190,25 @@ inline void advance(InputIterator &i, Distance n)
 {
 	__advance(i, n, typename iterator_traits<InputIterator>::iterator_category());
 }
+
+
+
+template <typename Iterator>
+class reverse_iterator{
+private:
+	Iterator cur;  //正向迭代器
+public:
+	typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
+	typedef typename iterator_traits<Iterator>::value_type        value_type;
+	typedef typename iterator_traits<Iterator>::difference_type   difference_type;
+	typedef typename iterator_traits<Iterator>::pointer           pointer;
+	typedef typename iterator_traits<Iterator>::reference         reference;
+
+	typedef Iterator                                              iterator_type;
+	typedef reverse_iterator<Iterator>                            self;
+
+
+};
 
 }//namespace JStl
 #endif

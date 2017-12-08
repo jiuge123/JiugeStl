@@ -12,12 +12,19 @@ class vector{
 public:
 	Alloc data_allocator;
 	typedef		T					value_type;
-	typedef		T*					iterator;
-	typedef		const T*			const_iterator;
+	typedef		T*					pointer;
+	typedef		const T*			const_pointer;
 	typedef		T&					reference;
 	typedef		const T&			const_reference;
 	typedef		size_t			    size_type;
 	typedef		ptrdiff_t			difference_type;
+
+	typedef		T*					iterator;
+	typedef		const T*			const_iterator;
+	typedef		JStl::reverse_iterator<iterator> 
+									reverse_iterator;
+	typedef		JStl::reverse_iterator<const_iterator>
+									const_reverse_iterator;
 private:
 
 	T *begin_;  //可用的首地址
@@ -35,7 +42,9 @@ public:
 
 	vector(std::initializer_list<value_type>);
 
-	template<typename Iter>
+	//如果不写后面那个，只要是两个参数就会往这里匹配，比如两个int
+	//enable是使用type时，如果前面的表达式为真，才能用，前面未假不会匹配
+	template<typename Iter, typename std::enable_if<is_input_iterator<Iter>::value, int>::type = 0>
 	vector(Iter first, Iter last);
 
 	vector(const vector&);
@@ -72,6 +81,19 @@ public:
 	}
 
 public:
+	reference operator[](size_t i)
+	{
+		if (i < size())
+			return *(begin_ + i);
+		throw std::out_of_range("vector_index_out_of_range");
+	}
+
+	const_reference operator[](size_t i) const
+	{
+		if (i < size())
+			return *(begin_ + i);
+		throw std::out_of_range("vector_index_out_of_range");
+	}
 
 	//返回vector长度
 	size_t size() const
@@ -122,9 +144,8 @@ vector<T, Alloc>::vector(std::initializer_list<T> i)
 	JStl::uninitialized_copy(i.begin(), i.end(), begin_);
 }
 
-//error
 template<typename T, typename Alloc = allocator<T>>
-template<typename Iter>
+template<typename Iter, typename std::enable_if<is_input_iterator<Iter>::value, int>::type = 0>
 vector<T, Alloc>::vector(Iter first, Iter last)
 {
 	if (first < last){
@@ -193,6 +214,7 @@ template<typename T, typename Alloc = allocator<T>>
 vector<T, Alloc>& vector<T, Alloc>::operator=(std::initializer_list<value_type> l)
 {
 	init_Space(l.size());
+	JStl::uninitialized_copy(l.begin(), l.end(), begin);
 }
 
 

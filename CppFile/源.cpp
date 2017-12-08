@@ -11,11 +11,11 @@ struct a{
 	a(int s) :as(s){}	
 	int as;
 };
+
 int main()
 {
-	int aa[] = { 3, 4, 5, 6 };
-	JStl::vector<a> b(aa, aa + 4);
-	JStl::vector<a>	c=b;
-	cout << c.begin()->as << b.begin();
+	JStl::vector<a> c{ 1, 2, 3 };
+	JStl::vector<a> b(2, 3);
+	cout << b.begin()->as;
 	system("pause");
 }

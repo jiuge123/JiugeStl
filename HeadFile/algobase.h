@@ -2,13 +2,14 @@
 #define  JIUGESTL_HEADFILE_ALGOBASE
 namespace JStl{
 /**************************************************************************************/
-//copy
+//copy 把[first，last)拷贝到result开始的last和first中
 /**************************************************************************************/
+
 template<typename InputIterator, typename ForwardIterator>
 ForwardIterator copy(InputIterator first, InputIterator last,
 					 ForwardIterator result)
 {
-	
+	return copy_cat(first, last, result);
 }
 /**************************************************************************************/
 //fill
