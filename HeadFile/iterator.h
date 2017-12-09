@@ -206,6 +206,7 @@ public:
 
 	typedef Iterator                                              iterator_type;
 	typedef reverse_iterator<Iterator>                            self;
+	
 
 
 };

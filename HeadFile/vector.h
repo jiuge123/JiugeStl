@@ -5,9 +5,10 @@
 
 #include "iterator.h"
 #include "uninitialized.h"
+#include "allocator.h"
 
 namespace JStl{
-template<typename T,typename Alloc = allocator<T>>
+template<typename T,typename Alloc = JStl::allocator<T>>
 class vector{
 public:
 	Alloc data_allocator;
@@ -80,6 +81,7 @@ public:
 		return end_;
 	}
 
+
 public:
 	reference operator[](size_t i)
 	{
@@ -93,6 +95,16 @@ public:
 		if (i < size())
 			return *(begin_ + i);
 		throw std::out_of_range("vector_index_out_of_range");
+	}
+
+	reference front()
+	{
+		return *begin_;
+	}
+
+	reference back()
+	{
+		return *(end_ - 1);
 	}
 
 	//·µ»Øvector³¤¶È
