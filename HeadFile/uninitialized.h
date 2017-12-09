@@ -5,7 +5,6 @@
 #include "iterator.h"
 #include "construct.h"
 #include "algobase.h"
-
 namespace JStl{
 /**************************************************************************************/
 ////从迭代器result开始连续构造last-first个对象，返回last的iter
@@ -37,7 +36,6 @@ ForwardIterator __uninitialized_copy(InputIterator first, InputIterator last,
 	return p;
 }
 
-//不判断first，last大小
 template<typename InputIterator, typename ForwardIterator>
 ForwardIterator uninitialized_copy(InputIterator first, InputIterator last, 
 								   ForwardIterator result)

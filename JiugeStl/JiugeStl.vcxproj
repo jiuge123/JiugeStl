@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\HeadFile\algobase.h" />
-    <ClInclude Include="..\HeadFile\allocator.h" />
+    <ClInclude Include="..\HeadFile\alloactor.h" />
     <ClInclude Include="..\HeadFile\alloc.h" />
     <ClInclude Include="..\HeadFile\construct.h" />
     <ClInclude Include="..\HeadFile\iterator.h" />
