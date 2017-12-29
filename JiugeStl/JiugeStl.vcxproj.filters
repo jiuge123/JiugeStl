@@ -18,9 +18,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\HeadFile\alloactor.h">
-      <Filter>HeadFile</Filter>
-    </ClInclude>
     <ClInclude Include="..\HeadFile\util.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
@@ -40,6 +37,9 @@
       <Filter>HeadFile</Filter>
     </ClInclude>
     <ClInclude Include="..\HeadFile\vector.h">
+      <Filter>HeadFile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HeadFile\allocator.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
   </ItemGroup>

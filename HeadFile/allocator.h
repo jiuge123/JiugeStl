@@ -26,24 +26,24 @@ public:
 
 	allocator &operator=(const allocator &lhs) = delete;
 	//分配内存
-	T* allocate();
-	T* allocate(size_t n);
+	static T* allocate();
+	static T* allocate(size_t n);
 
 	//调用构造函数
-	void construct(T *p);
-	void construct(T *p,const T& rhs);
-	void construct(T *p,T&& rhs);
+	static void construct(T *p);
+	static void construct(T *p, const T& rhs);
+	static void construct(T *p, T&& rhs);
 
 	template <typename... Args>
-	void construct(T *p,Args&&... args);
+	static void construct(T *p, Args&&... args);
 
 	//调用析构函数
-	void destroy(T *p);
-	void destroy(T *first, T *last);
+	static void destroy(T *p);
+	static void destroy(T *first, T *last);
 
 	//释放内存
-	void deallocate(T *p);
-	void deallocate(T *p, size_t n);
+	static void deallocate(T *p);
+	static void deallocate(T *p, size_t n);
 
 	template<typename U>
 	struct rebind{
