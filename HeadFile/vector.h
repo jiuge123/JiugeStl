@@ -46,7 +46,7 @@ public:
 
 	vector(size_t, const T&);
 
-	vector(std::initializer_list<value_type>);
+	vector(const std::initializer_list<value_type>&);
 
 	//如果不写后面那个，只要是两个参数就会往这里匹配，比如两个int
 	//enable是使用type时，如果前面的表达式为真，才能用，前面未假不会匹配
@@ -63,7 +63,7 @@ public:
 
 	vector& operator=(vector&&) _NOEXCEPT;
 
-	vector& operator=(std::initializer_list<value_type>);
+	vector& operator=(const std::initializer_list<value_type>&);
 public:	
 	//迭代器相关操作
 	iterator begin()
@@ -174,6 +174,7 @@ public:
 	void insert(iterator pos, Iter first, Iter last);
 
 	void resize(size_t newsize, const value_type& x);
+	void clear();
 };
 
 template<typename T, typename Alloc = allocator<T>>
@@ -199,7 +200,7 @@ void vector<T, Alloc>::fill_Alloc_Space(size_t n)
 	if (newp == nullptr)
 		throw bad_alloc();
 	size_t s = size();
-	uninitialized_copy(begin_, end_, newp);
+	uninitialized_move(begin_, end_, newp);
 	data_allocator::destroy(begin_, end_);
 	data_allocator::deallocate(begin_);
 	begin_ = newp;
@@ -215,7 +216,7 @@ vector<T,Alloc>::vector(size_t n, const T& value)
 }
 
 template<typename T, typename Alloc = allocator<T>>
-vector<T, Alloc>::vector(std::initializer_list<T> i)
+vector<T, Alloc>::vector(const std::initializer_list<T> &i)
 {
 	init_Space(i.size());
 	JStl::uninitialized_copy(i.begin(), i.end(), begin_);
@@ -288,7 +289,7 @@ vector<T, Alloc>& vector<T, Alloc>::operator=(vector &&rhs) _NOEXCEPT
 }
 
 template<typename T, typename Alloc = allocator<T>>
-vector<T, Alloc>& vector<T, Alloc>::operator=(std::initializer_list<value_type> l)
+vector<T, Alloc>& vector<T, Alloc>::operator=(const std::initializer_list<value_type> &l)
 {
 	init_Space(l.size());
 	JStl::uninitialized_copy(l.begin(), l.end(), begin);
@@ -328,17 +329,17 @@ vector<T, Alloc>::emplace(iterator pos, Args&& ...args)
 	assert(pos >= begin_ && pos <= end_);
 	size_t n = pos - begin_;
 	if (size() != capacity() && pos == end_){       //在结尾有位置
-		data_allocator::construct(pos, JStl::forward<Args>(args)...);
+		data_allocator::construct(pos, JStl::forward<Args&&>(args)...);
 		++end_;
 	}
 	else if (size() != capacity()){					//不在结尾有位置
-		copy_backward(pos, end_, end_ + 1);
-		*pos = value_type(JStl::forward<Args>(args)...);
+		move_backward(pos, end_, end_ + 1);
+		*pos = value_type(JStl::forward<Args&&>(args)...);
 		++end_;
 	}
 	else {											//无位置
 		fill_Alloc_Space(capacity() * 2);
-		return emplace(begin_ + n, JStl::forward<Args>(args)...);
+		return emplace(begin_ + n, JStl::forward<Args&&>(args)...);
 	}
 	return begin_ + n;
 }
@@ -348,12 +349,12 @@ template <class... Args>
 void vector<T, Alloc>::emplace_back(Args&& ...args)
 {
 	if (size() != capacity()){       
-		data_allocator::construct(pos, JStl::forward<Args>(args)...);
+		data_allocator::construct(pos, JStl::forward<Args&&>(args)...);
 		++end_;
 	}
 	else {											
 		fill_Alloc_Space(capacity() * 2);
-		emplace_back(JStl::forward<Args>(args)...);
+		emplace_back(JStl::forward<Args&&>(args)...);
 	}
 }
 
@@ -361,6 +362,7 @@ template<typename T, typename Alloc = allocator<T>>
 typename vector<T, Alloc>::iterator
 vector<T, Alloc>::erase(iterator pos)
 {
+	assert(pos >= begin_ && pos <= end_);
 	if (pos + 1 != end_)
 		uninitialized_copy(pos + 1, end_, pos);
 	--end_;
@@ -372,6 +374,9 @@ template<typename T, typename Alloc = allocator<T>>
 typename vector<T, Alloc>::iterator 
 vector<T, Alloc>::erase(iterator first, iterator last)
 {
+	assert(first >= begin_ && first <= end_);
+	assert(last >= begin_ && last <= end_);
+	assert(first <= last);
 	iterator it = uninitialized_copy(last, end_, first);
 	data_allocator::destroy(it, end_);
 	end_ = it;
@@ -382,36 +387,126 @@ template<typename T, typename Alloc = allocator<T>>
 typename vector<T, Alloc>::iterator 
 vector<T, Alloc>::insert(iterator pos, const value_type& value)
 {
-
+	assert(pos >= begin_ && pos <= end_);
+	size_t n = pos - begin_;
+	if (size() != capacity() && pos == end_){       //在结尾有位置
+		data_allocator::construct(pos, value);
+		++end_;
+	}
+	else if (size() != capacity()){					//不在结尾有位置
+		move_backward(pos, end_, end_ + 1);
+		*pos = value;
+		++end_;
+	}
+	else {											//无位置
+		fill_Alloc_Space(capacity() * 2);
+		return insert(begin_ + n, value);
+	}
+	return begin_ + n;
+	
 }
 
 template<typename T, typename Alloc = allocator<T>>
 typename vector<T, Alloc>::iterator 
 vector<T, Alloc>::insert(iterator pos, value_type&& value)
 {
-
+	assert(pos >= begin_ && pos <= end_);
+	size_t n = pos - begin_;
+	if (size() != capacity() && pos == end_){       //在结尾有位置
+		data_allocator::construct(pos, JStl::move(value));
+		++end_;
+	}
+	else if (size() != capacity()){					//不在结尾有位置
+		move_backward(pos, end_, end_ + 1);
+		*pos = value;
+		++end_;
+	}
+	else {											//无位置
+		fill_Alloc_Space(capacity() * 2);
+		return insert(begin_ + n, JStl::move(value));
+	}
+	return begin_ + n;
 }
 
 template<typename T, typename Alloc = allocator<T>>
 typename vector<T, Alloc>::iterator 
 vector<T, Alloc>::insert(iterator pos, size_type n, const value_type& value)
 {
+	size_t pos_n = pos - begin_;
+	if (n != 0){
+		size_t pos_after = end_ - pos;
+		if ((size_t)(cap_ - end_) >= n){ //空闲空间大于n
+			if (pos_after > n){       //pos之后的值比n多
+				move_backward(pos, pos + n, end_ + n);
+				//fill_n(pos, n, value);
+			}
+			else{
 
+			}
+
+		}
+		else{
+			size_t len = (size() > n ? size() : n) + size(); //size 和 n 大的作为新size
+			auto new_begin = data_allocator::allocate(len);
+			if (new_begin == 0)
+				throw bad_alloc();
+			auto new_end = new_begin;
+			new_end = uninitialized_move(begin_, pos, new_begin);
+			new_end = uninitialized_fill_n(new_end, n, value);
+			new_end = uninitialized_move(pos, end_, new_end);
+			data_allocator::deallocate(begin_);
+			begin_ = new_begin;
+			end_ = new_end;
+			cap_ = begin_ + len;			
+		}
+		return begin_ + pos_n;
+	}
 }
 
 template<typename T, typename Alloc = allocator<T>>
-template <class Iter, typename std::enable_if<
-	JStl::is_input_iterator<Iter>::value, int>::type = 0>
-	void vector<T, Alloc>::insert(iterator pos, Iter first, Iter last)
+template <class InputIterator, typename std::enable_if<
+	JStl::is_input_iterator<InputIterator>::value, int>::type = 0>
+void vector<T, Alloc>::insert(iterator pos, InputIterator first, InputIterator last)
 {
-
+	if (first == last)
+		return;
+	size_t n = JStl::distance(first, last);
+	if (n != 0){
+		if ((size_t)(cap_ - end_) >= n){ //空闲空间大于n
+			
+		}
+		else{
+			size_t len = (size() > n ? size() : n) + size(); //size 和 n 大的作为新size
+			auto new_begin = data_allocator::allocate(len);
+			if (new_begin == 0)
+				throw bad_alloc();
+			auto new_end = new_begin;
+			new_end = uninitialized_move(begin_, pos, new_begin);
+			new_end = uninitialized_copy(first, last, new_end);
+			new_end = uninitialized_move(pos, end_, new_end);
+			data_allocator::deallocate(begin_);
+			begin_ = new_begin;
+			end_ = new_end;
+			cap_ = begin_ + len;
+		}
+	}
 }
 
 template<typename T, typename Alloc = allocator<T>>
 void vector<T, Alloc>::resize(size_t newsize, const value_type& x)
 {
-	
+	if (newsize < size())
+		erase(begin_ + newsize, end_);
+	else
+		insert(end_, newsize - size(), x);
 }
+
+template<typename T, typename Alloc = allocator<T>>
+void vector<T, Alloc>::clear()
+{
+	erase(begin_, end_);
+}
+
 
 
 }//namespaec JStl;
