@@ -435,15 +435,10 @@ vector<T, Alloc>::insert(iterator pos, size_type n, const value_type& value)
 	size_t pos_n = pos - begin_;
 	if (n != 0){
 		size_t pos_after = end_ - pos;
-		if ((size_t)(cap_ - end_) >= n){ //空闲空间大于n
-			if (pos_after > n){       //pos之后的值比n多
-				move_backward(pos, pos + n, end_ + n);
-				//fill_n(pos, n, value);
-			}
-			else{
-
-			}
-
+		if ((size_t)(cap_ - end_) >= n){ //空闲空间大于n      
+			move_backward(pos, end_, end_ + n);
+			fill_n(pos, n, value);
+			end_ = end_ + n;
 		}
 		else{
 			size_t len = (size() > n ? size() : n) + size(); //size 和 n 大的作为新size
@@ -473,7 +468,9 @@ void vector<T, Alloc>::insert(iterator pos, InputIterator first, InputIterator l
 	size_t n = JStl::distance(first, last);
 	if (n != 0){
 		if ((size_t)(cap_ - end_) >= n){ //空闲空间大于n
-			
+			move_backward(pos, end_, end_ + n);
+			uninitialized_copy(first, last, pos);
+			end_ = end_ + n;
 		}
 		else{
 			size_t len = (size() > n ? size() : n) + size(); //size 和 n 大的作为新size

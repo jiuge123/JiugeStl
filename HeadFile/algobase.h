@@ -12,7 +12,7 @@ OutputIterator __unchecked_copy_cat(InputIterator first, InputIterator last,
 	OutputIterator result, JStl::input_iterator_tag)
 {
 	while (first != last){
-		construct(result, *first);
+		*result = *first;
 		++first;
 		++result;
 	}
@@ -25,7 +25,7 @@ RandomIterator __unchecked_copy_cat(RandomIterator first, RandomIterator last,
 {
 	auto n = last - first;
 	while (n-- > 0){
-		construct(result, *first);
+		*result = *first;
 		++first;
 		++last;
 	}
@@ -70,8 +70,12 @@ BidrectionalIterator2
 __unchecked_copy_backward_cat(BidrectionalIterator1 first, BidrectionalIterator1 last,
 BidrectionalIterator2 result, JStl::bidrection_iterator_tag)
 {
-	while (first != last)
-		*--result = *--last;
+	while (first != last){
+		--result;
+		--last;
+		*result = *last;
+	}
+	*result = *last;
 	return result;
 }
 
@@ -80,8 +84,12 @@ BidrectionalIterator2
 __unchecked_copy_backward_cat(BidrectionalIterator1 first, BidrectionalIterator1 last,
 BidrectionalIterator2 result, JStl::random_access_iterator_tag)
 {
-	for (auto n = last - first; n > 0; --n)
-		*--result = *--last;
+	auto n = last - first;
+	while (n-- > 0){		
+		--result;
+		--last;
+		*result = *last;
+	}	
 	return result;
 }
 
@@ -94,7 +102,21 @@ BidrectionalIterator2 result)
 		iterator_category(first));
 }
 
-
+template <class Tp, class Up>
+typename std::enable_if<
+	std::is_same<typename std::remove_const<Tp>::type, Up>::value &&
+	std::is_trivially_copy_assignable<Up>::value,
+	Up*>::type
+__unchecked_copy_backward(Tp* first, Tp* last, Up* result)
+{
+	const auto n = static_cast<size_t>(last - first);
+	if (n != 0)
+	{
+		result -= n;
+		std::memmove(result, first, n * sizeof(Up));
+	}
+	return result;
+}
 
 template<typename BidrectionalIterator1, typename BidrectionalIterator2>
 BidrectionalIterator2
@@ -149,7 +171,7 @@ OutputIterator __unchecked_move_cat(InputIterator first, InputIterator last,
 	OutputIterator result, JStl::input_iterator_tag)
 {
 	while (first != last){
-		construct(result, JStl::move(*first));
+		*result = JStl::move(*first);
 		++first;
 		++result;
 	}
@@ -162,7 +184,7 @@ RandomIterator __unchecked_move_cat(RandomIterator first, RandomIterator last,
 {
 	auto n = last - first;
 	while (n-- > 0){
-		construct(result, JStl::move(*first));
+		*result = JStl::move(*first);
 		++first;
 		++last;
 	}
@@ -207,8 +229,12 @@ BidrectionalIterator2
 __unchecked_move_backward_cat(BidrectionalIterator1 first, BidrectionalIterator1 last,
 BidrectionalIterator2 result, JStl::bidrection_iterator_tag)
 {
-	while (first != last)
-		*--result = JStl::move(*--last);
+	while (first != last){
+		--result;
+		--last;
+		*result = JStl::move(*last);
+	}
+	*result = *last;
 	return result;
 }
 
@@ -217,8 +243,12 @@ BidrectionalIterator2
 __unchecked_move_backward_cat(BidrectionalIterator1 first, BidrectionalIterator1 last,
 BidrectionalIterator2 result, JStl::random_access_iterator_tag)
 {
-	for (auto n = last - first; n > 0; --n)
-		*--result = JStl::move(*--last);
+	auto n = last - first;
+	while (n-- > 0){
+		--result;
+		--last;
+		*result = JStl::move(*last);
+	}
 	return result;
 }
 
@@ -236,16 +266,16 @@ typename std::enable_if<
 	std::is_same<typename std::remove_const<Tp>::type, Up>::value &&
 	std::is_trivially_move_assignable<Up>::value,
 	Up*>::type
-	__unchecked_move_backward(Tp* first, Tp* last, Up* result)
+__unchecked_move_backward(Tp* first, Tp* last, Up* result)
 {
-		const auto n = static_cast<size_t>(last - first);
-		if (n != 0)
-		{
-			result -= n;
-			std::memmove(result, first, n * sizeof(Up));
-		}
-		return result;
+	const auto n = static_cast<size_t>(last - first);
+	if (n != 0)
+	{
+		result -= n;
+		std::memmove(result, first, n * sizeof(Up));
 	}
+	return result;
+}
 
 template<typename BidrectionalIterator1, typename BidrectionalIterator2>
 BidrectionalIterator2
