@@ -7,8 +7,10 @@
 using namespace std;
 int main()
 {
-	vector<int> a{ 1, 2, 3, 4, }, b{ 9, 9 };
-	for (auto it = a.begin(); it != a.end(); ++it)
+	JStl::vector<int> a{ 1, 2, 3, 4, }, b{ 9, 9 };
+	auto it = a.rbegin();
+	*it = 6;
+	//for ( it != a.rend(); ++it)
 		cout << *it<<endl;
 	system("pause");
 }

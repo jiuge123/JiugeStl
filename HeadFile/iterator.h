@@ -207,6 +207,22 @@ public:
 	typedef Iterator                                              iterator_type;
 	typedef reverse_iterator<Iterator>                            self;
 
+public:
+	//¹¹Ôìº¯Êı
+	reverse_iterator() = default;
+	explicit reverse_iterator(iterator_type i) :cur(i){}
+	reverse_iterator(const self &rhs) :cur(rhs.cur){}
+
+public:
+	iterator_type base() const
+	{
+		return cur;
+	}
+
+	reference operator*() const
+	{
+		return *(cur - 1);
+	}
 
 };
 

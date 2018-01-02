@@ -86,6 +86,46 @@ public:
 		return end_;
 	}
 
+	reverse_iterator rbegin() 
+	{ 
+		return reverse_iterator(end());
+	}
+
+	const_reverse_iterator rbegin() const 
+	{ 
+		return const_reverse_iterator(end()); 
+	}
+
+	reverse_iterator rend()          
+	{ 
+		return reverse_iterator(begin()); 
+	}
+
+	const_reverse_iterator rend() const 
+	{ 
+		return const_reverse_iterator(begin()); 
+	}
+
+	const_iterator cbegin() const 
+	{ 
+		return begin(); 
+	}
+
+	const_iterator cend() const 
+	{ 
+		return end(); 
+	}
+
+	const_reverse_iterator crbegin() const 
+	{ 
+		return rbegin(); 
+	}
+
+	const_reverse_iterator crend() const 
+	{ 
+		return rend(); 
+	}
+
 public:
 	//普通函数
 	reference operator[](size_t i)
@@ -154,6 +194,13 @@ public:
 	}
 
 public:
+	
+	void assign(size_type n, const value_type& value);
+	template <class Iter, typename std::enable_if<
+		JStl::is_input_iterator<Iter>::value, int>::type = 0>
+	void assign(Iter first, Iter last);
+	void assign(const std::initializer_list<value_type> &il);
+	
 	void push_back(const value_type& value);
 	void push_back(value_type&& value);
 	
@@ -172,9 +219,13 @@ public:
 	iterator insert(iterator pos, size_type n, const value_type& value);
 	template <class Iter, typename std::enable_if<JStl::is_input_iterator<Iter>::value, int>::type = 0>
 	void insert(iterator pos, Iter first, Iter last);
+	void insert(iterator pos, const std::initializer_list<value_type> &il);
 
 	void resize(size_t newsize, const value_type& x);
+	void reverse();
 	void clear();
+	void swap(vector &rhs);
+	
 };
 
 template<typename T, typename Alloc = allocator<T>>
@@ -225,11 +276,9 @@ vector<T, Alloc>::vector(const std::initializer_list<T> &i)
 template<typename T, typename Alloc = allocator<T>>
 template<typename Iter, typename std::enable_if<is_input_iterator<Iter>::value, int>::type = 0>
 vector<T, Alloc>::vector(Iter first, Iter last)
-{
-	if (first < last){
-		init_Space(last - first);
-		JStl::uninitialized_copy(first, last, begin_);
-	}	
+{	
+	init_Space(distance(last - first));
+	JStl::uninitialized_copy(first, last, begin_);	
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -240,7 +289,7 @@ vector<T, Alloc>::vector(const vector &rhs)
 }
 
 template<typename T, typename Alloc = allocator<T>>
-vector<T, Alloc>::vector(vector &&rhs) :begin_(rhs.begin_), end_(rhs.end_), cap_(rhs.cap_) _NOEXCEPT
+vector<T, Alloc>::vector(vector &&rhs) :begin_(rhs.begin_), end_(rhs.end_), cap_(rhs.cap_) 
 {
 	rhs.begin_ = nullptr;
 	rhs.end_ = nullptr;
@@ -293,6 +342,55 @@ vector<T, Alloc>& vector<T, Alloc>::operator=(const std::initializer_list<value_
 {
 	init_Space(l.size());
 	JStl::uninitialized_copy(l.begin(), l.end(), begin);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void vector<T, Alloc>::assign(size_type n, const value_type& value)
+{
+	clear();
+	if (n > capacity()){
+		begin_ = data_allocator::allocate(n);
+		uninitialized_fill_n(begin_, n, value);
+		cap_ = end_ = begin_ + n;
+	}
+	else{
+		uninitialized_fill_n(begin_, n, value);
+		end_ = begin_ + n;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Iter, typename std::enable_if<
+	JStl::is_input_iterator<Iter>::value, int>::type = 0>
+	void vector<T, Alloc>::assign(Iter first, Iter last)
+{
+		size_t n = distance(first, last);
+		clear();
+		if (n > capacity()){
+			begin_ = data_allocator::allocate(n);
+			uninitialized_copy(first, last, begin_);
+			cap_ = end_ = begin_ + n;
+		}
+		else{
+			uninitialized_copy(first, last, begin_);
+			end_ = begin_ + n;
+		}
+	}
+
+template<typename T, typename Alloc = allocator<T>>
+void vector<T, Alloc>::assign(const std::initializer_list<value_type> &il)
+{
+	size_t n = il.size();
+	clear();
+	if (n > capacity()){
+		begin_ = data_allocator::allocate(n);
+		uninitialized_copy(il.begin(), il.end(), begin_);
+		cap_ = end_ = begin_ + n;
+	}
+	else{
+		uninitialized_copy(il.begin(), il.end(), begin_);
+		end_ = begin_ + n;
+	}
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -377,7 +475,7 @@ vector<T, Alloc>::erase(iterator first, iterator last)
 	assert(first >= begin_ && first <= end_);
 	assert(last >= begin_ && last <= end_);
 	assert(first <= last);
-	iterator it = uninitialized_copy(last, end_, first);
+	iterator it = uninitialized_move(last, end_, first);
 	data_allocator::destroy(it, end_);
 	end_ = it;
 	return first;
@@ -468,7 +566,7 @@ void vector<T, Alloc>::insert(iterator pos, InputIterator first, InputIterator l
 	size_t n = JStl::distance(first, last);
 	if (n != 0){
 		if ((size_t)(cap_ - end_) >= n){ //空闲空间大于n
-			move_backward(pos, end_, end_ + n);
+			copy_backward(pos, end_, end_ + n);
 			uninitialized_copy(first, last, pos);
 			end_ = end_ + n;
 		}
@@ -490,12 +588,41 @@ void vector<T, Alloc>::insert(iterator pos, InputIterator first, InputIterator l
 }
 
 template<typename T, typename Alloc = allocator<T>>
+void vector<T, Alloc>::insert(iterator pos, const std::initializer_list<value_type> &il)
+{
+	size_t n = il.size();
+	if (n != 0){
+		if ((size_t)(cap_ - end_) >= n){ //空闲空间大于n
+			move_backward(pos, end_, end_ + n);
+			uninitialized_copy(il.begin(), il.end(), pos);
+			end_ = end_ + n;
+		}
+		else{
+			size_t len = (size() > n ? size() : n) + size(); //size 和 n 大的作为新size
+			auto new_begin = data_allocator::allocate(len);
+			if (new_begin == 0)
+				throw bad_alloc();
+			auto new_end = new_begin;
+			new_end = uninitialized_move(begin_, pos, new_begin);
+			new_end = uninitialized_copy(il.begin(), il.end(), new_end);
+			new_end = uninitialized_move(pos, end_, new_end);
+			data_allocator::deallocate(begin_);
+			begin_ = new_begin;
+			end_ = new_end;
+			cap_ = begin_ + len;
+		}
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
 void vector<T, Alloc>::resize(size_t newsize, const value_type& x)
 {
-	if (newsize < size())
+	if (newsize < size()){
 		erase(begin_ + newsize, end_);
-	else
+	}	
+	else{
 		insert(end_, newsize - size(), x);
+	}	
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -504,6 +631,24 @@ void vector<T, Alloc>::clear()
 	erase(begin_, end_);
 }
 
+template<typename T, typename Alloc = allocator<T>>
+void vector<T, Alloc>::reverse()
+{
+	value_type temp;
+	for (size_t i = 0; i < size()/2; ++i){
+		temp = move(*(begin_ + i));
+		*(begin_ + i) = move(*(begin_ + size() - i - 1));
+		*(begin_ + size() - i - 1) = move(temp);
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void vector<T, Alloc>::swap(vector &rhs)
+{
+	vector temp(move(rhs));
+	rhs = move(*this);
+	*this = move(temp);
+}
 
 
 }//namespaec JStl;
