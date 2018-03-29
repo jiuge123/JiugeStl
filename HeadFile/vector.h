@@ -9,6 +9,8 @@
 #include "uninitialized.h"
 #include "allocator.h"
 
+//包含vector
+
 namespace JStl{
 template<typename T,typename Alloc = JStl::allocator<T>>
 class vector{
@@ -194,7 +196,7 @@ public:
 	}
 
 public:
-	
+	//成员函数
 	void assign(size_type n, const value_type& value);
 	template <class Iter, typename std::enable_if<
 		JStl::is_input_iterator<Iter>::value, int>::type = 0>
@@ -648,6 +650,45 @@ void vector<T, Alloc>::swap(vector &rhs)
 	vector temp(move(rhs));
 	rhs = move(*this);
 	*this = move(temp);
+}
+
+//重载运算符
+template<typename T, typename Alloc = allocator<T>>
+bool operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+{
+	if (lhs.size() != rhs.size())
+		return 0;
+	return equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator!=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+{
+	return !(lhs == rhs);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator<(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+{
+	return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator>(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+{
+	return rhs < lhs;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator>=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+{
+	return !(lhs < rhs);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator<=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+{
+	return !(rhs > lhs);
 }
 
 

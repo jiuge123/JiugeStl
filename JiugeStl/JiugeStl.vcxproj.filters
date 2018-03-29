@@ -42,5 +42,8 @@
     <ClInclude Include="..\HeadFile\allocator.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
+    <ClInclude Include="..\HeadFile\list.h">
+      <Filter>HeadFile</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

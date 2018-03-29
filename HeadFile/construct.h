@@ -58,7 +58,7 @@ template <class ForwardIterator>
 void destroy_cat(ForwardIterator first, ForwardIterator last, std::false_type)
 {
 	for (; first != last; ++first)
-		destroy_one(&*first);
+		destroy_one(&*first,std::false_type());
 }
 
 template <class ForwardIterator>

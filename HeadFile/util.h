@@ -37,9 +37,23 @@ T&& forward(typename std::remove_reference<T>::type&& arg) _NOEXCEPT
 template <typename T>
 void swap(T& lhs, T& rhs)
 {
-	auto temp(Jl::move(lhs));
+	auto temp(JStl::move(lhs));
 	lhs = JStl::move(rhs);
 	rhs = JStl::move(temp);
+}
+
+//min
+template<typename T>
+T min(const T &a, const T &b)
+{
+	return (a < b ? a : b);
+}
+
+//max
+template<typename T>
+T max(const T &a, const T &b)
+{
+	return (a > b ? a : b);
 }
 
 }//namespace JiugeStl

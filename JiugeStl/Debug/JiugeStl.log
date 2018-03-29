@@ -1,24 +1,25 @@
-﻿生成启动时间为 2018/1/2 11:45:22。
+﻿生成启动时间为 2018/3/29 23:59:01。
      1>项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\CppFile\源.cpp"
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\CppFile\源.cpp"
          源.cpp
-     1>f:\github\jiugestl\headfile\vector.h(282): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(276) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(282): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(277) : 参见“unnamed-parameter”的声明
-     1>f:\github\jiugestl\headfile\vector.h(378): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(362) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(378): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(364) : 参见“unnamed-parameter”的声明
-     1>f:\github\jiugestl\headfile\vector.h(443): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(422) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(457): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(445) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(588): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(559) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(588): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(561) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\vector.h(284): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(278) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(284): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(279) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\vector.h(380): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(364) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(380): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(366) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\vector.h(445): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(424) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(459): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(447) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(590): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(561) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(590): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(563) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\cppfile\源.cpp(11): warning C4101: “a”: 未引用的局部变量
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\github\JiugeStl\Debug\JiugeStl.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\github\JiugeStl\Debug\JiugeStl.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\github\JiugeStl\Debug\JiugeStl.lib" /MACHINE:X86 "Debug\源.obj"
          JiugeStl.vcxproj -> F:\github\JiugeStl\Debug\JiugeStl.exe
@@ -26,4 +27,4 @@
 
 生成成功。
 
-已用时间 00:00:01.11
+已用时间 00:00:01.19

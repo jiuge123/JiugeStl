@@ -284,6 +284,62 @@ move_backward(BidrectionalIterator1 first, BidrectionalIterator1 last, Bidrectio
 	return __unchecked_move_backward(first, last, result);
 }
 
+/**************************************************************************************/
+//equal
+// 比较 [first, last)区间上的元素值是否和第二序列相等
+/**************************************************************************************/
+template<typename InputIterator1,typename InputIterator2>
+bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
+{
+	for (; first1 != last1; ++first1, ++first2){
+		if (*first1 != *first2)
+			return false;
+	}
+	return true;
+}
+
+template<typename InputIterator1, typename InputIterator2,typename Compared>
+bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2,Compared comp)
+{
+	for (; first1 != last1; ++first1, ++first2){
+		if (!comp(*first1, *first2))
+			return false;
+	}
+	return true;
+}
+/**************************************************************************************/
+// lexicographical_compare
+// 以字典序排列对两个序列进行比较，当在某个位置发现第一组不相等元素时，有下列几种情况：
+// (1)如果第一序列的元素较小，返回 true ，否则返回 false
+// (2)如果到达 last1 而尚未到达 last2 返回 true
+// (3)如果到达 last2 而尚未到达 last1 返回 false
+// (4)如果同时到达 last1 和 last2 返回 false
+/**************************************************************************************/
+template<typename InputIterator1, typename InputIterator2>
+bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+							 InputIterator2 first2, InputIterator2 last2)
+{
+	for (; first1 != last1&&first2 != last2; ++first1, ++first2){
+		if (*first1 < *first2)
+			return true;
+		else if (*first1 > *first2)
+			return false;
+	}
+	return (first1 == last1) && (first2 != last2);
+}
+
+template<typename InputIterator1, typename InputIterator2, typename Compared>
+bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+	InputIterator2 first2, InputIterator2 last2, Compared comp)
+{
+	for (; first1 != last1&&first2 != last2; ++first1, ++first2){
+		if (comp(*first1,*first2))
+			return true;
+		else if (comp(*first2, *first1))
+			return false;
+	}
+	return (first1 == last1) && (first2 != last2);
+}
 
 }//namespace JStl
 #endif

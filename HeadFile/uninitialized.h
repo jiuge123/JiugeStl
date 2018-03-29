@@ -1,5 +1,6 @@
 #ifndef  JIUGESTL_HEADFILE_UNINITIALIZED
 #define  JIUGESTL_HEADFILE_UNINITIALIZED
+
 //·¶Î§¹¹Ôìº¯Êý
 
 #include "iterator.h"
