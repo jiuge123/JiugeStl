@@ -199,8 +199,29 @@ public:
 	typedef JStl::list_const_iterator<T>                const_iterator;
 	typedef JStl::reverse_iterator<iterator>			reverse_iterator;
 	typedef JStl::reverse_iterator<const_iterator>		const_reverse_iterator;
+	
+	typedef list_node<T>								list_node;
 
+private:
+	list_node node_;
+	size_type size_;
+
+public:
+	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
+	list();
 };
+
+template<typename T>
+void fill_init(size_type n, const value_type& value)
+{
+
+}
+
+template<typename T>
+list::list()
+{
+
+}
 	
 }//namespaec JStl;
 #endif
