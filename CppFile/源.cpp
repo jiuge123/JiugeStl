@@ -8,6 +8,7 @@
 using namespace std;
 int main()
 {
-	JStl::list<int> a;
+	list<int> a;
+	cout << a.size();
 	system("pause");
 }

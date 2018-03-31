@@ -10,7 +10,7 @@
 #include "allocator.h"
 #include "util.h"
 
-//包含list
+//包含list 双向环状链表
 
 namespace JStl{
 
@@ -201,27 +201,63 @@ public:
 	typedef JStl::reverse_iterator<const_iterator>		const_reverse_iterator;
 	
 	typedef list_node<T>								list_node;
+	typedef list_node*									list_ptr;
 
 private:
-	list_node node_;
+	list_ptr node_;   //指向尾部
 	size_type size_;
 
+	void fill_init(size_type n, const value_type& value);
+
+	void link_nodes_at_back(list_ptr first, list_ptr last);
+
+	void link_nodes_at_first(list_ptr first, list_ptr last);
+
+	template<class... Args>
+	list_ptr create_node(Args&& ...args);
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
 	list();
 };
 
-template<typename T>
-void fill_init(size_type n, const value_type& value)
+template<typename T, typename Alloc = JStl::allocator<T>>
+template<class... Args>
+typename list<T, Alloc>::list_ptr 
+list<T, Alloc>::create_node(Args&& ...args)
 {
 
 }
 
-template<typename T>
-list::list()
+template<typename T, typename Alloc = JStl::allocator<T>>
+void list<T, Alloc>::link_nodes_at_first(list_ptr first, list_ptr last)
 {
 
+}
+
+template<typename T,typename Alloc = JStl::allocator<T>>
+void list<T, Alloc>::link_nodes_at_back(list_ptr first, list_ptr last)
+{
+
+}
+
+template<typename T, typename Alloc = JStl::allocator<T>>
+void list<T, Alloc>::fill_init(size_type n, const value_type& value)
+{
+	node_ = node_allocator::allocate(n);
+	node_->unlink();
+	size_ = n;
+	while (n--){
+
+	}
+}
+
+
+
+template<typename T, typename Alloc = JStl::allocator<T>>
+list<T, Alloc>::list()
+{
+	fill_init(0, value_type());
 }
 	
-}//namespaec JStl;
+};//namespaec JStl;
 #endif
