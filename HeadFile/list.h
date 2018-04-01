@@ -225,19 +225,25 @@ template<class... Args>
 typename list<T, Alloc>::list_ptr 
 list<T, Alloc>::create_node(Args&& ...args)
 {
-
+         
 }
 
 template<typename T, typename Alloc = JStl::allocator<T>>
 void list<T, Alloc>::link_nodes_at_first(list_ptr first, list_ptr last)
 {
-
+	first->next = node_->next;
+	last->prev = node_;
+	node_->next->prev = first;
+	node->next = last;
 }
 
 template<typename T,typename Alloc = JStl::allocator<T>>
 void list<T, Alloc>::link_nodes_at_back(list_ptr first, list_ptr last)
 {
-
+	first->prev = node_->prev;
+	last->next = node_;
+	node_->prev->next = first;
+	node_->prev = last;
 }
 
 template<typename T, typename Alloc = JStl::allocator<T>>
@@ -247,7 +253,8 @@ void list<T, Alloc>::fill_init(size_type n, const value_type& value)
 	node_->unlink();
 	size_ = n;
 	while (n--){
-
+		list_ptr node = create_node(value);
+		list_node_at_back(node, node);
 	}
 }
 
