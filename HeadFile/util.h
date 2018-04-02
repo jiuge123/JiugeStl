@@ -56,5 +56,12 @@ T max(const T &a, const T &b)
 	return (a > b ? a : b);
 }
 
+//address_of
+template<typename T>
+T* address_of(T& value)
+{
+	return &value;
+}
+
 }//namespace JiugeStl
 #endif

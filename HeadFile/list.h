@@ -43,7 +43,7 @@ struct list_node
 //iterator
 
 template <class T>
-struct list_iterator :public JStl::iterator<JStl::bidrection_iterator_tag, T>
+struct list_iterator :public iterator<bidrection_iterator_tag, T>
 {
 	typedef T                                 value_type;
 	typedef T*                                pointer;
@@ -110,7 +110,7 @@ struct list_iterator :public JStl::iterator<JStl::bidrection_iterator_tag, T>
 };
 
 template <class T>
-struct list_const_iterator :public JStl::iterator<JStl::bidrection_iterator_tag, T>
+struct list_const_iterator :public iterator<bidrection_iterator_tag, T>
 {
 	typedef T                                 value_type;
 	typedef const T*                          pointer;
@@ -180,7 +180,7 @@ struct list_const_iterator :public JStl::iterator<JStl::bidrection_iterator_tag,
 
 };
 
-template<typename T, typename Alloc = JStl::allocator<T>>
+template<typename T, typename Alloc = allocator<T>>
 class list{
 public:
 	typedef JStl::allocator<T>							data_allocator;
@@ -201,35 +201,61 @@ public:
 	typedef JStl::reverse_iterator<const_iterator>		const_reverse_iterator;
 	
 	typedef list_node<T>								list_node;
-	typedef list_node*									list_ptr;
+	typedef list_node*									node_ptr;
 
 private:
-	list_ptr node_;   //指向尾部
+	node_ptr node_;   //指向尾部
 	size_type size_;
 
 	void fill_init(size_type n, const value_type& value);
 
-	void link_nodes_at_back(list_ptr first, list_ptr last);
+	void link_nodes_at_back(node_ptr first, node_ptr last);
 
-	void link_nodes_at_first(list_ptr first, list_ptr last);
+	void link_nodes_at_first(node_ptr first, node_ptr last);
 
 	template<class... Args>
-	list_ptr create_node(Args&& ...args);
+	node_ptr create_node(Args&& ...args);
+
+	void destory_node(node_ptr);
+
+	
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
 	list();
+
+public:
+	//成员函数
+	void clear();
 };
 
 template<typename T, typename Alloc = JStl::allocator<T>>
 template<class... Args>
-typename list<T, Alloc>::list_ptr 
+typename list<T, Alloc>::node_ptr 
 list<T, Alloc>::create_node(Args&& ...args)
 {
-         
+	node_ptr p = node_allocator::allocate(1);
+	try{
+		data_allocator::construct(address_of(p->value),JStl::forward(args));
+		p->prev = nullptr;
+		p->next = nullptr;
+	}
+	catch (...)
+	{
+		node_allocator::deallocate(p);
+		throw;
+	}
+	return p;
 }
 
-template<typename T, typename Alloc = JStl::allocator<T>>
-void list<T, Alloc>::link_nodes_at_first(list_ptr first, list_ptr last)
+template<typename T,typename Alloc = allocator<T>>
+void list<T, Alloc>::destory_node(node_ptr ptr)
+{
+	data_allocator::destory(address_of(ptr->value));
+	data_allocator::deallocate(ptr);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::link_nodes_at_first(node_ptr first, node_ptr last)
 {
 	first->next = node_->next;
 	last->prev = node_;
@@ -237,8 +263,8 @@ void list<T, Alloc>::link_nodes_at_first(list_ptr first, list_ptr last)
 	node->next = last;
 }
 
-template<typename T,typename Alloc = JStl::allocator<T>>
-void list<T, Alloc>::link_nodes_at_back(list_ptr first, list_ptr last)
+template<typename T,typename Alloc = allocator<T>>
+void list<T, Alloc>::link_nodes_at_back(node_ptr first, node_ptr last)
 {
 	first->prev = node_->prev;
 	last->next = node_;
@@ -246,25 +272,45 @@ void list<T, Alloc>::link_nodes_at_back(list_ptr first, list_ptr last)
 	node_->prev = last;
 }
 
-template<typename T, typename Alloc = JStl::allocator<T>>
+template<typename T, typename Alloc = allocator<T>>
 void list<T, Alloc>::fill_init(size_type n, const value_type& value)
 {
-	node_ = node_allocator::allocate(n);
+	node_ = node_allocator::allocate(1);
 	node_->unlink();
 	size_ = n;
-	while (n--){
-		list_ptr node = create_node(value);
-		list_node_at_back(node, node);
+	try{
+		for( ; n > 0; --n ){
+			node_ptr node = create_node(value);
+			list_node_at_back(node, node);
+		}
+	}
+	catch (...){
+		clear();
+		data_allocator::deallocate(node_);
+		node_ = nullptr;
+		throw;
 	}
 }
 
-
-
-template<typename T, typename Alloc = JStl::allocator<T>>
+template<typename T, typename Alloc = allocator<T>>
 list<T, Alloc>::list()
 {
 	fill_init(0, value_type());
 }
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::clear()
+{
+	if (size_ != 0){
+		node_ptr cur = node_->next;
+		for (auto next = cur->next; cur != node_; cur = next, next = cur->next){
+			destory_node(cur->self());
+		}
+		node_->unlink();
+		size_ = 0;
+	}
+}
+
 	
 };//namespaec JStl;
 #endif
