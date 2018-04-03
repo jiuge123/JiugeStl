@@ -1,26 +1,32 @@
-﻿生成启动时间为 2018/4/3 0:12:42。
+﻿生成启动时间为 2018/4/3 23:59:09。
      1>项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\CppFile\源.cpp"
          源.cpp
-     1>f:\github\jiugestl\headfile\vector.h(284): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(278) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(284): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(279) : 参见“unnamed-parameter”的声明
-     1>f:\github\jiugestl\headfile\vector.h(380): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(364) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(380): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(366) : 参见“unnamed-parameter”的声明
-     1>f:\github\jiugestl\headfile\vector.h(445): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(424) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(459): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(447) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(590): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(561) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\vector.h(590): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\vector.h(563) : 参见“unnamed-parameter”的声明
-     1>f:\github\jiugestl\headfile\list.h(248): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\list.h(231) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(285): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(279) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(285): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(280) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\vector.h(381): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(365) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(381): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(367) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\vector.h(446): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(425) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(460): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(448) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(591): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(562) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(591): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(564) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\list.h(271): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(254) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(339): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(318) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(365): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(359) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(365): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(361) : 参见“unnamed-parameter”的声明
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\github\JiugeStl\Debug\JiugeStl.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\github\JiugeStl\Debug\JiugeStl.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\github\JiugeStl\Debug\JiugeStl.lib" /MACHINE:X86 "Debug\源.obj"
          JiugeStl.vcxproj -> F:\github\JiugeStl\Debug\JiugeStl.exe
@@ -28,4 +34,4 @@
 
 生成成功。
 
-已用时间 00:00:02.62
+已用时间 00:00:01.25

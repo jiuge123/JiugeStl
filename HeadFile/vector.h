@@ -51,8 +51,9 @@ public:
 	vector(const std::initializer_list<value_type>&);
 
 	//如果不写后面那个，只要是两个参数就会往这里匹配，比如两个int
-	//enable是使用type时，如果前面的表达式为真，才能用，前面未假不会匹配
-	template<typename Iter, typename std::enable_if<is_input_iterator<Iter>::value, int>::type = 0>
+	//enable是使用type时，如果前面的表达式为真，才能用，前面为假不会匹配
+	template<typename Iter, typename std::enable_if<
+		is_input_iterator<Iter>::value, int>::type = 0>
 	vector(Iter first, Iter last);
 
 	vector(const vector&);

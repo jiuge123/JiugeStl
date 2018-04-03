@@ -184,7 +184,6 @@ template<typename T, typename Alloc = allocator<T>>
 class list{
 public:
 	typedef JStl::allocator<T>							data_allocator;
-	typedef JStl::allocator<T>							allocator_type;
 	typedef JStl::allocator<list_node<T>>				node_allocator;
 
 	typedef typename allocator<T>::value_type			value_type;
@@ -200,29 +199,53 @@ public:
 	typedef JStl::reverse_iterator<iterator>			reverse_iterator;
 	typedef JStl::reverse_iterator<const_iterator>		const_reverse_iterator;
 	
-	typedef list_node<T>								list_node;
-	typedef list_node*									node_ptr;
+	typedef list_node<T>*								node_ptr;
 
 private:
 	node_ptr node_;   //指向尾部
 	size_type size_;
 
 	void fill_init(size_type n, const value_type& value);
+	
+	template<typename Iter>
+	void copy_init(Iter first, Iter last);
 
-	void link_nodes_at_back(node_ptr first, node_ptr last);
-
-	void link_nodes_at_first(node_ptr first, node_ptr last);
+	//插入尾部节点
+	void link_node_at_back(node_ptr first, node_ptr last);
+	
+	//插入头部节点
+	void link_node_at_first(node_ptr first, node_ptr last);
 
 	template<class... Args>
 	node_ptr create_node(Args&& ...args);
 
 	void destory_node(node_ptr);
-
 	
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
 	list();
 
+	list(size_type n); 
+
+	list(size_type n,const value_type& v);
+
+	template<typename Iter, typename std::enable_if<
+		JStl::is_input_iterator<Iter>::value, int>::type = 0>
+	list(Iter first,Iter last);
+
+	list(const std::initializer_list<T>& l);
+
+	list(const list& rhs);
+
+	list(list &&rhs);
+public:
+	//迭代器相关操作
+public:
+	//普通函数
+	size_t size()
+	{
+		return size_;
+	}
 public:
 	//成员函数
 	void clear();
@@ -235,7 +258,7 @@ list<T, Alloc>::create_node(Args&& ...args)
 {
 	node_ptr p = node_allocator::allocate(1);
 	try{
-		data_allocator::construct(address_of(p->value),JStl::forward(args));
+		data_allocator::construct(address_of(p->value),JStl::forward<Args>(args)...);
 		p->prev = nullptr;
 		p->next = nullptr;
 	}
@@ -250,12 +273,12 @@ list<T, Alloc>::create_node(Args&& ...args)
 template<typename T,typename Alloc = allocator<T>>
 void list<T, Alloc>::destory_node(node_ptr ptr)
 {
-	data_allocator::destory(address_of(ptr->value));
-	data_allocator::deallocate(ptr);
+	data_allocator::destroy(address_of(ptr->value));
+	node_allocator::deallocate(ptr);
 }
 
 template<typename T, typename Alloc = allocator<T>>
-void list<T, Alloc>::link_nodes_at_first(node_ptr first, node_ptr last)
+void list<T, Alloc>::link_node_at_first(node_ptr first, node_ptr last)
 {
 	first->next = node_->next;
 	last->prev = node_;
@@ -264,7 +287,7 @@ void list<T, Alloc>::link_nodes_at_first(node_ptr first, node_ptr last)
 }
 
 template<typename T,typename Alloc = allocator<T>>
-void list<T, Alloc>::link_nodes_at_back(node_ptr first, node_ptr last)
+void list<T, Alloc>::link_node_at_back(node_ptr first, node_ptr last)
 {
 	first->prev = node_->prev;
 	last->next = node_;
@@ -281,21 +304,83 @@ void list<T, Alloc>::fill_init(size_type n, const value_type& value)
 	try{
 		for( ; n > 0; --n ){
 			node_ptr node = create_node(value);
-			list_node_at_back(node, node);
+			link_node_at_back(node, node);
 		}
 	}
 	catch (...){
 		clear();
-		data_allocator::deallocate(node_);
+		node_allocator::deallocate(node_);
 		node_ = nullptr;
 		throw;
 	}
+}
+
+template<typename T, typename Alloc = JStl::allocator<T>>
+template<class Iter>
+void list<T, Alloc>::copy_init(Iter first, Iter last)
+{
+	node_ = node_allocator::allocate(1);
+	node_->unlink();
+	size_ = JStl::distance(first, last);
+	size_type n = size_;
+	try{
+		while (n--){
+			node_ptr node = create_node(*first);
+			link_node_at_back(node, node);
+			++first;
+		}
+	}
+	catch (...){
+		clear();
+		node_allocator::deallocate(node_);
+		node_ = nullptr;
+		throw;
+	}	
 }
 
 template<typename T, typename Alloc = allocator<T>>
 list<T, Alloc>::list()
 {
 	fill_init(0, value_type());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+list<T, Alloc>::list(size_type n)
+{
+	fill_init(n, value_type());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+list<T, Alloc>::list(size_type n,const value_type& v)
+{
+	fill_init(n, v);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template<typename Iter, typename std::enable_if<
+	JStl::is_input_iterator<Iter>::value, int>::type = 0>
+list<T, Alloc>::list(Iter first, Iter last)
+{
+	copy_init(first, last);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+list<T, Alloc>::list(const std::initializer_list<T> &l)
+{
+	copy_init(l.begin(), l.end());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+list<T, Alloc>::list(const list& rhs)
+{
+	copy_init(rhs.begin(), rhs.end());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+list<T, Alloc>::list(list&& rhs) :node_(rhs.node_), size_(rhs.size_)
+{
+	rhs.node_ = nullptr;
+	rhs.size_ = 0;
 }
 
 template<typename T, typename Alloc = allocator<T>>
