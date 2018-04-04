@@ -7,8 +7,7 @@
 using namespace std;
 int main()
 {
-	JStl::list<int> a{ 1, 2, 3 };
-	JStl::list<int> b(std::move(a));
-	cout << b.size();
+	list<int> a{ 1, 2, 3 };
+	list<int> b;
 	system("pause");
 }

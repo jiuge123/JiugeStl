@@ -210,6 +210,11 @@ private:
 	template<typename Iter>
 	void copy_init(Iter first, Iter last);
 
+	void fill_assign(size_type n, const value_type& value);
+
+	template<typename Iter>
+	void copy_assign(Iter first, Iter last);
+
 	//插入尾部节点
 	void link_node_at_back(node_ptr first, node_ptr last);
 	
@@ -238,17 +243,41 @@ public:
 	list(const list& rhs);
 
 	list(list &&rhs);
+
+	list& operator=(const list& rhs);
+
+	list operator=(list &&rhs);
 public:
 	//迭代器相关操作
+	iterator begin()
+	{
+		return node_->next;
+	}
+
+	iterator end()
+	{
+		return node_;
+	}
 public:
 	//普通函数
+	/*void swap(list &rhs)
+	{
+
+	}*/
+
 	size_t size()
 	{
 		return size_;
 	}
 public:
 	//成员函数
+	//void assign();
+
 	void clear();
+
+	/*iterator insert(const_iterator pos, size_type n, const value_type& value);
+
+	iterator erase(const_iterator begin, const_iterator end);*/
 };
 
 template<typename T, typename Alloc = JStl::allocator<T>>
@@ -339,6 +368,30 @@ void list<T, Alloc>::copy_init(Iter first, Iter last)
 }
 
 template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::fill_assign(size_type n, const value_type& value)
+{
+	auto i = begin();
+	auto end = end();
+	for (; n > 0 && i != end; --n, ++i){
+		*i = value;
+	}
+	if (n > 0){
+		insert(e, n, value); //迭代器先完成，还有未插入
+	}
+	else{
+		erase(i, e);		//插入先完成，删除后面的原节点
+	}
+
+}
+
+//template<typename T, typename Alloc = JStl::allocator<T>>
+//template<class Iter>
+//void list<T, Alloc>::copy_assign(Iter first, Iter last)
+//{
+//
+//}
+
+template<typename T, typename Alloc = allocator<T>>
 list<T, Alloc>::list()
 {
 	fill_init(0, value_type());
@@ -382,6 +435,26 @@ list<T, Alloc>::list(list&& rhs) :node_(rhs.node_), size_(rhs.size_)
 	rhs.node_ = nullptr;
 	rhs.size_ = 0;
 }
+
+//template<typename T, typename Alloc = allocator<T>>
+//list<T, Alloc>& list<T, Alloc>::operator=(const list& rhs)
+//{
+//	if (this != &rhs){
+//		assign(rhs.begin(), rhs.end());
+//	}
+//	return *this;
+//}
+//
+//
+//template<typename T, typename Alloc = allocator<T>>
+//list<T, Alloc> list<T, Alloc>::operator=(list&& rhs)
+//{
+//	if (this != &rhs){
+//		list tmp(JStl::move(rhs));
+//		swap(tmp);
+//	}
+//	return *this;
+//}
 
 template<typename T, typename Alloc = allocator<T>>
 void list<T, Alloc>::clear()
