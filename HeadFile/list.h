@@ -124,9 +124,9 @@ struct list_const_iterator :public iterator<bidrection_iterator_tag, T>
 
 	list_const_iterator(node_ptr x) :node_(x) {}
 
-	list_const_iterator(const list_iterator& rhs) :node_(rhs.node_) {}
+	list_const_iterator(const list_iterator<T>& rhs) :node_(rhs.node_) {}
 
-	list_const_iterator(const list_const_iterator& rhs) :node_(rhs.node_) {}
+	list_const_iterator(const list_const_iterator<T>& rhs) :node_(rhs.node_) {}
 
 	reference operator*() const
 	{
@@ -246,7 +246,9 @@ public:
 
 	list& operator=(const list& rhs);
 
-	list operator=(list &&rhs);
+	list& operator=(list &&rhs);
+
+	list& operator=(std::initializer_list<T> l);
 public:
 	//迭代器相关操作
 	iterator begin()
@@ -258,12 +260,23 @@ public:
 	{
 		return node_;
 	}
+
+	iterator begin() const
+	{
+		return node_->next;
+	}
+
+	iterator end() const
+	{
+		return node_;
+	}
 public:
 	//普通函数
-	/*void swap(list &rhs)
+	void swap(list &rhs)
 	{
-
-	}*/
+		JStl::swap(node_, rhs.node_);
+		JStl::swap(size_, rhs.size_);
+	}
 
 	size_t size()
 	{
@@ -271,13 +284,15 @@ public:
 	}
 public:
 	//成员函数
-	//void assign();
+	void assign(const_iterator begin, const_iterator end);
 
 	void clear();
 
-	/*iterator insert(const_iterator pos, size_type n, const value_type& value);
+	iterator insert(const_iterator pos, size_type n, const value_type& value);
+	template<typename Iter>
+	iterator insert(const_iterator pos, Iter begin, Iter end);
 
-	iterator erase(const_iterator begin, const_iterator end);*/
+	iterator erase(const_iterator begin, const_iterator end);
 };
 
 template<typename T, typename Alloc = JStl::allocator<T>>
@@ -376,20 +391,29 @@ void list<T, Alloc>::fill_assign(size_type n, const value_type& value)
 		*i = value;
 	}
 	if (n > 0){
-		insert(e, n, value); //迭代器先完成，还有未插入
+		insert(end, n, value); //迭代器先完成，还有未插入
 	}
 	else{
-		erase(i, e);		//插入先完成，删除后面的原节点
+		erase(i, end);		//插入先完成，删除后面的原节点
 	}
-
 }
 
-//template<typename T, typename Alloc = JStl::allocator<T>>
-//template<class Iter>
-//void list<T, Alloc>::copy_assign(Iter first, Iter last)
-//{
-//
-//}
+template<typename T, typename Alloc = JStl::allocator<T>>
+template<class Iter>
+void list<T, Alloc>::copy_assign(Iter first, Iter last)
+{
+	auto i = begin();
+	auto end = end();
+	for (; first != last && i != end; ++first, ++i){
+		*i = *first;
+	}
+	if (first != last){
+		insert(end, first, last);
+	}
+	else{
+		erase(i, end);		
+	}
+}
 
 template<typename T, typename Alloc = allocator<T>>
 list<T, Alloc>::list()
@@ -436,24 +460,61 @@ list<T, Alloc>::list(list&& rhs) :node_(rhs.node_), size_(rhs.size_)
 	rhs.size_ = 0;
 }
 
+template<typename T, typename Alloc = allocator<T>>
+list<T, Alloc>& list<T, Alloc>::operator=(const list& rhs)
+{
+	if (this != &rhs){
+		assign(rhs.begin(), rhs.end());
+	}
+	return *this;
+}
+
+
+template<typename T, typename Alloc = allocator<T>>
+list<T, Alloc>& list<T, Alloc>::operator=(list&& rhs)
+{
+	if (this != &rhs){
+		list tmp(JStl::move(rhs));
+		swap(tmp);
+	}
+	return *this;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+list<T, Alloc>& list<T, Alloc>::operator=(std::initializer_list<T> l)
+{
+	list tmp(l.begin(),l.end());
+	swap(tmp);
+	return *this;
+}
+
 //template<typename T, typename Alloc = allocator<T>>
-//list<T, Alloc>& list<T, Alloc>::operator=(const list& rhs)
+//void typename 
+//list<T, Alloc>::assign(const_iterator begin, const_iterator end)
 //{
-//	if (this != &rhs){
-//		assign(rhs.begin(), rhs.end());
-//	}
-//	return *this;
+//
 //}
 //
+//template<typename T, typename Alloc = allocator<T>>
+//typename list<T, Alloc>::iterator  
+//list<T, Alloc>::insert(const_iterator pos, size_type n, const value_type& value)
+//{
+//
+//}
 //
 //template<typename T, typename Alloc = allocator<T>>
-//list<T, Alloc> list<T, Alloc>::operator=(list&& rhs)
+//template<typename Iter>
+//typename list<T, Alloc>::iterator
+//iterator insert(const_iterator pos, Iter begin, Iter end)
 //{
-//	if (this != &rhs){
-//		list tmp(JStl::move(rhs));
-//		swap(tmp);
-//	}
-//	return *this;
+//
+//}
+//
+//template<typename T, typename Alloc = allocator<T>>
+//typename list<T, Alloc>::iterator
+//list<T, Alloc>::erase(const_iterator begin, const_iterator end)
+//{
+//
 //}
 
 template<typename T, typename Alloc = allocator<T>>
