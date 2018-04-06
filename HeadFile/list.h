@@ -249,6 +249,8 @@ public:
 	list& operator=(list &&rhs);
 
 	list& operator=(std::initializer_list<T> l);
+
+	~list();
 public:
 	//迭代器相关操作
 	iterator begin()
@@ -256,19 +258,39 @@ public:
 		return node_->next;
 	}
 
+	const_iterator begin() const
+	{
+		return node_->next;
+	}
+	
 	iterator end()
 	{
 		return node_;
 	}
-
-	iterator begin() const
-	{
-		return node_->next;
-	}
-
-	iterator end() const
+	
+	const_iterator end() const
 	{
 		return node_;
+	}
+
+	reverse_iterator rbegin()
+	{
+		return reverse_iterator(end());
+	}
+	
+	reverse_iterator rbegin() const
+	{
+		return reverse_iterator(end());
+	}
+
+	reverse_iterator rend()
+	{
+		return reverse_iterator(begin());
+	}
+
+	reverse_iterator rend() const
+	{
+		return reverse_iterator(begin());
 	}
 public:
 	//普通函数
@@ -284,7 +306,11 @@ public:
 	}
 public:
 	//成员函数
-	void assign(const_iterator begin, const_iterator end);
+	void assign(size_type n, const value_type& value);
+	template <class Iter, typename std::enable_if<
+		JStl::is_input_iterator<Iter>::value, int>::type = 0>
+	void assign(Iter first, Iter last);
+	void assign(std::initializer_list<value_type> il);
 
 	void clear();
 
@@ -488,13 +514,36 @@ list<T, Alloc>& list<T, Alloc>::operator=(std::initializer_list<T> l)
 	return *this;
 }
 
-//template<typename T, typename Alloc = allocator<T>>
-//void typename 
-//list<T, Alloc>::assign(const_iterator begin, const_iterator end)
-//{
-//
-//}
-//
+template<typename T, typename Alloc = allocator<T>>
+list<T, Alloc>::~list()
+{
+	if (node_){
+		clear();
+		node_allocator::deallocate(node_);
+		node_ = nullptr;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::assign(size_type n, const value_type& value)
+{
+	fill_assign(n, value);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Iter, typename std::enable_if<
+	JStl::is_input_iterator<Iter>::value, int>::type = 0>
+void list<T, Alloc>::assign(Iter first, Iter last)
+{
+	copy_assign(first, last);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::assign(std::initializer_list<value_type> il)
+{
+	copy_assign(il.begin(), il.end());
+}
+
 //template<typename T, typename Alloc = allocator<T>>
 //typename list<T, Alloc>::iterator  
 //list<T, Alloc>::insert(const_iterator pos, size_type n, const value_type& value)
@@ -530,6 +579,5 @@ void list<T, Alloc>::clear()
 	}
 }
 
-	
 };//namespaec JStl;
 #endif

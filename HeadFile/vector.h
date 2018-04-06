@@ -25,7 +25,7 @@ public:
 	typedef		ptrdiff_t			difference_type;
 
 	typedef		T*					iterator;
-	typedef		const T*			const_iterator;
+	typedef		const T*  			const_iterator;
 	typedef		JStl::reverse_iterator<iterator> 
 									reverse_iterator;
 	typedef		JStl::reverse_iterator<const_iterator>
@@ -45,6 +45,8 @@ private:
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
 	vector() :begin_(0), end_(0), cap_(0){}
+
+	vector(size_t);
 
 	vector(size_t, const T&);
 
@@ -267,6 +269,13 @@ vector<T,Alloc>::vector(size_t n, const T& value)
 {
 	init_Space(n);
 	JStl::uninitialized_fill_n(begin_, n, value);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+vector<T, Alloc>::vector(size_t n)
+{
+	init_Space(n);
+	JStl::uninitialized_fill_n(begin_, n, value_type());
 }
 
 template<typename T, typename Alloc = allocator<T>>
