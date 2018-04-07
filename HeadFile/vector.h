@@ -459,7 +459,7 @@ template <class... Args>
 void vector<T, Alloc>::emplace_back(Args&& ...args)
 {
 	if (size() != capacity()){       
-		data_allocator::construct(pos, JStl::forward<Args&&>(args)...);
+		data_allocator::construct(end(), JStl::forward<Args&&>(args)...);
 		++end_;
 	}
 	else {											
