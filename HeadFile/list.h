@@ -217,9 +217,10 @@ private:
 
 	//插入尾部节点
 	void link_node_at_back(node_ptr first, node_ptr last);
-	
 	//插入头部节点
 	void link_node_at_front(node_ptr first, node_ptr last);
+	void link_nodes(node_ptr pos, node_ptr first, node_ptr last);
+
 
 	template<class... Args>
 	node_ptr create_node(Args&& ...args);
@@ -371,10 +372,13 @@ public:
 	template<class ...Args>
 	void emplace_back(Args&& ...args);
 	template<class ...Args>
-	void emplace(iterator pos,Args&& ...args);
+	iterator emplace(iterator pos,Args&& ...args);
 
+	iterator insert(const_iterator pos, const value_type& value);
+	iterator insert(const_iterator pos, value_type&& value);
 	iterator insert(const_iterator pos, size_type n, const value_type& value);
-	template<typename Iter>
+	template<typename Iter, typename std::enable_if<
+		JStl::is_input_iterator<Iter>::value, int>::type = 0 >
 	iterator insert(const_iterator pos, Iter begin, Iter end);
 
 	iterator erase(const_iterator begin, const_iterator end);
@@ -424,6 +428,15 @@ void list<T, Alloc>::link_node_at_back(node_ptr first, node_ptr last)
 	last->next = node_;				
 	node_->prev->next = first;
 	node_->prev = last;			//first->...->last->node
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::link_nodes(node_ptr pos, node_ptr first, node_ptr last)
+{
+	first->prev = pos->prev;
+	last->next = pos;
+	pos->prev->next = first;
+	pos->prev = last;			//first->...->last->pos
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -623,28 +636,47 @@ void list<T, Alloc>::emplace_back(Args&& ...args)
 	++size_;
 }
 
-//template<typename T, typename Alloc = allocator<T>>
-//template<class ...Args>
-//void list<T, Alloc>::emplace(iterator pos, Args&& ...args)
-//{
-//
-//}
-//
-//template<typename T, typename Alloc = allocator<T>>
-//typename list<T, Alloc>::iterator  
-//list<T, Alloc>::insert(const_iterator pos, size_type n, const value_type& value)
-//{
-//
-//}
-//
-//template<typename T, typename Alloc = allocator<T>>
-//template<typename Iter>
-//typename list<T, Alloc>::iterator
-//iterator insert(const_iterator pos, Iter begin, Iter end)
-//{
-//
-//}
-//
+template<typename T, typename Alloc = allocator<T>>
+template<class ...Args>
+typename list<T, Alloc>::iterator
+list<T, Alloc>::emplace(iterator pos, Args&& ...args)
+{
+	auto tmp = create_node(JStl::forward<Args>(args)...);
+	link_nodes(pos.node_, tmp, tmp);
+	++size_;
+	return	iterator(tmp);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename list<T, Alloc>::iterator
+list<T, Alloc>::insert(const_iterator pos, const value_type& value)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename list<T, Alloc>::iterator
+list<T, Alloc>::insert(const_iterator pos, value_type&& value)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename list<T, Alloc>::iterator  
+list<T, Alloc>::insert(const_iterator pos, size_type n, const value_type& value)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template<typename Iter, typename std::enable_if<
+	JStl::is_input_iterator<Iter>::value, int>::type = 0 >
+typename list<T, Alloc>::iterator
+list<T, Alloc>::insert(const_iterator pos, Iter begin, Iter end)
+{
+
+}
+
 //template<typename T, typename Alloc = allocator<T>>
 //typename list<T, Alloc>::iterator
 //list<T, Alloc>::erase(const_iterator begin, const_iterator end)
