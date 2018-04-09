@@ -10,8 +10,9 @@ int main()
 {
 	JStl::list<int> a{ 1, 2, 4 };
 	JStl::vector<int> b{ 1, 2, 4 };
-	a.emplace(a.end(),5);
-	for (auto c : a)
-		cout << c;
+	list<int> c{ 1, 2 };
+	cout<<*a.insert(a.begin(), {4,9,8});
+	for (auto cd : a)
+		cout << cd;
 	system("pause");
 }

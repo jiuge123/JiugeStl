@@ -175,10 +175,9 @@ struct list_const_iterator :public iterator<bidrection_iterator_tag, T>
 	{
 		return node_ != rhs.node_;
 	}
+};
 
 //list
-
-};
 
 template<typename T, typename Alloc = allocator<T>>
 class list{
@@ -202,30 +201,37 @@ public:
 	typedef list_node<T>*								node_ptr;
 
 private:
+
 	node_ptr node_;   //指向尾部
 	size_type size_;
 
-	void fill_init(size_type n, const value_type& value);
-	
+private:
+
+	template<class... Args>
+	node_ptr create_node(Args&& ...args);
+	void destroy_node(node_ptr);
+
+	//初始构造
+	void fill_init(size_type n, const value_type& value);  
 	template<typename Iter>
 	void copy_init(Iter first, Iter last);
 
+	//删除原来，构造新的
 	void fill_assign(size_type n, const value_type& value);
-
 	template<typename Iter>
 	void copy_assign(Iter first, Iter last);
+
+	//插入
+	iterator fill_insert(const_iterator pos, size_type n, const value_type& value);
+	template<typename Iter>
+	iterator copy_insert(const_iterator pos, size_type n, Iter begin);
 
 	//插入尾部节点
 	void link_node_at_back(node_ptr first, node_ptr last);
 	//插入头部节点
 	void link_node_at_front(node_ptr first, node_ptr last);
 	void link_nodes(node_ptr pos, node_ptr first, node_ptr last);
-
-
-	template<class... Args>
-	node_ptr create_node(Args&& ...args);
-
-	void destory_node(node_ptr);
+	iterator link_iter_node(node_ptr pos, node_ptr link);
 	
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
@@ -380,6 +386,7 @@ public:
 	template<typename Iter, typename std::enable_if<
 		JStl::is_input_iterator<Iter>::value, int>::type = 0 >
 	iterator insert(const_iterator pos, Iter begin, Iter end);
+	iterator insert(const_iterator pos, std::initializer_list<value_type> l);
 
 	iterator erase(const_iterator begin, const_iterator end);
 	
@@ -406,7 +413,7 @@ list<T, Alloc>::create_node(Args&& ...args)
 }
 
 template<typename T,typename Alloc = allocator<T>>
-void list<T, Alloc>::destory_node(node_ptr ptr)
+void list<T, Alloc>::destroy_node(node_ptr ptr)
 {
 	data_allocator::destroy(address_of(ptr->value));
 	node_allocator::deallocate(ptr);
@@ -437,6 +444,17 @@ void list<T, Alloc>::link_nodes(node_ptr pos, node_ptr first, node_ptr last)
 	last->next = pos;
 	pos->prev->next = first;
 	pos->prev = last;			//first->...->last->pos
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename list<T, Alloc>::iterator
+list<T, Alloc>::link_iter_node(node_ptr pos, node_ptr link)
+{
+	link->prev = pos->prev;
+	link->next = pos;
+	pos->prev->next = link;
+	pos->prev = link;
+	return iterator(link);
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -516,6 +534,79 @@ void list<T, Alloc>::copy_assign(Iter first, Iter last)
 }
 
 template<typename T, typename Alloc = allocator<T>>
+typename list<T, Alloc>::iterator 
+typename list<T, Alloc>::fill_insert(const_iterator pos, size_type n, const value_type& value)
+{
+	iterator be,en;
+	if (n != 0){
+		size_ += n;
+		auto link = create_node(value);
+		be = iterator(link);
+		try{
+			for (--n; n > 0; --n){
+				auto next = create_node(value);
+				next->prev = link;
+				link->next = next;
+				link = next;
+				en = iterator(link);
+			}
+		}
+		catch (...)
+		{
+			auto enode = en.node_;
+			while (true)
+			{
+				auto prev = enode->prev;
+				destroy_node(enode);
+				if (prev == nullptr)
+					break;
+				enode = prev;
+			}
+			throw;
+		}
+		link_nodes(pos.node_, be.node_, en.node_);
+	}
+	return be;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template<typename Iter>
+typename list<T, Alloc>::iterator  
+list<T, Alloc>::copy_insert(const_iterator pos, size_type n, Iter begin)
+{
+	iterator be, en;
+	if (n != 0){
+		size_ += n;
+		auto link = create_node(*begin);
+		be = iterator(link);
+		try{
+			for (--n, ++begin; n > 0; --n, ++begin){
+				auto next = create_node(*begin);
+				next->prev = link;
+				link->next = next;
+				link = next;
+				en = iterator(link);
+			}
+		}
+		catch (...)
+		{
+			auto enode = en.node_;
+			while (true)
+			{
+				auto prev = enode->prev;
+				destroy_node(enode);
+				if (prev == nullptr)
+					break;
+				enode = prev;
+			}
+			throw;
+		}
+		link_nodes(pos.node_, be.node_, en.node_);
+	}
+	return be;
+}
+
+template<typename T, typename Alloc = allocator<T>>
 list<T, Alloc>::list()
 {
 	fill_init(0, value_type());
@@ -568,7 +659,6 @@ list<T, Alloc>& list<T, Alloc>::operator=(const list& rhs)
 	}
 	return *this;
 }
-
 
 template<typename T, typename Alloc = allocator<T>>
 list<T, Alloc>& list<T, Alloc>::operator=(list&& rhs)
@@ -644,28 +734,32 @@ list<T, Alloc>::emplace(iterator pos, Args&& ...args)
 	auto tmp = create_node(JStl::forward<Args>(args)...);
 	link_nodes(pos.node_, tmp, tmp);
 	++size_;
-	return	iterator(tmp);
+	return iterator(tmp);
 }
 
 template<typename T, typename Alloc = allocator<T>>
 typename list<T, Alloc>::iterator
 list<T, Alloc>::insert(const_iterator pos, const value_type& value)
 {
-
+	auto tmp = create_node(value);
+	++size_;
+	return link_iter_node(pos.node_, tmp);
 }
 
 template<typename T, typename Alloc = allocator<T>>
 typename list<T, Alloc>::iterator
 list<T, Alloc>::insert(const_iterator pos, value_type&& value)
 {
-
+	auto tmp = create_node(JStl::move(value));
+	++size_;
+	return link_iter_node(pos.node_, tmp);
 }
 
 template<typename T, typename Alloc = allocator<T>>
 typename list<T, Alloc>::iterator  
 list<T, Alloc>::insert(const_iterator pos, size_type n, const value_type& value)
-{
-
+{	
+	return fill_insert(pos, n, value);
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -674,7 +768,16 @@ template<typename Iter, typename std::enable_if<
 typename list<T, Alloc>::iterator
 list<T, Alloc>::insert(const_iterator pos, Iter begin, Iter end)
 {
+	size_type n = JStl::distance(begin, end);
+	return copy_insert(pos, n, begin);
+}
 
+template<typename T, typename Alloc = allocator<T>>
+typename list<T, Alloc>::iterator
+list<T, Alloc>::insert(const_iterator pos, std::initializer_list<value_type> l)
+{
+	size_type n = l.size();
+	return copy_insert(pos, n, l.begin());
 }
 
 //template<typename T, typename Alloc = allocator<T>>
@@ -690,7 +793,7 @@ void list<T, Alloc>::clear()
 	if (size_ != 0){
 		node_ptr cur = node_->next;
 		for (auto next = cur->next; cur != node_; cur = next, next = cur->next){
-			destory_node(cur->self());
+			destroy_node(cur->self());
 		}
 		node_->unlink();
 		size_ = 0;
