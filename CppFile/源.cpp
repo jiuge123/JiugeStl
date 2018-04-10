@@ -11,8 +11,9 @@ int main()
 	JStl::list<int> a{ 1, 2, 4 };
 	JStl::vector<int> b{ 1, 2, 4 };
 	list<int> c{ 1, 2 };
-	cout<<*a.insert(a.begin(), {4,9,8});
+	a.resize(5);
 	for (auto cd : a)
 		cout << cd;
+	cout << a.size(); 
 	system("pause");
 }
