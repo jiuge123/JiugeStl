@@ -11,9 +11,12 @@ int main()
 	JStl::list<int> a{ 1, 2, 4 };
 	JStl::vector<int> b{ 1, 2, 4 };
 	list<int> c{ 1, 2 };
-	a.resize(5);
+	JStl::list<int> d{ 3, 3, 3 };
 	for (auto cd : a)
 		cout << cd;
-	cout << a.size(); 
+	cout <<"\n"<< a.size()<<endl; 
+	for (auto cd : d)
+		cout << cd;
+	cout << "\n" << d.size();
 	system("pause");
 }

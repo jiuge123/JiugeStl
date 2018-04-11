@@ -401,6 +401,18 @@ public:
 	void resize(size_type new_size);
 	void resize(size_type new_size, const value_type& value);
 	void clear();
+
+public:
+	//将x的元素移动到目的list的指定位置，高效的将他们插入到目的list并从x中删除
+	void splice(const_iterator pos, list& other);
+	void splice(const_iterator pos, list& other, const_iterator it);
+	void splice(const_iterator pos, list& other, const_iterator first, const_iterator last);
+
+	//从容器中删除所有与 val 值相等的元素
+	void remove(const value_type& value);
+	//从容器中删除所有与谓词判断相等的元素
+	template <class UnaryPredicate>
+	void remove_if(UnaryPredicate pred);
 };
 
 template<typename T, typename Alloc = JStl::allocator<T>>
@@ -554,7 +566,7 @@ template<typename T, typename Alloc = allocator<T>>
 typename list<T, Alloc>::iterator 
 typename list<T, Alloc>::fill_insert(const_iterator pos, size_type n, const value_type& value)
 {
-	iterator be,en(be);
+ 	iterator be,en(be);
 	if (n != 0){
 		size_ += n;
 		auto link = create_node(value);
@@ -908,6 +920,69 @@ void list<T, Alloc>::clear()
 		}
 		node_->unlink();
 		size_ = 0;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::splice(const_iterator pos, list& other)
+{
+	assert(&other != this);
+	if (!other.empty()){
+		auto be = other.node_->next;
+		auto en = other.node_->prev;
+		other.unlink_nodes(be, en);
+		link_nodes(pos.node_, be, en);
+		size_ += other.size_;
+		other.size_ = 0;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::splice(const_iterator pos, list& other, const_iterator it)
+{
+	//在pos的前面插节点
+	if (pos.node_ != it.node_ && pos.node_ != it.node_->next){
+		auto tmp = it.node_;
+		other.unlink_nodes(tmp, tmp);
+		link_nodes(pos.node_, tmp, tmp);
+		++size_;
+		--other.size_;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::splice(const_iterator pos, list& other, const_iterator first, const_iterator last)
+{
+	if (first != last && this != &other){
+		auto n = distance(first, last);
+		auto be = first.node_;
+		auto en = last.node_->prev;
+		other.unlink_nodes(be, en);
+		link_nodes(pos.node_, be, en);
+		size_ += n;
+		other.size_ -= n;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::remove(const value_type& value)
+{
+	remove_if([&](const value_type& v) {return v == value; });
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class UnaryPredicate>
+void list<T, Alloc>::remove_if(UnaryPredicate pred)
+{
+	auto be = begin();
+	auto en = end();
+	while (be != en){
+		auto next = be;
+		++next;	
+		if (pred(*be)){
+			erase(be);
+		}	
+		be = next;
 	}
 }
 
