@@ -231,6 +231,9 @@ private:
 	void link_node_at_front(node_ptr first, node_ptr last);
 	void link_nodes(node_ptr pos, node_ptr first, node_ptr last);
 	iterator link_iter_node(node_ptr pos, node_ptr link);
+
+	template <class Compared>
+	iterator list_sort(iterator f1, iterator l2, size_type n, Compared comp);
 	
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
@@ -408,11 +411,26 @@ public:
 	void splice(const_iterator pos, list& other, const_iterator it);
 	void splice(const_iterator pos, list& other, const_iterator first, const_iterator last);
 
-	//从容器中删除所有与 val 值相等的元素
+	//从 list 中删除所有与 val 值相等的元素
 	void remove(const value_type& value);
-	//从容器中删除所有与谓词判断相等的元素
+	//从 list 中删除所有与谓词判断true的元素
 	template <class UnaryPredicate>
 	void remove_if(UnaryPredicate pred);
+
+	// 移除 list 中满足谓词为true重复元素(首先要有序)
+	void unique();
+	template <class BinaryPredicate>
+	void unique(BinaryPredicate pred);
+
+	//合并两个list，按照comp的比较(首先要有序)
+	void merge(list& x);
+	template <class Compared>
+	void merge(list& x, Compared comp);
+
+	void sort();
+	template <class Compared>
+	void sort(Compared comp);
+
 };
 
 template<typename T, typename Alloc = JStl::allocator<T>>
@@ -633,6 +651,14 @@ list<T, Alloc>::copy_insert(const_iterator pos, size_type n, Iter begin)
 		link_nodes(pos.node_, be.node_, en.node_);
 	}
 	return be;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Compared>
+typename list<T, Alloc>::iterator 
+list<T, Alloc>::list_sort(iterator f1, iterator l2, size_type n, Compared comp)
+{
+
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -984,6 +1010,81 @@ void list<T, Alloc>::remove_if(UnaryPredicate pred)
 		}	
 		be = next;
 	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::unique()
+{
+	unique([](const value_type& a, const value_type& b){return a == b; });
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class BinaryPredicate>
+void list<T, Alloc>::unique(BinaryPredicate pred)
+{
+	auto be = begin();
+	auto en = end();
+	auto i = be;
+	++i;
+	while (i != en){
+		if (pred(*i, *be)){
+			erase(be);
+		}
+		be = i;
+		++i;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::merge(list& x)
+{
+	merge(x, [](const value_type &a, const value_type &b){return a < b; });
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Compared>
+void list<T, Alloc>::merge(list& x, Compared comp)
+{
+	if (this != &x){
+		auto be1 = begin();
+		auto en1 = end();
+		auto be2 = x.begin();
+		auto en2 = x.end();
+		while (be1 != en1&&be2 != en2){
+			if (comp(*be2, *be1)){
+				auto next = be2;
+				++next;
+				x.unlink_nodes(be2.node_, be2.node_);
+				link_nodes(be1.node_, be2.node_, be2.node_);			
+				be2 = next;
+			}
+			else{
+				++be1;
+			}
+		}
+		if (be2 != en2){
+			x.unlink_nodes(be2.node_, en2.node_);
+			link_nodes(be1.node_, be2.node_, en2.node_->prev);
+			
+		}
+		size_ += x.size_;
+		x.size_ = 0;
+		x.node_->unlink();
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::sort()
+{
+	list_sort(begin(), end(), size(),
+		[](const value_type &a, const value_type &b){return a < b; });
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Compared>
+void list<T, Alloc>::sort(Compared comp)
+{
+	list_sort(begin(), end(), size(), comp);
 }
 
 };//namespaec JStl;
