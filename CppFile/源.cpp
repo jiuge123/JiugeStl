@@ -2,6 +2,7 @@
 #include"../HeadFile/algobase.h"
 #include"../HeadFile/vector.h"
 #include"../HeadFile/list.h"
+#include"../HeadFile/functional.h"
 #include<iostream>
 #include<list>
 #include<vector>

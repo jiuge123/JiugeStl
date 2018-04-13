@@ -233,7 +233,7 @@ private:
 	iterator link_iter_node(node_ptr pos, node_ptr link);
 
 	template <class Compared>
-	iterator list_sort(iterator f1, iterator l2, size_type n, Compared comp);
+	iterator list_sort(iterator be, iterator en, size_type n, Compared comp);
 	
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
@@ -653,12 +653,73 @@ list<T, Alloc>::copy_insert(const_iterator pos, size_type n, Iter begin)
 	return be;
 }
 
+// 对 list 进行归并排序，返回一个迭代器指向区间最小元素的位置
 template<typename T, typename Alloc = allocator<T>>
 template <class Compared>
 typename list<T, Alloc>::iterator 
-list<T, Alloc>::list_sort(iterator f1, iterator l2, size_type n, Compared comp)
+list<T, Alloc>::list_sort(iterator be, iterator en, size_type n, Compared comp)
 {
+	if (n < 2)
+		return be;
+	if (n = 2){
+		if (comp(*--en, be)){
+			auto tmp = *--en.node_;
+			unlink_nodes(tmp, tmp);
+			link_nodes(be.node_, tmp, tmp);
+			return en;
+		}
+		return be;
+	}
 
+    auto n2 = n / 2;
+	auto mid = be;
+	JStl::advance(mid, n2);
+	auto result = be = list_sort(be, mid, n2, comp);  // 前半段
+	auto be2 = mid = list_sort(mid, en, n - n2, comp);  // 后半段
+
+	// 把较小的一段区间移到前面
+	if (comp(*be2, *be1)){
+		auto m = be2;
+		++m;
+		for (; m != en && comp(*m, *be); ++m)
+		;
+		auto f = f2.node_;
+		auto l = m.node_->prev;
+		result = f2;
+		l1 = f2 = m;
+		unlink_nodes(f, l);
+		m = f1;
+		++m;
+		link_nodes(f1.node_, f, l);
+		f1 = m;
+	}
+	else{
+		++f1;
+	}
+
+  // 合并两段有序区间
+	while (f1 != l1 && f2 != l2){
+		if (comp(*f2, *f1)){
+			auto m = f2;
+			++m;
+			for (; m != l2 && comp(*m, *f1); ++m)
+			;
+			auto f = f2.node_;
+			auto l = m.node_->prev;
+			if (l1 == f2)
+			l1 = m;
+			f2 = m;
+			unlink_nodes(f, l);
+			m = f1;
+			++m;
+			link_nodes(f1.node_, f, l);
+			f1 = m;
+		}
+		else{
+			++f1;
+		}
+	}
+	return result;
 }
 
 template<typename T, typename Alloc = allocator<T>>
