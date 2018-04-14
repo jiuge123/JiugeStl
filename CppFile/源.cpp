@@ -12,13 +12,13 @@ int main()
 	JStl::list<int> a{ 1, 2,2,2,2,3,4, 4 };
 	JStl::vector<int> b{ 1, 2, 4,8,32,124 };
 	list<int> c{ 1, 2 };
-	JStl::list<int> d{ 3, 3, 3, 8, 32, 124 };
-	a.merge(d);
+	JStl::list<int> d{ 6,3 };
+	d.reverse();
 	for (auto cd : a)
-		cout << cd;
+		cout << cd<<ends;
 	cout <<"\n"<< a.size()<<endl; 
 	for (auto cd : d)
-		cout << cd;
+		cout << cd << ends;
 	cout << "\n" << d.size();
 	system("pause");
 }

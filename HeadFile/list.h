@@ -231,9 +231,6 @@ private:
 	void link_node_at_front(node_ptr first, node_ptr last);
 	void link_nodes(node_ptr pos, node_ptr first, node_ptr last);
 	iterator link_iter_node(node_ptr pos, node_ptr link);
-
-	template <class Compared>
-	iterator list_sort(iterator be, iterator en, size_type n, Compared comp);
 	
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
@@ -430,6 +427,8 @@ public:
 	void sort();
 	template <class Compared>
 	void sort(Compared comp);
+
+	void reverse();
 
 };
 
@@ -651,75 +650,6 @@ list<T, Alloc>::copy_insert(const_iterator pos, size_type n, Iter begin)
 		link_nodes(pos.node_, be.node_, en.node_);
 	}
 	return be;
-}
-
-// 对 list 进行归并排序，返回一个迭代器指向区间最小元素的位置
-template<typename T, typename Alloc = allocator<T>>
-template <class Compared>
-typename list<T, Alloc>::iterator 
-list<T, Alloc>::list_sort(iterator be, iterator en, size_type n, Compared comp)
-{
-	if (n < 2)
-		return be;
-	if (n = 2){
-		if (comp(*--en, be)){
-			auto tmp = *--en.node_;
-			unlink_nodes(tmp, tmp);
-			link_nodes(be.node_, tmp, tmp);
-			return en;
-		}
-		return be;
-	}
-
-    auto n2 = n / 2;
-	auto mid = be;
-	JStl::advance(mid, n2);
-	auto result = be = list_sort(be, mid, n2, comp);  // 前半段
-	auto be2 = mid = list_sort(mid, en, n - n2, comp);  // 后半段
-
-	// 把较小的一段区间移到前面
-	if (comp(*be2, *be1)){
-		auto m = be2;
-		++m;
-		for (; m != en && comp(*m, *be); ++m)
-		;
-		auto f = f2.node_;
-		auto l = m.node_->prev;
-		result = f2;
-		l1 = f2 = m;
-		unlink_nodes(f, l);
-		m = f1;
-		++m;
-		link_nodes(f1.node_, f, l);
-		f1 = m;
-	}
-	else{
-		++f1;
-	}
-
-  // 合并两段有序区间
-	while (f1 != l1 && f2 != l2){
-		if (comp(*f2, *f1)){
-			auto m = f2;
-			++m;
-			for (; m != l2 && comp(*m, *f1); ++m)
-			;
-			auto f = f2.node_;
-			auto l = m.node_->prev;
-			if (l1 == f2)
-			l1 = m;
-			f2 = m;
-			unlink_nodes(f, l);
-			m = f1;
-			++m;
-			link_nodes(f1.node_, f, l);
-			f1 = m;
-		}
-		else{
-			++f1;
-		}
-	}
-	return result;
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -1040,7 +970,7 @@ void list<T, Alloc>::splice(const_iterator pos, list& other, const_iterator it)
 template<typename T, typename Alloc = allocator<T>>
 void list<T, Alloc>::splice(const_iterator pos, list& other, const_iterator first, const_iterator last)
 {
-	if (first != last && this != &other){
+	if (first != last){
 		auto n = distance(first, last);
 		auto be = first.node_;
 		auto en = last.node_->prev;
@@ -1137,15 +1067,58 @@ void list<T, Alloc>::merge(list& x, Compared comp)
 template<typename T, typename Alloc = allocator<T>>
 void list<T, Alloc>::sort()
 {
-	list_sort(begin(), end(), size(),
-		[](const value_type &a, const value_type &b){return a < b; });
+	sort([](const value_type &a, const value_type &b){return a < b; });
 }
 
+// 非递归归并排序，返回一个迭代器指向区间最小元素的位置
+//https://www.linuxidc.com/Linux/2016-04/130199.htm
 template<typename T, typename Alloc = allocator<T>>
 template <class Compared>
 void list<T, Alloc>::sort(Compared comp)
 {
-	list_sort(begin(), end(), size(), comp);
+	if (size_ < 2){
+		return;
+	}
+	size_type n = size_;
+	auto be = begin();
+	list<T, Alloc> carry;
+	list<T, Alloc> counter[64];	//每个数组放 1，2，4，8。。。
+	int fill = 0;
+	while (size_ > 0){
+		auto be2(++be);
+		carry.splice(carry.begin(), *this, begin());
+		int i = 0;
+		while (i < fill && !counter[i].empty())	{
+			counter[i].merge(carry);
+			carry.swap(counter[i++]);
+		}
+		carry.swap(counter[i]);
+		if (i == fill)
+			++fill;
+		be = be2;
+	}
+	for (int i = 1; i < fill; ++i)
+		counter[i].merge(counter[i - 1]);
+	auto tmp1 = counter[fill - 1].begin().node_;
+	auto tmp2 = counter[fill - 1].end().node_->prev;
+	counter[fill - 1].unlink_nodes(tmp1, tmp2);
+	link_nodes(node_, tmp1, tmp2);
+	size_ = n;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void list<T, Alloc>::reverse()
+{
+	if (size_ <= 1){
+		return;
+	}
+	auto be = begin();
+	while (++be != end())
+	{
+		auto tmp = end().node_->prev;
+		unlink_nodes(tmp, tmp);
+		link_node_at_front(tmp, tmp);
+	}
 }
 
 };//namespaec JStl;
