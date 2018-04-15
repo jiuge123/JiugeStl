@@ -7,18 +7,21 @@
 #include<list>
 #include<vector>
 using namespace std;
+template<class T,class T2>
+struct fpair{
+	typedef T first_type ;
+	typedef T2 second_type ;
+	int first =4;
+	double second=9.3;
+};
 int main()
 {
-	JStl::list<int> a{ 1, 2,2,2,2,3,4, 4 };
-	JStl::vector<int> b{ 1, 2, 4,8,32,124 };
+	JStl::list<int> a{ 1, 2 };
+	JStl::vector<int> b{ 1, 2 ,3};
 	list<int> c{ 1, 2 };
-	JStl::list<int> d{ 6,3 };
-	d.reverse();
-	for (auto cd : a)
-		cout << cd<<ends;
-	cout <<"\n"<< a.size()<<endl; 
-	for (auto cd : d)
-		cout << cd << ends;
-	cout << "\n" << d.size();
+	JStl::list<int> d{ 1,2 ,3};
+	JStl::selectsecond <  fpair < int, float > > f;
+	fpair<int, float> g;
+	cout << f(g);
 	system("pause");
 }

@@ -1,4 +1,4 @@
-﻿生成启动时间为 2018/4/15 1:21:00。
+﻿生成启动时间为 2018/4/16 0:57:04。
      1>项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\CppFile\源.cpp"
@@ -53,6 +53,19 @@
                  f:\github\jiugestl\headfile\list.h(1035) : 参见“Alloc”的声明
      1>f:\github\jiugestl\headfile\list.h(1107): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
                  f:\github\jiugestl\headfile\list.h(1075) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\functional.h(216): warning C4244: “return”: 从“const double”转换到“const float”，可能丢失数据
+                 f:\github\jiugestl\headfile\functional.h(215): 编译类 模板 成员函数“const float &JStl::selectsecond<fpair<int,float>>::operator ()(const Pair &) const”时
+                 with
+                 [
+                     Pair=fpair<int,float>
+                 ]
+                 f:\github\jiugestl\cppfile\源.cpp(25): 参见对正在编译的函数 模板 实例化“const float &JStl::selectsecond<fpair<int,float>>::operator ()(const Pair &) const”的引用
+                 with
+                 [
+                     Pair=fpair<int,float>
+                 ]
+                 f:\github\jiugestl\cppfile\源.cpp(23): 参见对正在编译的类 模板 实例化“JStl::selectsecond<fpair<int,float>>”的引用
+     1>f:\github\jiugestl\headfile\functional.h(216): warning C4172: 返回局部变量或临时变量的地址
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\github\JiugeStl\Debug\JiugeStl.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\github\JiugeStl\Debug\JiugeStl.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\github\JiugeStl\Debug\JiugeStl.lib" /MACHINE:X86 "Debug\源.obj"
          JiugeStl.vcxproj -> F:\github\JiugeStl\Debug\JiugeStl.exe
@@ -60,4 +73,4 @@
 
 生成成功。
 
-已用时间 00:00:01.45
+已用时间 00:00:01.38

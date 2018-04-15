@@ -1112,14 +1112,65 @@ void list<T, Alloc>::reverse()
 	if (size_ <= 1){
 		return;
 	}
-	auto be = begin();
-	while (++be != end())
+	auto be = node_;
+	while (be->next != end().node_)
 	{
 		auto tmp = end().node_->prev;
 		unlink_nodes(tmp, tmp);
-		link_node_at_front(tmp, tmp);
+		link_nodes(be->next,tmp, tmp);
+		be = tmp;
 	}
 }
+
+template <typename T>
+bool operator==(const list<T>& lhs, const list<T>& rhs)
+{
+	auto be1 = lhs.cbegin();
+	auto be2 = rhs.cbegin();
+	auto en1 = lhs.cend();
+	auto en2 = rhs.cend();
+	for (; be1 != en1 && be2 != en2 && *be1 == *be2; ++be1, ++be2)
+		;
+	return be1 == en1 && be2 == en2;//两个都到终点则==
+}
+
+template <class T>
+bool operator<(const list<T>& lhs, const list<T>& rhs)
+{
+	return JStl::lexicographical_compare(lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend());
+}
+
+template <class T>
+bool operator!=(const list<T>& lhs, const list<T>& rhs)
+{
+	return !(lhs == rhs);
+}
+
+template <class T>
+bool operator>(const list<T>& lhs, const list<T>& rhs)
+{
+	return rhs < lhs;
+}
+
+template <class T>
+bool operator<=(const list<T>& lhs, const list<T>& rhs)
+{
+	return !(rhs < lhs);
+}
+
+template <class T>
+bool operator>=(const list<T>& lhs, const list<T>& rhs)
+{
+	return !(lhs < rhs);
+}
+
+// 重载 mystl 的 swap
+template <class T>
+void swap(list<T>& lhs, list<T>& rhs)
+{
+	lhs.swap(rhs);
+}
+
 
 };//namespaec JStl;
 #endif
