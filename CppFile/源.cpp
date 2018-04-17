@@ -9,16 +9,9 @@
 #include<vector>
 using std::cout;
 using std::endl;
-struct MyStruct
-{
-	MyStruct(int a){}
-};
+using namespace JStl;
 int main()
 {
-	JStl::list<int> a{ 1, 2 };
-	JStl::vector<int> b{ 1, 2 ,3};
-	std::list<int> c{ 1, 2 };
-	JStl::list<int> d{ 1,2 ,3};
-	JStl::pair<int, double> f(2, 3.7);
+	pair<int, int> f = make_pair(3, 3);
 	system("pause");
 }
