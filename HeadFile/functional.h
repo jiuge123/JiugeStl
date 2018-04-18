@@ -237,6 +237,142 @@ struct projectsecond :public binary_function<Arg1, Arg2, Arg1>
 	}
 };
 
+/****************************************************************************/
+// 哈希函数对象
+//大部分对象，哈希无作用
+template <class Key>
+struct hash {};
+
+// 针对指针的偏特化版本
+template <class T>
+struct hash<T*>
+{
+	size_t operator()(T* p) const 
+	{ 
+		//这个用于将指针转化为数，或者将数转化为指针
+		return reinterpret_cast<size_t>(p); 
+	}
+};
+
+//对于整数，返回值
+//以下关于模板偏特化和全特化
+//https://www.cnblogs.com/staring-hxs/p/3659479.html  
+template <> 
+struct hash<bool>
+{
+	size_t operator()(bool val) const 
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <> 
+struct hash<char>
+{
+	size_t operator()(char val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<signed char>
+{
+	size_t operator()(signed char val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<unsigned char>
+{
+	size_t operator()(unsigned char val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<wchar_t>
+{
+	size_t operator()(wchar_t val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<short>
+{
+	size_t operator()(short val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<unsigned short>
+{
+	size_t operator()(unsigned short val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<int>
+{
+	size_t operator()(int val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<unsigned int>
+{
+	size_t operator()(unsigned int val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<long>
+{
+	size_t operator()(long val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<unsigned long>
+{
+	size_t operator()(unsigned long val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<long long>
+{
+	size_t operator()(long long val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
+
+template <>
+struct hash<unsigned long long>
+{
+	size_t operator()(unsigned long long val) const
+	{
+		return static_cast<size_t>(val);
+	}
+};
 
 };//namespaec JStl;
 #endif

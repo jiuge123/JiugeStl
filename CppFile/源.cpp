@@ -12,6 +12,8 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	pair<int, int> f = make_pair(3, 3);
+	int b = 6;
+	int *a = &b;
+	cout<<reinterpret_cast<int>(&a);
 	system("pause");
 }
