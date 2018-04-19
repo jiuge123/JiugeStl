@@ -12,8 +12,6 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	int b = 6;
-	int *a = &b;
-	cout<<reinterpret_cast<int>(&a);
+	
 	system("pause");
 }

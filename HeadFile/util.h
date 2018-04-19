@@ -226,7 +226,5 @@ pair<Arg1, Arg2> make_pair(Arg1&& first, Arg2&& second)
 	return pair<Arg1, Arg2>(forward<Arg1>(first), forward<Arg2>(second));
 }
 
-
-
 }//namespace JiugeStl
 #endif

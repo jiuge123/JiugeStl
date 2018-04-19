@@ -374,5 +374,46 @@ struct hash<unsigned long long>
 	}
 };
 
+//对于浮点型，进行位运算
+inline size_t bitwise_hash(const unsigned char* first, size_t count)
+{
+	const size_t offset = 5721542u;
+	const size_t prime = 99266161u;
+	size_t result = offset;
+	for (size_t i = 0; i < count; ++i)
+	{
+		result ^= (size_t)first[i];
+		result *= prime;
+	}
+	return result;
+}
+
+template <>
+struct hash<float>
+{
+	size_t operator()(const float& val)
+	{
+		return val == 0.0f ? 0 : bitwise_hash((const unsigned char*)&val, sizeof(float));
+	}
+};
+
+template <>
+struct hash<double>
+{
+	size_t operator()(const double& val)
+	{
+		return val == 0.0f ? 0 : bitwise_hash((const unsigned char*)&val, sizeof(double));
+	}
+};
+
+template <>
+struct hash<long double>
+{
+	size_t operator()(const long double& val)
+	{
+		return val == 0.0f ? 0 : bitwise_hash((const unsigned char*)&val, sizeof(long double));
+	}
+};
+
 };//namespaec JStl;
 #endif
