@@ -104,25 +104,26 @@ struct cat_Iter<Iter,true>:true_type
 
 //如果能够转化为inputIter或者是个指针
 template <typename Iter>
-struct is_input_iterator:cat_Iter<Iter,std::is_convertible<Iter,input_iterator_tag>
+struct is_input_iterator :cat_Iter<Iter, std::is_convertible<typename Iter::iterator_category, input_iterator_tag>
 							  ::value||std::is_pointer<Iter>::value>{};
 
 template <typename Iter>
-struct is_forward_iterator:cat_Iter<Iter, std::is_convertible<Iter, forward_iterator_tag>
+struct is_forward_iterator :cat_Iter<Iter, std::is_convertible<typename Iter::iterator_category, forward_iterator_tag>
 							   ::value || std::is_pointer<Iter>::value>{};
 
 template <typename Iter>
-struct is_bidrection_iterator:cat_Iter<Iter, std::is_convertible<Iter, bidrection_iterator_tag>
+struct is_bidrection_iterator :cat_Iter<Iter, std::is_convertible<typename Iter::iterator_category, bidrection_iterator_tag>
 								  ::value || std::is_pointer<Iter>::value>{};
 
 template <typename Iter>
-struct is_random_access_iterator:cat_Iter<Iter, std::is_convertible<Iter, random_access_iterator_tag>
+struct is_random_access_iterator :cat_Iter<Iter, std::is_convertible<typename Iter::iterator_category, random_access_iterator_tag>
 									 ::value || std::is_pointer<Iter>::value>{};
 
 template <typename Iter>
-struct is_iterator :cat_Iter<Iter, std::is_convertible<Iter, input_iterator_tag>::value 
-								|| std::is_convertible<Iter, output_iterator_tag>::value 
-								|| std::is_pointer<Iter>::value>{};
+struct is_iterator :cat_Iter<Iter, 
+	   std::is_convertible<typename Iter::iterator_category, input_iterator_tag>::value 
+	|| std::is_convertible<typename Iter::iterator_category, output_iterator_tag>::value
+	|| std::is_pointer<Iter>::value>{};
 /**************************************************************************************/
 //计算两个iterator的距离
 /**************************************************************************************/
