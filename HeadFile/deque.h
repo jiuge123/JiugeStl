@@ -36,7 +36,7 @@ struct deque_iterator
 	typedef T*           value_pointer;
 	typedef T**          map_pointer;
 
-	static const size_type buffer_size;
+	const size_type buffer_size = _deque_buf_size<T>();
 
 	value_pointer cur;      //指向缓冲区现行元素
 	value_pointer first;	//指向缓冲区头
@@ -52,10 +52,76 @@ struct deque_iterator
 		:cur(v), first(*n), last(*n + buffer_size), node(n) 
 	{}
 
-};
+	deque_iterator(const iterator& rhs)
+		:cur(rhs.cur), first(rhs.first), last(rhs.last), node(rhs.node)
+	{}
 
-template<typename T, typename Ref, typename Ptr>
-size_t deque_iterator<T, Ref, Ptr>::buffer_size = _deque_buf_size<T>();
+	deque_iterator(iterator&& rhs) 
+		: cur(rhs.cur), first(rhs.first), last(rhs.last), node(rhs.node)
+	{
+		rhs.cur = nullptr;
+		rhs.first = nullptr;
+		rhs.last = nullptr;
+		rhs.node = nullptr;
+	}
+
+	deque_iterator(const const_iterator& rhs)
+		:cur(rhs.cur), first(rhs.first), last(rhs.last), node(rhs.node)
+	{}
+
+	self& operator=(const iterator& rhs)
+	{
+		if (this != &rhs)
+		{
+			cur = rhs.cur;
+			first = rhs.first;
+			last = rhs.last;
+			node = rhs.node;
+		}
+		return *this;
+	}
+
+	self& operator=(iterator&& rhs)
+	{
+		if (this != &rhs)
+		{
+			cur = rhs.cur;
+			first = rhs.first;
+			last = rhs.last;
+			node = rhs.node;
+		}
+		rhs.cur = nullptr;
+		rhs.first = nullptr;
+		rhs.last = nullptr;
+		rhs.node = nullptr;
+		return *this;
+	}
+
+	// 转到另一个缓冲区
+	void set_node(map_pointer new_node)
+	{
+		node = new_node;
+		first = *new_node;
+		last = first + buffer_size;
+	}
+
+	reference operator*()  const 
+	{ 
+		return *cur; 
+	}
+
+	pointer operator->() const 
+	{ 
+		return cur; 
+	}
+
+	difference_type operator-(const self& x) const
+	{
+		return static_cast<difference_type>(buffer_size * (node - x.node)
+			+ (cur - first) - (x.cur - x.first));
+	}
+
+};
 
 template <class T, class Alloc = allocator>
 class deque{

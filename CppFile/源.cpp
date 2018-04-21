@@ -7,12 +7,18 @@
 #include"../HeadFile/util.h"
 #include<iostream>
 #include<deque>
+#include<vector>
 using std::cout;
 using std::endl;
 using namespace JStl;
 int main()
 {
-	vector<int> a;
-	cout<<is_bidrection_iterator<deque_iterator<int,int*,int&>>::value;
+	int a1[] = { 1, 2, 3, 4 };
+	int a2[] = { 5, 6, 7, 8 };
+	int a3[] = { 9, 10, 11, 12 };
+	int *b2[] = { a1, a2, a3 };
+	deque_iterator<int, int&, int*> a(a1+2,b2),b(a2,b2+1);
+	cout << *a;
+
 	system("pause");
 }

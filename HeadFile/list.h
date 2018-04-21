@@ -43,13 +43,14 @@ struct list_node
 //iterator
 
 template <class T>
-struct list_iterator :public iterator<bidrection_iterator_tag, T>
+struct list_iterator 
 {
 	typedef T                                 value_type;
 	typedef T*                                pointer;
 	typedef T&                                reference;
 	typedef list_node<T>*					  node_ptr;
 	typedef list_iterator<T>                  self;
+	typedef bidrection_iterator_tag			  iterator_category;
 
 	node_ptr node_; 
 
@@ -110,13 +111,14 @@ struct list_iterator :public iterator<bidrection_iterator_tag, T>
 };
 
 template <class T>
-struct list_const_iterator :public iterator<bidrection_iterator_tag, T>
+struct list_const_iterator 
 {
 	typedef T                                 value_type;
 	typedef const T*                          pointer;
 	typedef const T&                          reference;
 	typedef list_node<T>*					  node_ptr;
 	typedef list_const_iterator<T>            self;
+	typedef bidrection_iterator_tag			  iterator_category;
 
 	node_ptr node_;
 

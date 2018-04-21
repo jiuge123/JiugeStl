@@ -15,14 +15,15 @@ namespace JStl{
 template<typename T,typename Alloc = JStl::allocator<T>>
 class vector{
 public:
-	typedef		Alloc				data_allocator;
-	typedef		T					value_type;
-	typedef		T*					pointer;
-	typedef		const T*			const_pointer;
-	typedef		T&					reference;
-	typedef		const T&			const_reference;
-	typedef		size_t			    size_type;
-	typedef		ptrdiff_t			difference_type;
+	typedef		Alloc							data_allocator;
+	typedef		T								value_type;
+	typedef		T*								pointer;
+	typedef		const T*						const_pointer;
+	typedef		T&					 			reference;
+	typedef		const T&						const_reference;
+	typedef		size_t							size_type;
+	typedef		ptrdiff_t						difference_type;
+	typedef     random_access_iterator_tag		iterator_category;
 
 	typedef		T*					iterator;
 	typedef		const T*  			const_iterator;
