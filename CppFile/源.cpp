@@ -8,17 +8,21 @@
 #include<iostream>
 #include<deque>
 #include<vector>
+#include<list>
 using std::cout;
 using std::endl;
 using namespace JStl;
 int main()
 {
-	int a1[] = { 1, 2, 3, 4 };
-	int a2[] = { 5, 6, 7, 8 };
-	int a3[] = { 9, 10, 11, 12 };
+	int a1[256];
+	int a2[256];
+	int a3[256];
+	for (int i = 0; i < 256;i++){
+		a1[i] = i;
+		a2[i] = i+256;
+		a3[i] = i+512;
+	}
 	int *b2[] = { a1, a2, a3 };
-	deque_iterator<int, int&, int*> a(a1+2,b2),b(a2,b2+1);
-	cout << *a;
-
+	deque_iterator<int, int&, int*> a(a1, b2), b(a2, b2 + 1);
 	system("pause");
 }
