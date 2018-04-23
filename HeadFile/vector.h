@@ -38,10 +38,10 @@ private:
 	T *cap_;	//容量地址
 	
 	//初始分配空间
-	void init_Space(size_t);
+	void init_space(size_t);
 
 	//重新分配地址
-	void fill_Alloc_Space(size_t);
+	void refill_alloc_space(size_t);
 	
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
@@ -235,7 +235,7 @@ public:
 };
 
 template<typename T, typename Alloc = allocator<T>>
-void vector<T, Alloc>::init_Space(size_t n)
+void vector<T, Alloc>::init_space(size_t n)
 {
 	try{
 		begin_ = data_allocator::allocate(n);
@@ -250,7 +250,7 @@ void vector<T, Alloc>::init_Space(size_t n)
 }
 
 template<typename T, typename Alloc = allocator<T>>
-void vector<T, Alloc>::fill_Alloc_Space(size_t n)
+void vector<T, Alloc>::refill_alloc_space(size_t n)
 {
 	n = (n == 0)? 1 : n;
 	T *newp = data_allocator::allocate(n);
@@ -268,21 +268,21 @@ void vector<T, Alloc>::fill_Alloc_Space(size_t n)
 template<typename T, typename Alloc = allocator<T>>
 vector<T,Alloc>::vector(size_t n, const T& value)
 {
-	init_Space(n);
+	init_space(n);
 	JStl::uninitialized_fill_n(begin_, n, value);
 }
 
 template<typename T, typename Alloc = allocator<T>>
 vector<T, Alloc>::vector(size_t n)
 {
-	init_Space(n);
+	init_space(n);
 	JStl::uninitialized_fill_n(begin_, n, value_type());
 }
 
 template<typename T, typename Alloc = allocator<T>>
 vector<T, Alloc>::vector(const std::initializer_list<T> &i)
 {
-	init_Space(i.size());
+	init_space(i.size());
 	JStl::uninitialized_copy(i.begin(), i.end(), begin_);
 }
 
@@ -290,14 +290,14 @@ template<typename T, typename Alloc = allocator<T>>
 template<typename Iter, typename std::enable_if<is_input_iterator<Iter>::value, int>::type = 0>
 vector<T, Alloc>::vector(Iter first, Iter last)
 {	
-	init_Space(distance(last - first));
+	init_space(distance(last - first));
 	JStl::uninitialized_copy(first, last, begin_);	
 }
 
 template<typename T, typename Alloc = allocator<T>>
 vector<T, Alloc>::vector(const vector &rhs)
 {
-	init_Space(rhs.size());
+	init_space(rhs.size());
 	JStl::uninitialized_copy(rhs.begin(), rhs.end(), begin_);
 }
 
@@ -327,7 +327,7 @@ vector<T, Alloc>& vector<T, Alloc>::operator=(const vector &rhs)
 	}
 	else{
 		this->~vector();
-		init_Space(rhs.size());
+		init_space(rhs.size());
 		JStl::uninitialized_copy(rhs.begin_, rhs.end_, begin_);
 		return *this;
 	}	
@@ -353,7 +353,7 @@ vector<T, Alloc>& vector<T, Alloc>::operator=(vector &&rhs) _NOEXCEPT
 template<typename T, typename Alloc = allocator<T>>
 vector<T, Alloc>& vector<T, Alloc>::operator=(const std::initializer_list<value_type> &l)
 {
-	init_Space(l.size());
+	init_space(l.size());
 	JStl::uninitialized_copy(l.begin(), l.end(), begin);
 }
 
@@ -410,7 +410,7 @@ template<typename T, typename Alloc = allocator<T>>
 void vector<T, Alloc>::push_back(const value_type& value)
 {
 	if (size() == capacity()){
-		fill_Alloc_Space(capacity() * 2);
+		refill_alloc_space(capacity() * 2);
 	}
 	data_allocator::construct(end_++, value);
 }
@@ -419,7 +419,7 @@ template<typename T, typename Alloc = allocator<T>>
 void vector<T, Alloc>::push_back(value_type&& value)
 {
 	if (size() == capacity()){
-		fill_Alloc_Space(capacity() * 2);
+		refill_alloc_space(capacity() * 2);
 	}
 	data_allocator::construct(end_++, value);
 }
@@ -449,7 +449,7 @@ vector<T, Alloc>::emplace(iterator pos, Args&& ...args)
 		++end_;
 	}
 	else {											//无位置
-		fill_Alloc_Space(capacity() * 2);
+		refill_alloc_space(capacity() * 2);
 		return emplace(begin_ + n, JStl::forward<Args&&>(args)...);
 	}
 	return begin_ + n;
@@ -464,7 +464,7 @@ void vector<T, Alloc>::emplace_back(Args&& ...args)
 		++end_;
 	}
 	else {											
-		fill_Alloc_Space(capacity() * 2);
+		refill_alloc_space(capacity() * 2);
 		emplace_back(JStl::forward<Args&&>(args)...);
 	}
 }
@@ -510,7 +510,7 @@ vector<T, Alloc>::insert(iterator pos, const value_type& value)
 		++end_;
 	}
 	else {											//无位置
-		fill_Alloc_Space(capacity() * 2);
+		refill_alloc_space(capacity() * 2);
 		return insert(begin_ + n, value);
 	}
 	return begin_ + n;
@@ -533,7 +533,7 @@ vector<T, Alloc>::insert(iterator pos, value_type&& value)
 		++end_;
 	}
 	else {											//无位置
-		fill_Alloc_Space(capacity() * 2);
+		refill_alloc_space(capacity() * 2);
 		return insert(begin_ + n, JStl::move(value));
 	}
 	return begin_ + n;
