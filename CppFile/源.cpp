@@ -9,6 +9,7 @@
 #include<deque>
 #include<vector>
 #include<list>
+#include<algorithm>
 using std::cout;
 using std::endl;
 using namespace JStl;
@@ -23,6 +24,7 @@ int main()
 		a3[i] = i+512;
 	}
 	int *b2[] = { a1, a2, a3 };
-	deque_iterator<int, int&, int*> a(a1, b2), b(a2, b2 + 1);
+	deque_iterator<int, int&, int*> d(a1, b2), b(a2, b2 + 1);
+	deque<int> c(3331,33);
 	system("pause");
 }

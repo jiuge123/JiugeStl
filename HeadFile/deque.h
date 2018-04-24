@@ -14,10 +14,11 @@
 namespace JStl{
 
 template<typename T>
-size_t _deque_buf_size()
+struct _deque_buf_size
 {
-	return sizeof(T) < 256 ? 1024 / sizeof(T) : 8;
-}
+	static const size_t value = sizeof(T) < 256 ? 1024 / sizeof(T) : 8;
+};
+
 
 //iterator
 template<typename T,typename Ref,typename Ptr>
@@ -36,7 +37,7 @@ struct deque_iterator
 	typedef T*           value_pointer;
 	typedef T**          map_pointer;
 
-	const size_type buffer_size = _deque_buf_size<T>();
+	static const size_type buffer_size = _deque_buf_size<T>::value;
 
 	value_pointer cur;      //指向缓冲区现行元素
 	value_pointer first;	//指向缓冲区头
@@ -59,6 +60,7 @@ struct deque_iterator
 	deque_iterator(iterator&& rhs) 
 		: cur(rhs.cur), first(rhs.first), last(rhs.last), node(rhs.node)
 	{
+		if (*this != rhs)
 		rhs.cur = nullptr;
 		rhs.first = nullptr;
 		rhs.last = nullptr;
@@ -229,7 +231,7 @@ struct deque_iterator
 
 };
 
-template <class T, class Alloc = allocator>
+template <class T, class Alloc = allocator<T>>
 class deque{
 	typedef JStl::allocator<T>                       data_allocator;
 	typedef JStl::allocator<T*>                      map_allocator;
@@ -246,10 +248,10 @@ class deque{
 
 	typedef deque_iterator<T, T&, T*>                iterator;
 	typedef deque_iterator<T, const T&, const T*>    const_iterator;
-	typedef JStl::reverse_iterator<iterator>        reverse_iterator;
-	typedef JStl::reverse_iterator<const_iterator>  const_reverse_iterator;
+	typedef JStl::reverse_iterator<iterator>         reverse_iterator;
+	typedef JStl::reverse_iterator<const_iterator>   const_reverse_iterator;
 
-	const size_type buffer_size = deque_buf_size<T>::value;
+	static const size_type buffer_size = _deque_buf_size<T>::value;
 
 private:
 	iterator       begin_;     // 指向第一个节点
@@ -257,16 +259,23 @@ private:
 	map_pointer    map_;       // 指向管控中心
 	size_type      map_size_;  // map 内指针的数目
 
-	//分配内存
+	//为map分配内存
 	map_pointer create_map(size_type n);
 
-	//
+	//构造缓冲区
+	void create_buffer(map_pointer nstart, map_pointer nfinish);
+
 	void map_init(size_type n);
 
 	void fill_init(size_type n, const value_type& value);
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
 	deque();
+
+	deque(size_type n);
+
+	deque(size_type n, const value_type& value);
+
 };
 
 template<typename T, typename Alloc = allocator<T>>
@@ -281,6 +290,25 @@ deque<T, Alloc>::create_map(size_type size)
 }
 
 template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::create_buffer(map_pointer nstart, map_pointer nfinish)
+{
+	map_pointer cur;
+	try{
+		for (cur = nstart; cur <= nfinish; ++cur){
+			*cur = data_allocator::allocate(buffer_size);
+		}
+	}
+	catch (...){
+		while (cur != nstart){
+			--cur;
+			data_allocator::deallocate(*cur, buffer_size);
+			*cur = nullptr;
+		}
+		throw;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
 void deque<T, Alloc>::map_init(size_type n)
 {
 	const size_type nNode = n / buffer_size + 1;
@@ -289,50 +317,61 @@ void deque<T, Alloc>::map_init(size_type n)
 		map_ = create_map(map_size_);
 	}
 	catch (...){
+		map_allocator::deallocate(map_, map_size_);
 		map_ = nullptr;
 		map_size_ = 0;
 		throw;
 	}
 
-//	// 让 nstart 和 nfinish 都指向 map_ 最中央的区域
-//	map_pointer nstart = map_ + (map_size_ - nNode) / 2;
-//	map_pointer nfinish = nstart + nNode - 1;
-//	try
-//	{
-//		create_buffer(nstart, nfinish);
-//	}
-//	catch (...)
-//	{
-//		map_allocator::deallocate(map_, map_size_);
-//		map_ = nullptr;
-//		map_size_ = 0;
-//		throw;
-//	}
-//	begin_.set_node(nstart);
-//	end_.set_node(nfinish);
-//	begin_.cur = begin_.first;
-//	end_.cur = end_.first + (nElem % buffer_size);
-//}
-//
-//template<typename T, typename Alloc = allocator<T>>
-//void deque<T, Alloc>::fill_init(size_type n, const value_type& value)
-//{
-//	map_init(n);
-//	if (n != 0)
-//	{
-//		for (auto cur = begin_.node; cur < end_.node; ++cur)
-//		{
-//			mystl::uninitialized_fill(*cur, *cur + buffer_size, value);
-//		}
-//		mystl::uninitialized_fill(end_.first, end_.cur, value);
-//	}
-//}
-//
-//template<typename T,typename Alloc = allocator<T>>
-//deque<T,Alloc>::deque()
-//{
-//	fill_init(0, value_type());
-//}
+	// 指向数据的开始和结束
+	map_pointer nstart = map_ + 1;
+	map_pointer nfinish = nstart + nNode - 1;
+	try{
+		create_buffer(nstart, nfinish);
+	}
+	catch (...){
+		map_allocator::deallocate(map_, map_size_);
+		map_ = nullptr;
+		map_size_ = 0;
+		throw;
+	}
+	begin_.set_node(nstart);
+	end_.set_node(nfinish);
+	begin_.cur = begin_.first;
+	end_.cur = end_.first + (n % buffer_size);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::fill_init(size_type n, const value_type& value)
+{
+	map_init(n);
+	if (n != 0)
+	{
+		for (auto cur = begin_.node; cur < end_.node; ++cur)
+		{
+			JStl::uninitialized_fill(*cur, *cur + buffer_size, value);
+		}
+		JStl::uninitialized_fill(end_.first, end_.cur, value);
+	}
+}
+
+template<typename T,typename Alloc = allocator<T>>
+deque<T,Alloc>::deque()
+{
+	fill_init(0, value_type());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+deque<T, Alloc>::deque(size_type n)
+{
+	fill_init(n, value_type());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+deque<T, Alloc>::deque(size_type n,const value_type& value)
+{
+	fill_init(n, value);
+}
 
 }
 #endif

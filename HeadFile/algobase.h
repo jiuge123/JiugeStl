@@ -64,6 +64,7 @@ ForwardIterator copy(InputIterator first, InputIterator last,
 
 /**************************************************************************************/
 //copy_backward 将 [first, last)区间内的元素拷贝到 [result - (last - first), result)内
+//斜移
 /**************************************************************************************/
 template <class BidrectionalIterator1, class BidrectionalIterator2>
 BidrectionalIterator2
@@ -165,7 +166,7 @@ ForwardIterator fill_n(ForwardIterator first, Size n, const T& x)
 }
 
 /**************************************************************************************/
-//move 把[first，last)move到result开始的last和first中
+//move 把[first，last)move到result中
 /**************************************************************************************/
 template<typename InputIterator, typename OutputIterator>
 OutputIterator __unchecked_move_cat(InputIterator first, InputIterator last,
