@@ -15,16 +15,8 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	int a1[256];
-	int a2[256];
-	int a3[256];
-	for (int i = 0; i < 256;i++){
-		a1[i] = i;
-		a2[i] = i+256;
-		a3[i] = i+512;
-	}
-	int *b2[] = { a1, a2, a3 };
-	deque_iterator<int, int&, int*> d(a1, b2), b(a2, b2 + 1);
-	deque<int> c(3331,33);
+	list<int> a{ 1, 2, 3 };
+	deque<int> b(a.begin(), a.end());
+	
 	system("pause");
 }

@@ -23,7 +23,6 @@ public:
 	typedef		const T&						const_reference;
 	typedef		size_t							size_type;
 	typedef		ptrdiff_t						difference_type;
-	typedef     random_access_iterator_tag		iterator_category;
 
 	typedef		T*					iterator;
 	typedef		const T*  			const_iterator;
@@ -290,7 +289,7 @@ template<typename T, typename Alloc = allocator<T>>
 template<typename Iter, typename std::enable_if<is_input_iterator<Iter>::value, int>::type = 0>
 vector<T, Alloc>::vector(Iter first, Iter last)
 {	
-	init_space(distance(last - first));
+	init_space(distance(first,last));
 	JStl::uninitialized_copy(first, last, begin_);	
 }
 

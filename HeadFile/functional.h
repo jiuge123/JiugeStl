@@ -415,5 +415,5 @@ struct hash<long double>
 	}
 };
 
-};//namespaec JStl;
+}//namespaec JStl;
 #endif

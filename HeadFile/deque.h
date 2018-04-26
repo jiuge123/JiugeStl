@@ -22,7 +22,7 @@ struct _deque_buf_size
 
 //iterator
 template<typename T,typename Ref,typename Ptr>
-struct deque_iterator
+struct deque_iterator:public random_access_iterator_tag
 {
 	typedef deque_iterator<T, T&, T*>				iterator;
 	typedef deque_iterator<T, const T&, const T*>	const_iterator;
@@ -265,9 +265,18 @@ private:
 	//构造缓冲区
 	void create_buffer(map_pointer nstart, map_pointer nfinish);
 
+	//构造map
 	void map_init(size_type n);
 
 	void fill_init(size_type n, const value_type& value);
+
+	template <class Iter>
+	void copy_init(Iter first, Iter last, input_iterator_tag);
+	template <class Iter>
+	void copy_init(Iter first, Iter last, forward_iterator_tag);
+
+	void require_capacity(size_type n, bool front);
+
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
 	deque();
@@ -276,6 +285,14 @@ public:
 
 	deque(size_type n, const value_type& value);
 
+	template<typename Iter, typename std::enable_if<
+		is_input_iterator<Iter>::value, int>::type = 0>
+	deque(Iter first, Iter last);
+
+public:
+	//成员函数
+	template <class ...Args>
+	void emplace_back(Args&& ...args);
 };
 
 template<typename T, typename Alloc = allocator<T>>
@@ -312,7 +329,7 @@ template<typename T, typename Alloc = allocator<T>>
 void deque<T, Alloc>::map_init(size_type n)
 {
 	const size_type nNode = n / buffer_size + 1;
-	map_size_ = nNode + 2;		// 需要分配的缓冲区个数 + 2
+	map_size_ = nNode + 4;		// 需要分配的缓冲区个数 + 4
 	try{
 		map_ = create_map(map_size_);
 	}
@@ -322,7 +339,6 @@ void deque<T, Alloc>::map_init(size_type n)
 		map_size_ = 0;
 		throw;
 	}
-
 	// 指向数据的开始和结束
 	map_pointer nstart = map_ + 1;
 	map_pointer nfinish = nstart + nNode - 1;
@@ -355,6 +371,38 @@ void deque<T, Alloc>::fill_init(size_type n, const value_type& value)
 	}
 }
 
+template<typename T, typename Alloc = allocator<T>>
+template<typename Iter>
+void deque<T, Alloc>::copy_init(Iter first, Iter last, input_iterator_tag)
+{
+	const size_type n = mystl::distance(first, last);
+	map_init(n);
+	for (; first != last; ++first)
+		emplace_back(*first);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template<typename Iter>
+void deque<T, Alloc>::copy_init(Iter first, Iter last, forward_iterator_tag)
+{
+	const size_type n = JStl::distance(first, last);
+	map_init(n);
+	for (auto cur = begin_.node; cur < end_.node; ++cur)
+	{
+		auto next = first;
+		JStl::advance(next, buffer_size);			//每次拷贝buffer_size个数
+		JStl::uninitialized_copy(first, next, *cur);//到cur中
+		first = next;
+	}
+	JStl::uninitialized_copy(first, last, end_.first);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::require_capacity(size_type n, bool front)
+{
+
+} 
+
 template<typename T,typename Alloc = allocator<T>>
 deque<T,Alloc>::deque()
 {
@@ -373,5 +421,27 @@ deque<T, Alloc>::deque(size_type n,const value_type& value)
 	fill_init(n, value);
 }
 
+template<typename T, typename Alloc = allocator<T>>
+template <class Iter, typename std::enable_if<
+	JStl::is_input_iterator<Iter>::value, int>::type = 0>
+deque<T, Alloc>::deque(Iter first, Iter last)
+{
+	copy_init(first, last, iterator_category(first));
 }
+
+template<typename T, typename Alloc = allocator<T>>
+template <class ...Args>
+void deque<T, Alloc>::emplace_back(Args&& ...args)
+{
+	if (end_.cur != end_.last - 1){
+		data_allocator::construct(end_.cur, JStl::forward<Args&&>(args)...);
+	}
+	else{
+		require_capacity(1, false);
+		data_allocator::construct(end_.cur, mystl::forward<Args>(args)...);	
+	}
+	++end_;
+}
+
+}//namespace JStl
 #endif

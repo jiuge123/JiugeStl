@@ -57,9 +57,7 @@ template<typename InputIterator, typename ForwardIterator>
 ForwardIterator copy(InputIterator first, InputIterator last,
 	ForwardIterator result)
 {
-	assert(last >= first);
 	return __unchecked_copy(first, last, result);
-	
 }
 
 /**************************************************************************************/

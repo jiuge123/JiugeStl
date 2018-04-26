@@ -43,14 +43,16 @@ struct list_node
 //iterator
 
 template <class T>
-struct list_iterator 
+struct list_iterator :public random_access_iterator_tag
 {
+	typedef bidrection_iterator_tag			  iterator_category;
 	typedef T                                 value_type;
 	typedef T*                                pointer;
 	typedef T&                                reference;
+	typedef ptrdiff_t						  difference_type;
+	
 	typedef list_node<T>*					  node_ptr;
 	typedef list_iterator<T>                  self;
-	typedef bidrection_iterator_tag			  iterator_category;
 
 	node_ptr node_; 
 
@@ -111,14 +113,16 @@ struct list_iterator
 };
 
 template <class T>
-struct list_const_iterator 
+struct list_const_iterator :public random_access_iterator_tag
 {
+	typedef bidrection_iterator_tag			  iterator_category;
 	typedef T                                 value_type;
 	typedef const T*                          pointer;
 	typedef const T&                          reference;
+	typedef ptrdiff_t						  difference_type;	
+	
 	typedef list_node<T>*					  node_ptr;
 	typedef list_const_iterator<T>            self;
-	typedef bidrection_iterator_tag			  iterator_category;
 
 	node_ptr node_;
 
@@ -366,6 +370,7 @@ public:
 		assert(!empty());
 		return node_->value;
 	}
+
 public:
 	//³ÉÔ±º¯Êý
 	void assign(size_type n, const value_type& value);
@@ -1174,5 +1179,5 @@ void swap(list<T>& lhs, list<T>& rhs)
 }
 
 
-};//namespaec JStl;
+}//namespaec JStl;
 #endif
