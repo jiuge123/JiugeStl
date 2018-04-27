@@ -275,7 +275,7 @@ private:
 	template <class Iter>
 	void copy_init(Iter first, Iter last, forward_iterator_tag);
 
-	void require_capacity(size_type n, bool front);
+	void require_capacity(size_type n, bool isfront);
 
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
@@ -329,7 +329,7 @@ template<typename T, typename Alloc = allocator<T>>
 void deque<T, Alloc>::map_init(size_type n)
 {
 	const size_type nNode = n / buffer_size + 1;
-	map_size_ = nNode + 4;		// 需要分配的缓冲区个数 + 4
+	map_size_ = JStl::max((size_type)8, nNode + 2);	// 需要分配的缓冲区个数 
 	try{
 		map_ = create_map(map_size_);
 	}
@@ -339,9 +339,9 @@ void deque<T, Alloc>::map_init(size_type n)
 		map_size_ = 0;
 		throw;
 	}
-	// 指向数据的开始和结束
-	map_pointer nstart = map_ + 1;
-	map_pointer nfinish = nstart + nNode - 1;
+	// 指向数据的开始和结束 而且指向中间
+	map_pointer nstart = map_ + (map_size_ - n) / 2;
+	map_pointer nfinish = nstart + n - 1;
 	try{
 		create_buffer(nstart, nfinish);
 	}
@@ -375,7 +375,7 @@ template<typename T, typename Alloc = allocator<T>>
 template<typename Iter>
 void deque<T, Alloc>::copy_init(Iter first, Iter last, input_iterator_tag)
 {
-	const size_type n = mystl::distance(first, last);
+	const size_type n = JStl::distance(first, last);
 	map_init(n);
 	for (; first != last; ++first)
 		emplace_back(*first);
@@ -397,11 +397,30 @@ void deque<T, Alloc>::copy_init(Iter first, Iter last, forward_iterator_tag)
 	JStl::uninitialized_copy(first, last, end_.first);
 }
 
-template<typename T, typename Alloc = allocator<T>>
-void deque<T, Alloc>::require_capacity(size_type n, bool front)
-{
-
-} 
+//template<typename T, typename Alloc = allocator<T>>
+//void deque<T, Alloc>::require_capacity(size_type n, bool isfront)
+//{
+//	if (isfront && (static_cast<size_type>(begin_.cur - begin_.first) < n))
+//	{
+//		const size_type need_buffer = (n - (begin_.cur - begin_.first)) / buffer_size + 1;
+//		if (need_buffer > static_cast<size_type>(begin_.node - map_))
+//		{
+//			reallocate_map_at_front(need_buffer);
+//			return;
+//		}
+//		create_buffer(begin_.node - need_buffer, begin_.node - 1);
+//	}
+//	else if (!isfront && (static_cast<size_type>(end_.last - end_.cur - 1) < n))
+//	{
+//		const size_type need_buffer = (n - (end_.last - end_.cur - 1)) / buffer_size + 1;
+//		if (need_buffer > static_cast<size_type>((map_ + map_size_) - end_.node - 1))
+//		{
+//			reallocate_map_at_back(need_buffer);
+//			return;
+//		}
+//		create_buffer(end_.node + 1, end_.node + need_buffer);
+//	}
+//} 
 
 template<typename T,typename Alloc = allocator<T>>
 deque<T,Alloc>::deque()
@@ -433,15 +452,17 @@ template<typename T, typename Alloc = allocator<T>>
 template <class ...Args>
 void deque<T, Alloc>::emplace_back(Args&& ...args)
 {
+	//由于每个buffer只能存放size-1个数据
+	//所以cur最多到last-1
 	if (end_.cur != end_.last - 1){
 		data_allocator::construct(end_.cur, JStl::forward<Args&&>(args)...);
 	}
 	else{
-		require_capacity(1, false);
-		data_allocator::construct(end_.cur, mystl::forward<Args>(args)...);	
+		//require_capacity(1, false);
+		data_allocator::construct(end_.cur, JStl::forward<Args>(args)...);
 	}
 	++end_;
 }
 
-}//namespace JStl
+}//na`espace JStl
 #endif

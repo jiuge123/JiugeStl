@@ -15,8 +15,11 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	list<int> a{ 1, 2, 3 };
+	list<int> a;
+	for (int i = 0; i < 255; i++){
+		a.push_back(i);
+	}
 	deque<int> b(a.begin(), a.end());
-	
+	b.emplace_back(3);
 	system("pause");
 }
