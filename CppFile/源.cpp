@@ -20,6 +20,10 @@ int main()
 		a.push_back(i);
 	}
 	deque<int> b(a.begin(), a.end());
-	b.emplace_back(3);
+	for (int i = 0; i < 2550; i++){
+		if (i == 7 * 255-1)
+			;
+		b.emplace_back(3);
+	}
 	system("pause");
 }

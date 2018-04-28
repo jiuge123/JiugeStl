@@ -269,12 +269,16 @@ private:
 	void map_init(size_type n);
 
 	void fill_init(size_type n, const value_type& value);
-
 	template <class Iter>
 	void copy_init(Iter first, Iter last, input_iterator_tag);
 	template <class Iter>
 	void copy_init(Iter first, Iter last, forward_iterator_tag);
 
+	//在头部更换map_
+	void reallocate_map_at_front(size_type need_buffer);
+	void reallocate_map_at_back(size_type need_buffer);
+
+	//计算缓冲区越界后是否需要构造新的缓冲区和换map
 	void require_capacity(size_type n, bool isfront);
 
 public:
@@ -329,7 +333,7 @@ template<typename T, typename Alloc = allocator<T>>
 void deque<T, Alloc>::map_init(size_type n)
 {
 	const size_type nNode = n / buffer_size + 1;
-	map_size_ = JStl::max((size_type)8, nNode + 2);	// 需要分配的缓冲区个数 
+	map_size_ = JStl::max(static_cast<size_type>(8), nNode + 2);	// 需要分配的缓冲区个数 
 	try{
 		map_ = create_map(map_size_);
 	}
@@ -339,9 +343,9 @@ void deque<T, Alloc>::map_init(size_type n)
 		map_size_ = 0;
 		throw;
 	}
-	// 指向数据的开始和结束 而且指向中间
-	map_pointer nstart = map_ + (map_size_ - n) / 2;
-	map_pointer nfinish = nstart + n - 1;
+	// 指向数据的开始和结束 而且指向map中间
+	map_pointer nstart = map_ + (map_size_ - nNode) / 2;
+	map_pointer nfinish = nstart + nNode - 1;
 	try{
 		create_buffer(nstart, nfinish);
 	}
@@ -397,30 +401,84 @@ void deque<T, Alloc>::copy_init(Iter first, Iter last, forward_iterator_tag)
 	JStl::uninitialized_copy(first, last, end_.first);
 }
 
-//template<typename T, typename Alloc = allocator<T>>
-//void deque<T, Alloc>::require_capacity(size_type n, bool isfront)
-//{
-//	if (isfront && (static_cast<size_type>(begin_.cur - begin_.first) < n))
-//	{
-//		const size_type need_buffer = (n - (begin_.cur - begin_.first)) / buffer_size + 1;
-//		if (need_buffer > static_cast<size_type>(begin_.node - map_))
-//		{
-//			reallocate_map_at_front(need_buffer);
-//			return;
-//		}
-//		create_buffer(begin_.node - need_buffer, begin_.node - 1);
-//	}
-//	else if (!isfront && (static_cast<size_type>(end_.last - end_.cur - 1) < n))
-//	{
-//		const size_type need_buffer = (n - (end_.last - end_.cur - 1)) / buffer_size + 1;
-//		if (need_buffer > static_cast<size_type>((map_ + map_size_) - end_.node - 1))
-//		{
-//			reallocate_map_at_back(need_buffer);
-//			return;
-//		}
-//		create_buffer(end_.node + 1, end_.node + need_buffer);
-//	}
-//} 
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::reallocate_map_at_front(size_type need_buffer)
+{
+	const size_type new_map_size = JStl::max(map_size_ * 2 ,
+		map_size_ + need_buffer + 8);
+	map_pointer new_map = create_map(new_map_size);
+	const size_type old_buffer = end_.node - begin_.node + 1;
+	//所需构造的缓冲区数目
+	const size_type new_buffer = old_buffer + need_buffer;
+
+	auto begin = new_map + (new_map_size - new_buffer) / 2;
+	//begin 到 mid 是新的
+	auto mid = begin + need_buffer;
+	auto end = mid + old_buffer;
+	create_buffer(begin, mid - 1);
+	//将新的 map 中的指针指向原来的 buffer
+	for (auto begin1 = mid, begin2 = begin_.node; begin1 != end; ++begin1, ++begin2)
+		*begin1 = *begin2;
+
+	// 更新数据
+	map_allocator::deallocate(map_, map_size_);
+	map_ = new_map;
+	map_size_ = new_map_size;
+	begin_ = iterator(*mid + (begin_.cur - begin_.first), mid);
+	end_ = iterator(*(end - 1) + (end_.cur - end_.first), end - 1);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::reallocate_map_at_back(size_type need_buffer)
+{
+	const size_type new_map_size = JStl::max(map_size_ * 2,
+		map_size_ + need_buffer + 8);
+	map_pointer new_map = create_map(new_map_size);
+	const size_type old_buffer = end_.node - begin_.node + 1;
+	const size_type new_buffer = old_buffer + need_buffer;
+
+	auto begin = new_map + ((new_map_size - new_buffer) / 2);
+	auto mid = begin + old_buffer;
+	auto end = mid + need_buffer;
+	for (auto begin1 = begin, begin2 = begin_.node; begin1 != mid; ++begin1, ++begin2)
+		*begin1 = *begin2;
+	create_buffer(mid, end - 1);
+
+	map_allocator::deallocate(map_, map_size_);
+	map_ = new_map;
+	map_size_ = new_map_size;
+	begin_ = iterator(*begin + (begin_.cur - begin_.first), begin);
+	end_ = iterator(*(mid - 1) + (end_.cur - end_.first), mid - 1);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::require_capacity(size_type n, bool isfront)
+{
+	//所需内存不够
+	if (isfront && (static_cast<size_type>(begin_.cur - begin_.first) < n))
+	{
+		//计算所需的数目
+		const size_type need_buffer = (n - (begin_.cur - begin_.first)) / buffer_size + 1;
+		//如果map_中所剩的数组指针不足
+		if (need_buffer > static_cast<size_type>(begin_.node - map_))
+		{
+			//重新分配map
+			reallocate_map_at_front(need_buffer);
+			return;
+		}
+		create_buffer(begin_.node - need_buffer, begin_.node - 1);
+	}
+	else if (!isfront && (static_cast<size_type>(end_.last - end_.cur - 1) < n))
+	{
+		const size_type need_buffer = (n - (end_.last - end_.cur - 1)) / buffer_size + 1;
+		if (need_buffer > static_cast<size_type>(map_ + map_size_ - end_.node - 1))
+		{
+			reallocate_map_at_back(need_buffer);
+			return;
+		}
+		create_buffer(end_.node + 1, end_.node + need_buffer);
+	}
+} 
 
 template<typename T,typename Alloc = allocator<T>>
 deque<T,Alloc>::deque()
@@ -458,11 +516,11 @@ void deque<T, Alloc>::emplace_back(Args&& ...args)
 		data_allocator::construct(end_.cur, JStl::forward<Args&&>(args)...);
 	}
 	else{
-		//require_capacity(1, false);
+		require_capacity(1, false);
 		data_allocator::construct(end_.cur, JStl::forward<Args>(args)...);
 	}
 	++end_;
 }
 
-}//na`espace JStl
+}//namespace JStl
 #endif
