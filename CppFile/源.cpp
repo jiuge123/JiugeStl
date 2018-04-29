@@ -15,15 +15,9 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	list<int> a;
-	for (int i = 0; i < 255; i++){
-		a.push_back(i);
-	}
-	deque<int> b(a.begin(), a.end());
-	for (int i = 0; i < 2550; i++){
-		if (i == 7 * 255-1)
-			;
-		b.emplace_back(3);
-	}
+	deque<int> a{ 1, 2, 34 };
+	deque<int> b(a);
+	b.emplace_back(3);
+	cout << b.size();
 	system("pause");
 }

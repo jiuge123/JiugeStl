@@ -20,7 +20,7 @@ OutputIterator __unchecked_copy_cat(InputIterator first, InputIterator last,
 }
 
 template<typename RandomIterator, typename OutputIterator>
-RandomIterator __unchecked_copy_cat(RandomIterator first, RandomIterator last,
+OutputIterator __unchecked_copy_cat(RandomIterator first, RandomIterator last,
 	OutputIterator result, JStl::random_access_iterator_tag)
 {
 	auto n = last - first;
@@ -32,9 +32,9 @@ RandomIterator __unchecked_copy_cat(RandomIterator first, RandomIterator last,
 	return result;
 }
 
-template<typename InputIterator, typename ForwardIterator>
-ForwardIterator __unchecked_copy(InputIterator first, InputIterator last,
-	ForwardIterator result)
+template<typename InputIterator, typename OutputIterator>
+OutputIterator __unchecked_copy(InputIterator first, InputIterator last,
+	OutputIterator result)
 {
 	return __unchecked_copy_cat(first, last, result, JStl::iterator_category(first));
 }
@@ -53,9 +53,9 @@ __unchecked_copy(Tp* first, Tp* last, Up* result)
 	return result + n;
 }
 
-template<typename InputIterator, typename ForwardIterator>
-ForwardIterator copy(InputIterator first, InputIterator last,
-	ForwardIterator result)
+template<typename InputIterator, typename OutputIterator>
+OutputIterator copy(InputIterator first, InputIterator last,
+	OutputIterator result)
 {
 	return __unchecked_copy(first, last, result);
 }
@@ -179,7 +179,7 @@ OutputIterator __unchecked_move_cat(InputIterator first, InputIterator last,
 }
 
 template<typename RandomIterator, typename OutputIterator>
-RandomIterator __unchecked_move_cat(RandomIterator first, RandomIterator last,
+OutputIterator __unchecked_move_cat(RandomIterator first, RandomIterator last,
 	OutputIterator result, JStl::random_access_iterator_tag)
 {
 	auto n = last - first;
@@ -191,9 +191,9 @@ RandomIterator __unchecked_move_cat(RandomIterator first, RandomIterator last,
 	return result;
 }
 
-template<typename InputIterator, typename ForwardIterator>
-ForwardIterator __unchecked_move(InputIterator first, InputIterator last,
-	ForwardIterator result)
+template<typename InputIterator, typename OutputIterator>
+OutputIterator __unchecked_move(InputIterator first, InputIterator last,
+	OutputIterator result)
 {
 	return __unchecked_move_cat(first, last, result, JStl::iterator_category(first));
 }
@@ -212,9 +212,9 @@ typename std::enable_if<
 	return result + n;
 }
 
-template<typename InputIterator, typename ForwardIterator>
-ForwardIterator move(InputIterator first, InputIterator last,
-	ForwardIterator result)
+template<typename InputIterator, typename OutputIterator>
+OutputIterator move(InputIterator first, InputIterator last,
+	OutputIterator result)
 {
 	assert(last >= first);
 	return __unchecked_move(first, last, result);

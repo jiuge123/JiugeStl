@@ -162,12 +162,10 @@ struct deque_iterator:public random_access_iterator_tag
 	self& operator+=(difference_type n)
 	{
 		const auto offset = n + (cur - first);
-		if (offset >= 0 && offset < static_cast<difference_type>(buffer_size))
-		{ 
+		if (offset >= 0 && offset < static_cast<difference_type>(buffer_size)){ 
 			cur += n;
 		}
-		else // 要跳到其他的缓冲区
-		{
+		else{ // 要跳到其他的缓冲区
 			auto m1 = offset / buffer_size;
 			auto m2 = offset % buffer_size;
 			set_node(node + m1);
@@ -293,10 +291,40 @@ public:
 		is_input_iterator<Iter>::value, int>::type = 0>
 	deque(Iter first, Iter last);
 
+	deque(std::initializer_list<T> l);
+
+	deque(const deque& rhs);
+
+	deque(deque &&rhs);
+
+	deque& operator=(const deque& rhs);
+
+	deque& operator=(deque&& rhs);
+
+	deque& operator=(std::initializer_list<value_type> l);
+
+public:
+	//迭代器相关操作
+
+public:
+	//普通函数
+	size_type size()
+	{
+		return end_ - begin_;
+	}
+
 public:
 	//成员函数
 	template <class ...Args>
 	void emplace_back(Args&& ...args);
+
+	template <class Iter, typename std::enable_if<
+		JStl::is_input_iterator<Iter>::value, int>::type = 0>
+	void insert(iterator position, Iter first, Iter last);
+
+	iterator erase(iterator first, iterator last);
+
+	void clear();
 };
 
 template<typename T, typename Alloc = allocator<T>>
@@ -507,11 +535,64 @@ deque<T, Alloc>::deque(Iter first, Iter last)
 }
 
 template<typename T, typename Alloc = allocator<T>>
+deque<T, Alloc>::deque(std::initializer_list<T> l)
+{
+	copy_init(l.begin(), l.end(), JStl::forward_iterator_tag());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+deque<T, Alloc>::deque(const deque& rhs)
+{
+	copy_init(rhs.begin_, rhs.end_, JStl::forward_iterator_tag());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+deque<T, Alloc>::deque(deque &&rhs) : begin_(JStl::move(rhs.begin_)),
+									  end_(JStl::move(rhs.end_)),
+									  map_(JStl::move(rhs.map_)),
+									  map_size_(JStl::move(rhs.map_size_))
+{
+	rhs.map_ = nullptr;
+	rhs.map_size_ = 0;
+}
+
+//template<typename T, typename Alloc = allocator<T>>
+//deque<T, Alloc>& 
+//deque<T, Alloc>::operator=(const deque& rhs)
+//{
+//	if (this != &rhs){
+//		const auto len = size();
+//		if (len >= rhs.size()){
+//			erase(JStl::copy(rhs.begin_, rhs.end_, begin_), end_);
+//		}
+//		else{
+//			iterator mid = rhs.begin() + static_cast<difference_type>(len);
+//			JStl::copy(rhs.begin_, mid, begin_);
+//			insert(end_, mid, rhs.end_);
+//		}
+//	}
+//	return *this;
+//}
+//
+//template<typename T, typename Alloc = allocator<T>>
+//deque<T, Alloc>&
+//deque<T, Alloc>::operator=(deque&& rhs)
+//{
+//
+//}
+//
+//template<typename T, typename Alloc = allocator<T>>
+//deque<T, Alloc>&
+//deque<T, Alloc>::operator= (std::initializer_list<value_type> l)
+//{
+//
+//}
+
+
+template<typename T, typename Alloc = allocator<T>>
 template <class ...Args>
 void deque<T, Alloc>::emplace_back(Args&& ...args)
 {
-	//由于每个buffer只能存放size-1个数据
-	//所以cur最多到last-1
 	if (end_.cur != end_.last - 1){
 		data_allocator::construct(end_.cur, JStl::forward<Args&&>(args)...);
 	}
@@ -520,6 +601,27 @@ void deque<T, Alloc>::emplace_back(Args&& ...args)
 		data_allocator::construct(end_.cur, JStl::forward<Args>(args)...);
 	}
 	++end_;
+}
+
+//template<typename T, typename Alloc = allocator<T>>
+//template <class Iter, typename std::enable_if<
+//	JStl::is_input_iterator<Iter>::value, int>::type = 0>
+//void deque<T, Alloc>::insert(iterator position, Iter first, Iter last)
+//{
+//
+//}
+//
+//template<typename T, typename Alloc = allocator<T>>
+//typename deque<T,Alloc>::iterator
+//deque<T, Alloc>::erase(iterator first, iterator last)
+//{
+//
+//}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::clear()
+{
+	erase(begin_, end_);
 }
 
 }//namespace JStl
