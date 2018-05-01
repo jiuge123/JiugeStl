@@ -10,16 +10,18 @@
 #include<vector>
 #include<list>
 #include<algorithm>
+#include<forward_list>
 using std::cout;
 using std::endl;
 using namespace JStl;
 int main()
 {
-	deque<int> a{ 1, 2, 3,4 };
+	std::deque<int> f;
+	int k = 54;
+	deque<int> a{ 1, 2, 3, 4 };
+	a.insert(a.begin(), 3);
 	for (auto c : a)
-		cout << c;
-	a.clear();
-	for (auto c : a)
-		cout << c;
+		cout << c<<endl;
+
 	system("pause");
 }

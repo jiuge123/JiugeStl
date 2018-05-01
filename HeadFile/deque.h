@@ -256,6 +256,7 @@ private:
 	iterator       end_;       // 指向最后一个结点
 	map_pointer    map_;       // 指向管控中心
 	size_type      map_size_;  // map 内指针的数目
+	
 
 	//为map分配内存
 	map_pointer create_map(size_type n);
@@ -278,6 +279,9 @@ private:
 
 	//计算缓冲区越界后是否需要构造新的缓冲区和换map
 	void require_capacity(size_type n, bool isfront);
+
+	template <class... Args>
+	iterator insert_aux(iterator position, Args&& ...args);
 
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
@@ -378,7 +382,16 @@ public:
 public:
 	//成员函数
 	template <class ...Args>
+	void emplace_front(Args&& ...args);
+	
+	template <class ...Args>
 	void emplace_back(Args&& ...args);
+
+	void push_front(const value_type& value);
+	void push_front(value_type&& value);
+
+	void push_back(const value_type& value);
+	void push_back(value_type&& value);
 
 	iterator insert(iterator position, const value_type& value);
 	iterator insert(iterator position, value_type&& value);
@@ -573,6 +586,14 @@ void deque<T, Alloc>::require_capacity(size_type n, bool isfront)
 	}
 } 
 
+//template<typename T, typename Alloc = allocator<T>>
+//template <class... Args>
+//typename deque<T, Alloc>::iterator
+//deque<T, Alloc>::insert_aux(iterator position, Args&& ...args)
+//{
+//	
+//}
+
 template<typename T,typename Alloc = allocator<T>>
 deque<T,Alloc>::deque()
 {
@@ -667,11 +688,26 @@ void deque<T, Alloc>::shrink_to_fit()
 	}
 }
 
+template<typename T, typename Alloc = allocator<T>>
+template <class ...Args>
+void deque<T, Alloc>::emplace_front(Args&& ...args)
+{
+	if (begin_.cur != begin_.first){
+		--begin_;
+		data_allocator::construct(begin_.cur, JStl::forward<Args&&>(args)...);	
+	}
+	else{
+		require_capacity(1, true);
+		--begin_;
+		data_allocator::construct(begin_.cur, JStl::forward<Args&&>(args)...);
+	}
+}
 
 template<typename T, typename Alloc = allocator<T>>
 template <class ...Args>
 void deque<T, Alloc>::emplace_back(Args&& ...args)
 {
+	//数组a[0]到a[255] end.last指向256 end.cur指向255，且未被构造
 	if (end_.cur != end_.last - 1){
 		data_allocator::construct(end_.cur, JStl::forward<Args&&>(args)...);
 	}
@@ -680,23 +716,84 @@ void deque<T, Alloc>::emplace_back(Args&& ...args)
 		data_allocator::construct(end_.cur, JStl::forward<Args>(args)...);
 	}
 	++end_;
-	cout << map_size_;
 }
 
-//template<typename T, typename Alloc = allocator<T>>
-//typename deque<T, Alloc>::iterator 
-//deque<T, Alloc>::insert(iterator position, const value_type& value)
-//{
-//
-//}
-//
-//template<typename T, typename Alloc = allocator<T>>
-//typename deque<T, Alloc>::iterator 
-//deque<T, Alloc>::insert(iterator position, value_type&& value)
-//{
-//
-//}
-//
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::push_front(const value_type& value)
+{
+	if (begin_.cur != begin_.first){
+		--begin_;
+		data_allocator::construct(begin_.cur, value);
+	}
+	else{
+		require_capacity(1, true);
+		--begin_;
+		*begin_ = value;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::push_front(value_type&& value)
+{
+	emplace_front(value);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::push_back(const value_type& value)
+{
+	if (end_.cur != end_.last - 1){
+		*end_ = value;
+	}
+	else{
+		require_capacity(1, false);
+		data_allocator::construct(end_.cur, value);
+	}
+	++end_;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::push_back(value_type&& value)
+{
+	emplace_back(value);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename deque<T, Alloc>::iterator 
+deque<T, Alloc>::insert(iterator position, const value_type& value)
+{
+	if (position == begin_){
+		push_front(value);
+		return begin_;
+	}
+	else if(position == end_){
+		auto tmp = end_;
+		push_back(value);
+		return tmp;
+	}
+	else{
+		return insert_aux(position, value);
+	}
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename deque<T, Alloc>::iterator 
+deque<T, Alloc>::insert(iterator position, value_type&& value)
+{
+	if (position == begin_){
+		push_front(JStl::move(value));
+		return begin_;
+	}
+	else if (position == end_){
+		auto tmp = end_;
+		push_back(JStl::move(value));
+		return tmp;
+	}
+	else{
+		return insert_aux(position, value);
+	}
+}
+
 //template<typename T, typename Alloc = allocator<T>>
 //void deque<T, Alloc>::insert(iterator position, size_type n, const value_type& value)
 //{
