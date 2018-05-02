@@ -1,4 +1,4 @@
-﻿生成启动时间为 2018/5/2 0:54:58。
+﻿生成启动时间为 2018/5/3 1:28:58。
      1>项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\CppFile\源.cpp"
@@ -57,23 +57,25 @@
                  f:\github\jiugestl\headfile\deque.h(484) : 参见“Alloc”的声明
      1>f:\github\jiugestl\headfile\deque.h(508): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
                  f:\github\jiugestl\headfile\deque.h(494) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\deque.h(595): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+     1>f:\github\jiugestl\headfile\deque.h(608): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
                  f:\github\jiugestl\headfile\deque.h(589) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\deque.h(621): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\deque.h(615) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\deque.h(621): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\deque.h(617) : 参见“unnamed-parameter”的声明
-     1>f:\github\jiugestl\headfile\deque.h(704): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\deque.h(691) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\deque.h(719): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\deque.h(706) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\deque.h(823): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\deque.h(803) : 参见“Alloc”的声明
-     1>f:\github\jiugestl\headfile\deque.h(823): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
-                 f:\github\jiugestl\headfile\deque.h(805) : 参见“unnamed-parameter”的声明
-     1>f:\github\jiugestl\headfile\deque.h(595): error C4716: “JStl::deque<int,JStl::allocator<int> >::insert_aux<int &>”: 必须返回一个值
-     1>已完成生成项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”(Build 个目标)的操作 - 失败。
+     1>f:\github\jiugestl\headfile\deque.h(634): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(628) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(634): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(630) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\deque.h(717): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(704) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(732): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(719) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(846): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(825) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(846): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(827) : 参见“unnamed-parameter”的声明
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\github\JiugeStl\Debug\JiugeStl.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\github\JiugeStl\Debug\JiugeStl.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\github\JiugeStl\Debug\JiugeStl.lib" /MACHINE:X86 "Debug\源.obj"
+         JiugeStl.vcxproj -> F:\github\JiugeStl\Debug\JiugeStl.exe
+     1>已完成生成项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”(Build 个目标)的操作。
 
-生成失败。
+生成成功。
 
-已用时间 00:00:00.91
+已用时间 00:00:01.29

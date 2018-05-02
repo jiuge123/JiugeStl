@@ -186,7 +186,7 @@ OutputIterator __unchecked_move_cat(RandomIterator first, RandomIterator last,
 	while (n-- > 0){
 		*result = JStl::move(*first);
 		++first;
-		++last;
+		++result;
 	}
 	return result;
 }
@@ -216,9 +216,7 @@ template<typename InputIterator, typename OutputIterator>
 OutputIterator move(InputIterator first, InputIterator last,
 	OutputIterator result)
 {
-	assert(last >= first);
 	return __unchecked_move(first, last, result);
-	
 }
 
 /**************************************************************************************/

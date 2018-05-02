@@ -586,13 +586,27 @@ void deque<T, Alloc>::require_capacity(size_type n, bool isfront)
 	}
 } 
 
-//template<typename T, typename Alloc = allocator<T>>
-//template <class... Args>
-//typename deque<T, Alloc>::iterator
-//deque<T, Alloc>::insert_aux(iterator position, Args&& ...args)
-//{
-//	
-//}
+template<typename T, typename Alloc = allocator<T>>
+template <class... Args>
+typename deque<T, Alloc>::iterator
+deque<T, Alloc>::insert_aux(iterator position, Args&& ...args)
+{
+	value_type value = value_type(JStl::forward<Args>(args)...);
+	const size_type elems_before = position - begin_;
+	if (elems_before < (size() / 2)){
+		//放于前边
+		emplace_front(value);
+		move(begin_ + 1, position, begin_);
+		data_allocator::construct((--position).cur, value);
+		//warning 这个position一定要加括号，要不然无法换队列
+	}
+	else{
+		emplace_back(value);
+		move_backward(position, end_ - 1, end_);
+		data_allocator::construct(position.cur, value);
+	}
+	return position;
+}
 
 template<typename T,typename Alloc = allocator<T>>
 deque<T,Alloc>::deque()
@@ -694,12 +708,12 @@ void deque<T, Alloc>::emplace_front(Args&& ...args)
 {
 	if (begin_.cur != begin_.first){
 		--begin_;
-		data_allocator::construct(begin_.cur, JStl::forward<Args&&>(args)...);	
+		data_allocator::construct(begin_.cur, JStl::forward<Args>(args)...);	
 	}
 	else{
 		require_capacity(1, true);
 		--begin_;
-		data_allocator::construct(begin_.cur, JStl::forward<Args&&>(args)...);
+		data_allocator::construct(begin_.cur, JStl::forward<Args>(args)...);
 	}
 }
 
@@ -709,7 +723,7 @@ void deque<T, Alloc>::emplace_back(Args&& ...args)
 {
 	//数组a[0]到a[255] end.last指向256 end.cur指向255，且未被构造
 	if (end_.cur != end_.last - 1){
-		data_allocator::construct(end_.cur, JStl::forward<Args&&>(args)...);
+		data_allocator::construct(end_.cur, JStl::forward<Args>(args)...);
 	}
 	else{
 		require_capacity(1, false);
@@ -794,18 +808,28 @@ deque<T, Alloc>::insert(iterator position, value_type&& value)
 	}
 }
 
-//template<typename T, typename Alloc = allocator<T>>
-//void deque<T, Alloc>::insert(iterator position, size_type n, const value_type& value)
-//{
-//
-//}
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::insert(iterator position, size_type n, const value_type& value)
+{
+	const size_type elems_before = position - begin_;
+	if (elems_before < (size() / 2)){
+		require_capacity(n, true);
+	}
+	else{
+		require_capacity(n, false);
+	}
+	for (size_type i = 0; i < n; ++i){
+		insert(position, value);
+	}
+}
 
 template<typename T, typename Alloc = allocator<T>>
 template <class Iter, typename std::enable_if<
 	JStl::is_input_iterator<Iter>::value, int>::type = 0>
 void deque<T, Alloc>::insert(iterator position, Iter first, Iter last)
 {
-	if (last <= first)  return;
+	if (last <= first)  
+		return;
 	const size_type n = JStl::distance(first, last);
 	const size_type elems_before = position - begin_;
 	//如果插入的位置离前面进，就从前面分配内存
@@ -818,7 +842,7 @@ void deque<T, Alloc>::insert(iterator position, Iter first, Iter last)
 	position = begin_ + elems_before;
 	auto cur = --last;
 	for (size_type i = 0; i < n; ++i, --cur){
-		insert(position, *cur);
+		position = insert(position, *cur);
 	}
 }
 //
