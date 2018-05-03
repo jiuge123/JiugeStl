@@ -14,15 +14,15 @@
 using std::cout;
 using std::endl;
 using namespace JStl;
+void ff(){
+	deque<int> a;
+}
+
 int main()
 {
-	std::deque<int> f;
-	vector<int> ff{ 6, 7, 8 };
-	int k = 54;
-	deque<int> a{ 1, 2, 3, 4 };
-	cout<<*a.insert(a.begin()+1, 33);
-	for (auto c : a)
-		cout << c<<endl;
+	for (int k = 1; k < 1000000000; k++){
+		ff();
+	}
 
 	system("pause");
 }

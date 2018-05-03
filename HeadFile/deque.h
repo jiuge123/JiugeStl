@@ -307,6 +307,8 @@ public:
 
 	deque& operator=(std::initializer_list<value_type> l);
 
+	~deque();
+
 public:
 	//迭代器相关操作
 	iterator begin()
@@ -369,18 +371,34 @@ public:
 		return rend();
 	}
 public:
-	//普通函数
-
-	// 减小容器容量
-	void shrink_to_fit();
+	//简单函数
 	
 	size_type size()
 	{
 		return end_ - begin_;
 	}
 
+	void swap(deque& rhs)
+	{
+		if (this != &rhs){
+			JStl::swap(begin_, rhs.begin_);
+			JStl::swap(end_, rhs.end_);
+			JStl::swap(map_, rhs.map_);
+			JStl::swap(map_size_, rhs.map_size_);
+		}
+	}
+
+	void empty()
+	{
+		return begin_ == end_;
+	}
+
+
 public:
-	//成员函数
+	//复杂函数
+	// 减小容器容量
+	void shrink_to_fit();
+
 	template <class ...Args>
 	void emplace_front(Args&& ...args);
 	
@@ -674,19 +692,41 @@ deque<T, Alloc>::operator=(const deque& rhs)
 	return *this;
 }
 
-//template<typename T, typename Alloc = allocator<T>>
-//deque<T, Alloc>&
-//deque<T, Alloc>::operator=(deque&& rhs)
-//{
-//
-//}
-//
-//template<typename T, typename Alloc = allocator<T>>
-//deque<T, Alloc>&
-//deque<T, Alloc>::operator= (std::initializer_list<value_type> l)
-//{
-//
-//}
+template<typename T, typename Alloc = allocator<T>>
+deque<T, Alloc>&
+deque<T, Alloc>::operator=(deque&& rhs)
+{
+	if (&rhs != this){
+		clear();
+		begin_ = JStl::move(rhs.begin_);
+		end_ = JStl::move(rhs.end_);
+		map_ = rhs.map_;
+		map_size_ = rhs.map_size_;
+		rhs.map_ = nullptr;
+		rhs.map_size_ = 0;
+	}
+	return *this;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+deque<T, Alloc>&
+deque<T, Alloc>::operator= (std::initializer_list<value_type> l)
+{
+	deque tmp(l);
+	swap(tmp);
+	return *this;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+deque<T, Alloc>::~deque()
+{
+	clear();
+	data_allocator::deallocate(*begin_.node, buffer_size);
+	*begin_.node = nullptr;
+	map_allocator::deallocate(map_, map_size_);
+	map_ = nullptr;
+	map_size_ = 0;
+}
 
 template<typename T, typename Alloc = allocator<T>>
 void deque<T, Alloc>::shrink_to_fit() 
@@ -845,38 +885,34 @@ void deque<T, Alloc>::insert(iterator position, Iter first, Iter last)
 		position = insert(position, *cur);
 	}
 }
-//
-//template<typename T, typename Alloc = allocator<T>>
-//typename deque<T,Alloc>::iterator
-//deque<T, Alloc>::erase(iterator first, iterator last)
-//{
-//	if (first == begin_ && last == end_)
-//	{
-//		clear();
-//		return end_;
-//	}
-//	else
-//	{
-//		const size_type len = last - first;
-//		const size_type elems_before = first - begin_;
-//		if (elems_before < ((size() - len) / 2))
-//		{
-//			JStl::copy_backward(begin_, first, last);
-//			auto new_begin = begin_ + len;
-//			data_allocator::destroy(begin_.cur, new_begin.cur);
-//			begin_ = new_begin;
-//		}
-//		else
-//		{
-//			JStl::copy(last, end_, first);
-//			auto new_end = end_ - len;
-//			data_allocator::destroy(new_end.cur, end_.cur);
-//			end_ = new_end;
-//		}
-//		return begin_ + elems_before;
-//	}
-//}
-//
+
+template<typename T, typename Alloc = allocator<T>>
+typename deque<T,Alloc>::iterator
+deque<T, Alloc>::erase(iterator first, iterator last)
+{
+	if (first == begin_ && last == end_){
+		clear();
+		return end_;
+	}
+	else{
+		const size_type len = last - first;
+		const size_type elems_before = first - begin_;
+		if (elems_before < ((size() - len) / 2)){
+			JStl::move_backward(begin_, first, last);
+			auto new_begin = begin_ + len;
+			data_allocator::destroy(begin_.cur, new_begin.cur);
+			begin_ = new_begin;
+		}
+		else{
+			JStl::move(last, end_, first);
+			auto new_end = end_ - len;
+			data_allocator::destroy(new_end.cur, end_.cur);
+			end_ = new_end;
+		}
+		return begin_ + elems_before;
+	}
+}
+
 template<typename T, typename Alloc = allocator<T>>
 void deque<T, Alloc>::clear()
 {

@@ -27,7 +27,7 @@ OutputIterator __unchecked_copy_cat(RandomIterator first, RandomIterator last,
 	while (n-- > 0){
 		*result = *first;
 		++first;
-		++last;
+		++result;
 	}
 	return result;
 }

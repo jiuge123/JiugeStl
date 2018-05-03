@@ -325,7 +325,7 @@ public:
 		return rend();
 	}
 public:
-	//普通函数
+	//简单函数
 	void swap(list &rhs)
 	{
 		JStl::swap(node_, rhs.node_);
@@ -372,7 +372,7 @@ public:
 	}
 
 public:
-	//成员函数
+	//复杂函数
 	void assign(size_type n, const value_type& value);
 	template <class Iter, typename std::enable_if<
 		JStl::is_input_iterator<Iter>::value, int>::type = 0>
