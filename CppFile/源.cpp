@@ -14,15 +14,12 @@
 using std::cout;
 using std::endl;
 using namespace JStl;
-void ff(){
-	deque<int> a;
-}
-
 int main()
 {
-	for (int k = 1; k < 1000000000; k++){
-		ff();
+	deque<int> a{ 1, 2, 3 };
+	a.assign(1,5);
+	for (auto c : a){
+		cout << c;
 	}
-
 	system("pause");
 }

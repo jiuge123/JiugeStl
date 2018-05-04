@@ -273,6 +273,12 @@ private:
 	template <class Iter>
 	void copy_init(Iter first, Iter last, forward_iterator_tag);
 
+	void fill_assign(size_type n, const value_type& value);
+	template <class Iter>
+	void copy_assign(Iter first, Iter last, input_iterator_tag);
+	template <class Iter>
+	void copy_assign(Iter first, Iter last, forward_iterator_tag);
+
 	//在头部更换map_
 	void reallocate_map_at_front(size_type need_buffer);
 	void reallocate_map_at_back(size_type need_buffer);
@@ -388,16 +394,63 @@ public:
 		}
 	}
 
-	void empty()
+	bool empty()
 	{
 		return begin_ == end_;
 	}
 
+	reference operator[](size_type n)
+	{
+		assert(n < size());
+		return begin_[n];
+	}
+
+	const_reference operator[](size_type n) const 
+	{
+		assert(n < size());
+		return begin_[n];
+	}
+
+	reference at(size_type n) 
+	{
+		return (*this)[n];
+	}
+
+	const_reference at(size_type n) const 
+	{
+		return (*this)[n];
+	}
+
+	reference front()
+	{
+		assert(!empty());
+		return begin_[0];
+	}
+
+	const_reference front() const 
+	{
+		assert(!empty());
+		return *begin_;
+	}
+
+	reference back()
+	{
+		assert(!empty());
+		return *(end_ - 1);
+	}
+
+	const_reference back() const
+	{
+		assert(!empty());
+		return *(end_ - 1);
+	}
 
 public:
 	//复杂函数
 	// 减小容器容量
 	void shrink_to_fit();
+
+	void assign(size_type n, const value_type& value);
 
 	template <class ...Args>
 	void emplace_front(Args&& ...args);
@@ -420,6 +473,8 @@ public:
 
 	iterator erase(iterator first, iterator last);
 
+	void resize(size_type new_size);
+	void resize(size_type new_size, const value_type& value);
 	void clear();
 };
 
@@ -523,6 +578,54 @@ void deque<T, Alloc>::copy_init(Iter first, Iter last, forward_iterator_tag)
 		first = next;
 	}
 	JStl::uninitialized_copy(first, last, end_.first);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::fill_assign(size_type n, const value_type& value)
+{
+	if (n > size()){
+		JStl::fill_n(begin_, size(), value);
+		insert(end_, n - size(), value);
+	}
+	else{
+		JStl::fill_n(begin_, n, value);
+		erase(begin_ + n, end_);
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Iter>
+void deque<T, Alloc>::copy_assign(Iter first, Iter last, input_iterator_tag)
+{
+	auto begin = begin_;
+	auto end = end_;
+	for (; begin != end && first1 != last1; ++begin, ++first1){
+		*begin = *first;
+	}
+	if (begin != end){
+		//插入数目小于原有数目
+		erase(first1, last1);
+	}
+	else{
+		insert(end_, first, last);
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Iter>
+void deque<T, Alloc>::copy_assign(Iter first, Iter last, forward_iterator_tag)
+{
+	const size_type len1 = size();
+	const size_type len2 = JStl::distance(first, last);
+	if (len1 < len2){
+		auto next = first;
+		JStl::advance(next, len1);
+		JStl::copy(first, next, begin_);
+		insert(end_, next, last);
+	}
+	else{
+		erase(JStl::copy(first, last, begin_), end_);
+	}
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -743,6 +846,12 @@ void deque<T, Alloc>::shrink_to_fit()
 }
 
 template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::assign(size_type n, const value_type& value)
+{
+	fill_assign(n, value);
+}
+
+template<typename T, typename Alloc = allocator<T>>
 template <class ...Args>
 void deque<T, Alloc>::emplace_front(Args&& ...args)
 {
@@ -910,6 +1019,27 @@ deque<T, Alloc>::erase(iterator first, iterator last)
 			end_ = new_end;
 		}
 		return begin_ + elems_before;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::resize(size_type new_size)
+{
+	resize(new_size, value_type());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void deque<T, Alloc>::resize(size_type new_size, const value_type& value)
+{
+	auto size = size();
+	if (size = new_size){
+		return;
+	}
+	else if(new_size > size){
+		insert(end_, new_size, value);
+	}
+	else{
+		erase(end_ - (size_ - new_size), end_);
 	}
 }
 
