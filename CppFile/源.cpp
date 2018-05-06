@@ -16,10 +16,11 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	deque<int> a{ 1, 2, 3 };
-	a.assign(1,5);
+	deque<int> a{ 1, 23, 56 };
+	list<int> b{ 1, 23, 56 };
+	a.insert(a.begin(),{ 2, 4, 5 });
 	for (auto c : a){
-		cout << c;
+		cout << c<<endl;
 	}
 	system("pause");
 }
