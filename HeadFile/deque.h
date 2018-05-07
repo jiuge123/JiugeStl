@@ -379,7 +379,7 @@ public:
 public:
 	//简单函数
 	
-	size_type size()
+	size_type size() const
 	{
 		return end_ - begin_;
 	}
@@ -394,7 +394,7 @@ public:
 		}
 	}
 
-	bool empty()
+	bool empty() const
 	{
 		return begin_ == end_;
 	}
@@ -479,6 +479,7 @@ public:
 	void insert(iterator pos, Iter first, Iter last);
 	void insert(iterator pos, std::initializer_list<value_type> l);
 
+	iterator erase(iterator pos);
 	iterator erase(iterator first, iterator last);
 
 	void resize(size_type new_size);
@@ -1003,7 +1004,7 @@ deque<T, Alloc>::insert(iterator pos, value_type&& value)
 		return tmp;
 	}
 	else{
-		return insert_aux(pos, value);
+		return insert_aux(pos, JStl::forward<value_type>(value));
 	}
 }
 
@@ -1047,6 +1048,15 @@ template<typename T, typename Alloc = allocator<T>>
 void deque<T, Alloc>::insert(iterator pos, std::initializer_list<value_type> l)
 {
 	insert(pos, l.begin(), l.end());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename deque<T, Alloc>::iterator
+deque<T, Alloc>::erase(iterator pos)
+{
+	auto tmp = copy(pos + 1, end_, pos);
+	pop_back();
+	return tmp;
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -1114,6 +1124,51 @@ void deque<T, Alloc>::clear()
 	}
 	shrink_to_fit();
 	end_ = begin_;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator==(const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs)
+{
+	return lhs.size() == rhs.size() &&
+		JStl::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator<(const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs)
+{
+	return JStl::lexicographical_compare(
+		lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator!=(const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs)
+{
+	return !(lhs == rhs);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator>(const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs)
+{
+	return rhs < lhs;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator<=(const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs)
+{
+	return !(rhs < lhs);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator>=(const deque<T, Alloc>& lhs, const deque<T, Alloc>& rhs)
+{
+	return !(lhs < rhs);
+}
+
+// 重载 mystl 的 swap
+template<typename T, typename Alloc = allocator<T>>
+void swap(deque<T, Alloc>& lhs, deque<T, Alloc>& rhs)
+{
+	lhs.swap(rhs);
 }
 
 }//namespace JStl

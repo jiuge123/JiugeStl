@@ -16,11 +16,9 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	deque<int> a{ 1, 23, 56 };
-	list<int> b{ 1, 23, 56 };
-	a.insert(a.begin(),{ 2, 4, 5 });
-	for (auto c : a){
-		cout << c<<endl;
-	}
+	deque<int> a{ 23, 56 };
+	deque<int> b{ 1, 23, 56 };
+	cout << (a > b);
+	
 	system("pause");
 }
