@@ -71,6 +71,7 @@
     <ClInclude Include="..\HeadFile\algobase.h" />
     <ClInclude Include="..\HeadFile\allocator.h" />
     <ClInclude Include="..\HeadFile\alloc.h" />
+    <ClInclude Include="..\HeadFile\array.h" />
     <ClInclude Include="..\HeadFile\construct.h" />
     <ClInclude Include="..\HeadFile\deque.h" />
     <ClInclude Include="..\HeadFile\functional.h" />

@@ -5,10 +5,13 @@
 #include"../HeadFile/deque.h"
 #include"../HeadFile/functional.h"
 #include"../HeadFile/util.h"
+#include"../HeadFile/array.h"
 #include<iostream>
 #include<deque>
+#include<string>
 #include<vector>
 #include<list>
+#include<array>
 #include<algorithm>
 #include<forward_list>
 using std::cout;
@@ -16,9 +19,9 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	deque<int> a{ 23, 56 };
-	deque<int> b{ 1, 23, 56 };
-	cout << (a > b);
-	
+	array<int, 3> d;
+	for (auto c : d){
+		cout << c;
+	}
 	system("pause");
 }
