@@ -401,14 +401,16 @@ public:
 
 	reference operator[](size_type n)
 	{
-		assert(n < size());
-		return begin_[n];
+		if(n < size());
+			return begin_[n];
+		throw std::out_of_range("deque_index_out_of_range");
 	}
 
 	const_reference operator[](size_type n) const 
 	{
-		assert(n < size());
-		return begin_[n];
+		if(n < size());
+			return begin_[n];
+		throw std::out_of_range("deque_index_out_of_range");
 	}
 
 	reference at(size_type n) 

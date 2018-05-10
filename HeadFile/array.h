@@ -34,8 +34,18 @@ private:
 	pointer  elem_;
 
 public:
-	array() : elem_(data_allocator::allocate(Size))
-	{}
+	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
+	array();
+
+	array(const array& rhs);
+
+	array(array&& rhs);
+
+	array& operator=(const array& rhs);
+
+	array& operator=(array&& rhs);
+
+	~array();
 
 public:
 	//迭代器相关操作
@@ -98,7 +108,130 @@ public:
 	{
 		return rend();
 	}
+
+public:
+	//简单函数
+	size_type size() const 
+	{
+		return Size;
+	}
+
+	size_type max_size() const
+	{
+		return Size;
+	}
+
+	void swap(array& rhs)
+	{
+		JStl::swap(rhs.elem_, elem_);
+	}
+
+	reference operator[](size_type i)
+	{
+		if(i < Size)
+			return *(elem_ + i);
+		throw std::out_of_range("array_index_out_of_range");
+	}
+
+	const_reference operator[](size_type i) const
+	{
+		if (i < Size)
+			return *(elem_ + i);
+		throw std::out_of_range("array_index_out_of_range");
+	}
+
+	reference at(size_type i)
+	{
+		return elem_[i];
+	}
+
+	const_reference at(size_type i) const
+	{
+		return elem_[i];
+	}
+
+	reference front()
+	{
+		return elem_[0];
+	}
+
+	const_reference front() const
+	{
+		return elem_[0];
+	}
+
+	reference back()
+	{
+		return elem_[Size - 1];
+	}
+
+	const_reference back() const
+	{
+		return elem_[Size - 1];
+	}
+
+	pointer data()
+	{
+		return elem_;
+	}
+
+public:
+	//复杂函数
+	void assign(value_type value);
+
+	void fill(value_type value);
 };
+
+template<typename T, size_t Size>
+array<T, Size>::array() : elem_(data_allocator::allocate(Size))
+{}
+
+template<typename T, size_t Size>
+array<T, Size>::array(const array& rhs) : elem_(data_allocator::allocate(Size))
+{
+	for (size_t i = 0; i < Size; ++i){
+		data_allocator::construct(elem_,rhs[i]);
+		++elem_;
+	}
+	elem_ -= Size;
+}
+
+template<typename T, size_t Size>
+array<T, Size>& 
+array<T, Size>::operator=(const array& rhs)
+{
+	JStl::copy(rhs.begin(), rhs.end(), elem_);
+	return *this;
+}
+
+template<typename T, size_t Size>
+array<T, Size>& 
+array<T, Size>::operator=(array&& rhs)
+{
+	if (&rhs != this)
+		elem_ = rhs.begin();
+	return *this;
+}
+
+template<typename T, size_t Size>
+array<T, Size>::~array()
+{
+	data_allocator::destroy(elem_, elem_ + Size);
+	data_allocator::deallocate(elem_);
+}
+
+template<typename T,size_t Size>
+void array<T, Size>::assign(value_type value)
+{
+	uninitialized_fill_n(elem_, Size, value);
+}
+
+template<typename T, size_t Size>
+void array<T, Size>::fill(value_type value)
+{
+	uninitialized_fill_n(elem_, Size, value);
+}
+
 
 }//namespace JStl
 #endif

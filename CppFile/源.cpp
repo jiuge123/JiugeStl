@@ -17,11 +17,10 @@
 using std::cout;
 using std::endl;
 using namespace JStl;
+
 int main()
 {
+	fuct();
 	array<int, 3> d;
-	for (auto c : d){
-		cout << c;
-	}
 	system("pause");
 }
