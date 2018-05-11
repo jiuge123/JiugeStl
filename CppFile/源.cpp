@@ -20,7 +20,10 @@ using namespace JStl;
 
 int main()
 {
-	fuct();
-	array<int, 3> d;
+
+	array<int, 3> d,f;
+	d.assign(3);
+	f.assign(5);
+	cout << (d >= f);
 	system("pause");
 }
