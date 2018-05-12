@@ -43,7 +43,7 @@ struct list_node
 //iterator
 
 template <class T>
-struct list_iterator :public random_access_iterator_tag
+struct list_iterator :public bidrection_iterator_tag
 {
 	typedef bidrection_iterator_tag			  iterator_category;
 	typedef T                                 value_type;
@@ -113,7 +113,7 @@ struct list_iterator :public random_access_iterator_tag
 };
 
 template <class T>
-struct list_const_iterator :public random_access_iterator_tag
+struct list_const_iterator :public bidrection_iterator_tag
 {
 	typedef bidrection_iterator_tag			  iterator_category;
 	typedef T                                 value_type;

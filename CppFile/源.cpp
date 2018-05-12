@@ -6,6 +6,7 @@
 #include"../HeadFile/functional.h"
 #include"../HeadFile/util.h"
 #include"../HeadFile/array.h"
+#include"../HeadFile/forward_list.h"
 #include<iostream>
 #include<deque>
 #include<string>
@@ -17,13 +18,13 @@
 using std::cout;
 using std::endl;
 using namespace JStl;
-
 int main()
 {
-
-	array<int, 3> d,f;
-	d.assign(3);
-	f.assign(5);
-	cout << (d >= f);
+	list<int> f(3,3);
+	flist_iterator<int> ff;
+	*ff = 5;
+	flist_const_iterator<int> fff;
+	*fff = 5;
+	cout << *f.begin();
 	system("pause");
 }

@@ -8,7 +8,7 @@
 #include "uninitialized.h"
 #include "allocator.h"
 
-//包含array
+//包含array,对数组的简单封装
 
 namespace JStl{
 

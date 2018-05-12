@@ -74,6 +74,7 @@
     <ClInclude Include="..\HeadFile\array.h" />
     <ClInclude Include="..\HeadFile\construct.h" />
     <ClInclude Include="..\HeadFile\deque.h" />
+    <ClInclude Include="..\HeadFile\forward_list.h" />
     <ClInclude Include="..\HeadFile\functional.h" />
     <ClInclude Include="..\HeadFile\iterator.h" />
     <ClInclude Include="..\HeadFile\list.h" />
