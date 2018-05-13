@@ -13,51 +13,82 @@
 //包含forwara_list 单向链表
 
 namespace JStl{
-template <class T>
-struct flist_node 
+
+struct _flist_node_base
 {
-	typedef flist_node<T>* node_ptr;
+	_flist_node_base *next;
+};
 
-	node_ptr next;
-	T value;
+template<class T>
+struct _flist_node:public _flist_node_base
+{
+	T data;
+};
 
-	flist_node() = default;
+_flist_node_base* _flist_make_link(_flist_node_base *prev, _flist_node_base *newnode)
+{
+	newnode->next = prev->next;
+	prev->next = newnode;
+	return newnode;
+}
 
-	flist_node(const T &v) :value(v){}
+size_t _slist_size(_flist_node_base *node)
+{
+	size_t n = 0;
+	for (; node != nullptr; node = node->next)
+		++n;
+	return n;
+}
 
-	flist_node(T &&v) :value(move(v)){}
+struct _flist_iterator_base:public forward_iterator_tag
+{
+	typedef size_t					size_type;
+	typedef ptrdiff_t				difference_type;
+	typedef forward_iterator_tag	iterator_category;
 
-	node_ptr self()
+	_flist_node_base *node;
+
+	_flist_iterator_base(_flist_node_base *x) :node(x)
+	{}
+	
+	void incr()
 	{
-		return static_cast<node_ptr>(&*this);
+		node = node->next;
+	}
+
+	bool operator==(const _flist_iterator_base& x) const{
+		return node == x.node;
+	}
+
+	bool operator!=(const _flist_iterator_base& x) const{
+		return !(node == x.node);
 	}
 };
 
-//iterator
-
-template <class T>
-struct flist_iterator :public forward_iterator_tag
+template<typename T, typename Ref, typename Ptr>
+struct flist_iterator :public _flist_iterator_base
 {
-	typedef forward_iterator_tag			  iterator_category;
-	typedef T                                 value_type;
-	typedef T*                                pointer;
-	typedef T&                                reference;
-	typedef ptrdiff_t						  difference_type;
+	typedef flist_iterator<T, T&, T*>				iterator;
+	typedef flist_iterator<T, const T&, const T*>	const_iterator;
+	typedef flist_iterator							self;
 
-	typedef flist_node<T>*					  node_ptr;
-	typedef flist_iterator<T>                 self;
+	typedef T				value_type;
+	typedef Ptr				pointer;
+	typedef Ref				reference;
+	typedef _flist_node<T>  list_node;
 
-	node_ptr node_;
+	flist_iterator() :_flist_iterator_base(nullptr)
+	{}
 
-	flist_iterator() = default;
+	flist_iterator(list_node *x) :_flist_iterator_base(x)
+	{}
 
-	flist_iterator(node_ptr x) :node_(x) {}
-
-	flist_iterator(const flist_iterator& rhs) :node_(rhs.node_) {}
+	flist_iterator(const list_iterator *x) :_flist_iterator_base(x.node)
+	{}
 
 	reference operator*() const
 	{
-		return node_->value;
+		return (static_cast<list_node*>(node))->data;
 	}
 
 	pointer operator->() const
@@ -68,86 +99,42 @@ struct flist_iterator :public forward_iterator_tag
 	self& operator++()
 	{
 		assert(node_ != nullptr);
-		node_ = node_->next;
+		incr();
 		return *this;
 	}
 
 	self operator++(int)
 	{
 		self tmp = *this;
-		++*this;
+		incr();
 		return tmp;
-	}
-
-	bool operator==(const self& rhs) const
-	{
-		return node_ == rhs.node_;
-	}
-
-	bool operator!=(const self& rhs) const
-	{
-		return node_ != rhs.node_;
-	}
-
-};
-
-template <class T>
-struct flist_const_iterator :public forward_iterator_tag
-{
-	typedef forward_iterator_tag			  iterator_category;
-	typedef T                                 value_type;
-	typedef const T*                          pointer;
-	typedef const T&                          reference;
-	typedef ptrdiff_t						  difference_type;
-
-	typedef flist_node<T>*					  node_ptr;
-	typedef flist_const_iterator<T>           self;
-
-	node_ptr node_;
-
-	flist_const_iterator() = default;
-
-	flist_const_iterator(node_ptr x) :node_(x) {}
-
-	flist_const_iterator(const list_iterator<T>& rhs) :node_(rhs.node_) {}
-
-	flist_const_iterator(const flist_const_iterator<T>& rhs) :node_(rhs.node_) {}
-
-	reference operator*() const
-	{
-		return node_->value;
-	}
-
-	pointer operator->() const
-	{
-		return &(operator*());
-	}
-
-	self& operator++()
-	{
-		assert(node_ != nullptr);
-		node_ = node_->next;
-		return *this;
-	}
-
-	self operator++(int)
-	{
-		self tmp = *this;
-		++*this;
-		return tmp;
-	}
-
-	bool operator==(const self& rhs) const
-	{
-		return node_ == rhs.node_;
-	}
-
-	bool operator!=(const self& rhs) const
-	{
-		return node_ != rhs.node_;
 	}
 };
 
+template<typename T, typename Alloc = allocator<T>>
+class forward_list{
+public:
+	typedef JStl::allocator<T>							data_allocator;
+	typedef JStl::allocator<_flist_node<T>>				node_allocator;
+
+	typedef typename allocator<T>::value_type			value_type;
+	typedef typename allocator<T>::pointer				pointer;
+	typedef typename allocator<T>::const_pointer		const_pointer;
+	typedef typename allocator<T>::reference			reference;
+	typedef typename allocator<T>::const_reference		const_reference;
+	typedef typename allocator<T>::size_type			size_type;
+	typedef typename allocator<T>::difference_type		difference_type;
+
+	typedef JStl::flist_iterator<T,T&,T*>				iterator;
+	typedef JStl::flist_iterator<T,const T&,const T*>         
+														const_iterator;
+	typedef JStl::reverse_iterator<iterator>			reverse_iterator;
+	typedef JStl::reverse_iterator<const_iterator>		const_reverse_iterator;
+
+	typedef	_flist_node_base			flist_node_base;
+	typedef	_flist_node<T>				flist_node;
+	typedef	_flist_iterator_base		iterator_base;
+};
 }
 
 #endif

@@ -20,11 +20,6 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	list<int> f(3,3);
-	flist_iterator<int> ff;
-	*ff = 5;
-	flist_const_iterator<int> fff;
-	*fff = 5;
-	cout << *f.begin();
+	std::forward_list<int> a(7);
 	system("pause");
 }
