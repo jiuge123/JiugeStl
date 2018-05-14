@@ -133,8 +133,131 @@ public:
 
 	typedef	_flist_node_base			flist_node_base;
 	typedef	_flist_node<T>				flist_node;
+	typedef _flist_node<T>*				node_ptr;
 	typedef	_flist_iterator_base		iterator_base;
+
+private:
+	flist_node_base head;
+
+private:
+	template<class... Args>
+	node_ptr create_node(Args&& ...args);
+
+	void destroy_node(node_ptr node);
+
+public:
+	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
+	forward_list();
+
+	forward_list(size_type n);
+
+	forward_list(size_type n, const value_type& v);
+
+	template<typename Iter, typename std::enable_if<
+		JStl::is_input_iterator<Iter>::value, int>::type = 0>
+	forward_list(Iter first, Iter last);
+
+	forward_list(std::initializer_list<T> l);
+
+	forward_list(const forward_list& rhs);
+
+	forward_list(forward_list &&rhs);
+
+	forward_list& operator=(const forward_list& rhs);
+
+	forward_list& operator=(forward_list &&rhs);
+
+	forward_list& operator=(std::initializer_list<T> l);
+
+	~forward_list();
+
 };
+
+template<typename T, typename Alloc = allocator<T>>
+template<class... Args>
+typename forward_list<T, Alloc>::node_ptr
+forward_list<T, Alloc>::create_node(Args&& ...args)
+{
+	node_ptr node = node_allocator::allocate();
+	node_allocator::construct(node, JStl::forward<Args>(args)...);
+	node->next = nullptr;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::destroy_node(node_ptr node)
+{
+	node_allocator::destroy(node);
+	node_allocator::deallocate(node);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>::forward_list()
+{
+	head.next = nullptr;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>::forward_list(size_type n)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>::forward_list(size_type n, const value_type& v)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template<typename Iter, typename std::enable_if<
+	JStl::is_input_iterator<Iter>::value, int>::type = 0>
+forward_list<T, Alloc>::forward_list(Iter first, Iter last)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>::forward_list(std::initializer_list<T> l)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>::forward_list(const forward_list& rhs)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>::forward_list(forward_list &&rhs)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>& forward_list<T, Alloc>::operator=(const forward_list& rhs)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>& forward_list<T, Alloc>::operator=(forward_list &&rhs)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>& forward_list<T, Alloc>::operator=(std::initializer_list<T> l)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>::~forward_list()
+{
+	
+}
+
 }
 
 #endif

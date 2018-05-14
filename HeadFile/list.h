@@ -250,7 +250,7 @@ public:
 		JStl::is_input_iterator<Iter>::value, int>::type = 0>
 	list(Iter first,Iter last);
 
-	list(const std::initializer_list<T>& l);
+	list(std::initializer_list<T> l);
 
 	list(const list& rhs);
 
@@ -686,7 +686,7 @@ list<T, Alloc>::list(Iter first, Iter last)
 }
 
 template<typename T, typename Alloc = allocator<T>>
-list<T, Alloc>::list(const std::initializer_list<T> &l)
+list<T, Alloc>::list(std::initializer_list<T> l)
 {
 	copy_init(l.begin(), l.end());
 }
