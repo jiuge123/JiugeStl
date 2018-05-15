@@ -21,6 +21,9 @@ using namespace JStl;
 int main()
 {
 	std::forward_list<int> a(3,5);
-	forward_list<int> b;
+	forward_list<int> b(2);
+	for (auto c : b){
+		cout << c;
+	}
 	system("pause");
 }

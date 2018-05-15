@@ -22,6 +22,9 @@ struct _flist_node_base
 template<class T>
 struct _flist_node:public _flist_node_base
 {
+	_flist_node(T x) :data(x)
+	{}
+
 	T data;
 };
 
@@ -46,22 +49,22 @@ struct _flist_iterator_base:public forward_iterator_tag
 	typedef ptrdiff_t				difference_type;
 	typedef forward_iterator_tag	iterator_category;
 
-	_flist_node_base *node;
+	_flist_node_base *node_;
 
-	_flist_iterator_base(_flist_node_base *x) :node(x)
+	_flist_iterator_base(_flist_node_base *x) :node_(x)
 	{}
 	
 	void incr()
 	{
-		node = node->next;
+		node_ = node_->next;
 	}
 
 	bool operator==(const _flist_iterator_base& x) const{
-		return node == x.node;
+		return node_ == x.node_;
 	}
 
 	bool operator!=(const _flist_iterator_base& x) const{
-		return !(node == x.node);
+		return !(node_ == x.node_);
 	}
 };
 
@@ -75,20 +78,22 @@ struct flist_iterator :public _flist_iterator_base
 	typedef T				value_type;
 	typedef Ptr				pointer;
 	typedef Ref				reference;
-	typedef _flist_node<T>  list_node;
+	typedef _flist_node<T>  flist_node;
+
+	flist_node *node_;
 
 	flist_iterator() :_flist_iterator_base(nullptr)
 	{}
 
-	flist_iterator(list_node *x) :_flist_iterator_base(x)
+	flist_iterator(flist_node *x) :_flist_iterator_base(x)
 	{}
 
-	flist_iterator(const list_iterator *x) :_flist_iterator_base(x.node)
+	flist_iterator(const flist_iterator<T, T&, T*> *x) :_flist_iterator_base(x.node)
 	{}
 
 	reference operator*() const
 	{
-		return (static_cast<list_node*>(node))->data;
+		return node_->data;
 	}
 
 	pointer operator->() const
@@ -126,18 +131,15 @@ public:
 	typedef typename allocator<T>::difference_type		difference_type;
 
 	typedef JStl::flist_iterator<T,T&,T*>				iterator;
-	typedef JStl::flist_iterator<T,const T&,const T*>         
-														const_iterator;
-	typedef JStl::reverse_iterator<iterator>			reverse_iterator;
-	typedef JStl::reverse_iterator<const_iterator>		const_reverse_iterator;
-
+	typedef JStl::flist_iterator<T,const T&,const T*>   const_iterator;
+														
 	typedef	_flist_node_base			flist_node_base;
 	typedef	_flist_node<T>				flist_node;
 	typedef _flist_node<T>*				node_ptr;
 	typedef	_flist_iterator_base		iterator_base;
 
 private:
-	flist_node_base head;
+	flist_node_base head_;
 
 private:
 	template<class... Args>
@@ -170,6 +172,37 @@ public:
 	forward_list& operator=(std::initializer_list<T> l);
 
 	~forward_list();
+public:
+	//迭代器相关操作
+	iterator begin()
+	{
+		return iterator((node_ptr)head_.next);
+	}
+
+	const_iterator begin() const
+	{
+		return iterator((node_ptr)head_.next);
+	}
+
+	iterator end()
+	{
+		return iterator();
+	}
+
+	const_iterator end() const
+	{
+		return iterator();
+	}
+
+	const_iterator cbegin() const
+	{
+		return begin();
+	}
+
+	const_iterator cend() const
+	{
+		return end();
+	}
 
 };
 
@@ -181,6 +214,7 @@ forward_list<T, Alloc>::create_node(Args&& ...args)
 	node_ptr node = node_allocator::allocate();
 	node_allocator::construct(node, JStl::forward<Args>(args)...);
 	node->next = nullptr;
+	return node;
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -193,13 +227,18 @@ void forward_list<T, Alloc>::destroy_node(node_ptr node)
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::forward_list()
 {
-	head.next = nullptr;
+	head_.next = nullptr;
 }
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::forward_list(size_type n)
 {
-
+	auto p = &head_;
+	while (n--){
+		auto node = create_node(value_type());
+		_flist_make_link(p, node);
+		p = p->next;
+	}
 }
 
 template<typename T, typename Alloc = allocator<T>>
