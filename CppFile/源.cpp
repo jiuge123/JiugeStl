@@ -23,7 +23,8 @@ int main()
 	std::forward_list<int> d{ 1, 2, 3 };
 	std::forward_list<int> a(d.begin(),d.end());
 	forward_list<int> g(3, 5);
-	forward_list<int> b(g);
+	forward_list<int> b = g;
+	b.assign({ 1, 2, 3 });
 	for (auto c : b){
 		cout << c;
 	}

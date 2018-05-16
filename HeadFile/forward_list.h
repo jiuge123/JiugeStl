@@ -24,7 +24,6 @@ struct _flist_node:public _flist_node_base
 {
 	_flist_node(T value) :data(value)
 	{}
-
 	T data;
 };
 
@@ -203,8 +202,19 @@ public:
 	{
 		return end();
 	}
+public:
+	void swap(forward_list& rhs)
+	{
+		JStl::swap(head_, rhs.head_);
+	}
 
 public:
+	void assign(size_type n, const value_type& value);
+	template <class Iter, typename std::enable_if<
+		JStl::is_input_iterator<Iter>::value, int>::type = 0>
+		void assign(Iter first, Iter last);
+	void assign(std::initializer_list<value_type> il);
+
 	void clear();
 };
 
@@ -245,7 +255,6 @@ void forward_list<T, Alloc>::fill_init(size_type n, const value_type& value)
 	}
 	catch (...){
 		clear();
-		head_.next = nullptr;
 		throw;
 	}
 }
@@ -266,7 +275,6 @@ void forward_list<T, Alloc>::copy_init(Iter first, Iter last)
 	}
 	catch (...){
 		clear();
-		head_.next = nullptr;
 		throw;
 	}
 }
@@ -312,37 +320,73 @@ forward_list<T, Alloc>::forward_list(const forward_list& rhs)
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::forward_list(forward_list &&rhs)
 {
-
+	head_ = rhs.head_;
+	rhs.head_.next = nullptr;
 }
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>& forward_list<T, Alloc>::operator=(const forward_list& rhs)
 {
-
+	clear();
+	copy_init(rhs.begin(),rhs.end());
+	return *this;
 }
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>& forward_list<T, Alloc>::operator=(forward_list &&rhs)
 {
-
+	swap(rhs);
+	rhs.head_.next = nullptr;
+	return *this;
 }
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>& forward_list<T, Alloc>::operator=(std::initializer_list<T> l)
 {
-
+	clear();
+	copy_init(l.begin(), l.end());
+	return *this;
 }
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::~forward_list()
 {
-	
+	clear();
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::assign(size_type n, const value_type& value)
+{
+	clear();
+	fill_init(n, value);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Iter, typename std::enable_if<
+	JStl::is_input_iterator<Iter>::value, int>::type = 0>
+void forward_list<T, Alloc>::assign(Iter first, Iter last)
+{
+	clear();
+	copy_init(first,last);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::assign(std::initializer_list<value_type> l)
+{
+	clear();
+	copy_init(l.begin(), l.end());
 }
 
 template<typename T, typename Alloc = allocator<T>>
 void forward_list<T, Alloc>::clear()
 {
-
+	auto p = head_.next;
+	while (p != nullptr){
+		auto pnext = p->next;
+		destroy_node(static_cast<node_ptr>(p));
+		p = pnext;
+	}
+	head_.next = nullptr;
 }
 
 
