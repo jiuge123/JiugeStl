@@ -2,7 +2,7 @@
 #define  JIUGESTL_HEADFILE_FORWARDLIST
 
 #include <cassert>
-
+#include<iostream>
 #include <initializer_list>
 
 #include "iterator.h"
@@ -22,7 +22,7 @@ struct _flist_node_base
 template<class T>
 struct _flist_node:public _flist_node_base
 {
-	_flist_node(T x) :data(x)
+	_flist_node(T value) :data(value)
 	{}
 
 	T data;
@@ -80,20 +80,18 @@ struct flist_iterator :public _flist_iterator_base
 	typedef Ref				reference;
 	typedef _flist_node<T>  flist_node;
 
-	flist_node *node_;
-
 	flist_iterator() :_flist_iterator_base(nullptr)
 	{}
 
 	flist_iterator(flist_node *x) :_flist_iterator_base(x)
 	{}
 
-	flist_iterator(const flist_iterator<T, T&, T*> *x) :_flist_iterator_base(x.node)
+	flist_iterator(const iterator &x) :_flist_iterator_base(x.node_)
 	{}
 
 	reference operator*() const
 	{
-		return node_->data;
+		return ((flist_node*)node_)->data;
 	}
 
 	pointer operator->() const
@@ -103,7 +101,6 @@ struct flist_iterator :public _flist_iterator_base
 
 	self& operator++()
 	{
-		assert(node_ != nullptr);
 		incr();
 		return *this;
 	}
@@ -147,6 +144,9 @@ private:
 
 	void destroy_node(node_ptr node);
 
+	void fill_init(size_type n, const value_type& value);  
+	template<typename Iter>
+	void copy_init(Iter first, Iter last);
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
 	forward_list();
@@ -204,6 +204,8 @@ public:
 		return end();
 	}
 
+public:
+	void clear();
 };
 
 template<typename T, typename Alloc = allocator<T>>
@@ -212,9 +214,15 @@ typename forward_list<T, Alloc>::node_ptr
 forward_list<T, Alloc>::create_node(Args&& ...args)
 {
 	node_ptr node = node_allocator::allocate();
-	node_allocator::construct(node, JStl::forward<Args>(args)...);
-	node->next = nullptr;
-	return node;
+	try{
+		node_allocator::construct(node, JStl::forward<Args>(args)...);
+		node->next = nullptr;
+		return node;
+	}
+	catch (...){
+		node_allocator::deallocate(node);
+		throw;
+	}
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -225,26 +233,60 @@ void forward_list<T, Alloc>::destroy_node(node_ptr node)
 }
 
 template<typename T, typename Alloc = allocator<T>>
-forward_list<T, Alloc>::forward_list()
+void forward_list<T, Alloc>::fill_init(size_type n, const value_type& value)
 {
 	head_.next = nullptr;
+	auto p = &head_;
+	try{
+		for (; n > 0; --n){
+			auto node = create_node(value);
+			p = _flist_make_link(p, node);
+		}
+	}
+	catch (...){
+		clear();
+		head_.next = nullptr;
+		throw;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template<typename Iter>
+void forward_list<T, Alloc>::copy_init(Iter first, Iter last)
+{
+	head_.next = nullptr;
+	auto p = &head_;
+	size_type n = JStl::distance(first, last);
+	try{
+		for (; n > 0; --n){
+			auto node = create_node(*first);
+			p = _flist_make_link(p, node);
+			++first;
+		}
+	}
+	catch (...){
+		clear();
+		head_.next = nullptr;
+		throw;
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+forward_list<T, Alloc>::forward_list()
+{
+	fill_init(0, value_type);
 }
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::forward_list(size_type n)
 {
-	auto p = &head_;
-	while (n--){
-		auto node = create_node(value_type());
-		_flist_make_link(p, node);
-		p = p->next;
-	}
+	fill_init(n, value_type());
 }
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::forward_list(size_type n, const value_type& v)
 {
-
+	fill_init(n, v);
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -252,19 +294,19 @@ template<typename Iter, typename std::enable_if<
 	JStl::is_input_iterator<Iter>::value, int>::type = 0>
 forward_list<T, Alloc>::forward_list(Iter first, Iter last)
 {
-
+	copy_init(first, last);
 }
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::forward_list(std::initializer_list<T> l)
 {
-
+	copy_init(l.begin(), l.end());
 }
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::forward_list(const forward_list& rhs)
 {
-
+	copy_init(rhs.begin(), rhs.end());
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -296,6 +338,13 @@ forward_list<T, Alloc>::~forward_list()
 {
 	
 }
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::clear()
+{
+
+}
+
 
 }
 

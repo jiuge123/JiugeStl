@@ -1,6 +1,6 @@
 #ifndef  JIUGESTL_HEADFILE_ALLOC
 #define  JIUGESTL_HEADFILE_ALLOC
-//内存池实现(跟着stl源码剖析写的)
+//内存池实现
 
 #include<iostream>
 #include<exception>

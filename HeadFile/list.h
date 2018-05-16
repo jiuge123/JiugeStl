@@ -450,8 +450,7 @@ list<T, Alloc>::create_node(Args&& ...args)
 		p->prev = nullptr;
 		p->next = nullptr;
 	}
-	catch (...)
-	{
+	catch (...){
 		node_allocator::deallocate(p);
 		throw;
 	}
