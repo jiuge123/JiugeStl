@@ -20,13 +20,13 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	std::forward_list<int> d{ 1, 2, 3 };
+	std::forward_list<int> d{ 1, 2, 3,6 };
 	std::forward_list<int> a(d.begin(),d.end());
-	forward_list<int> g(3, 5);
+	forward_list<int> g{ 1, 2, 3, 6 };
 	forward_list<int> b = g;
-	b.assign({ 1, 2, 3 });
-	for (auto c : b){
+	cout<<*d.erase_after(d.begin());
+	for (auto c : d)
 		cout << c;
-	}
+	
 	system("pause");
 }
