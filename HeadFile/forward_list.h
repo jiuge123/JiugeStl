@@ -90,6 +90,7 @@ struct flist_iterator :public _flist_iterator_base
 
 	reference operator*() const
 	{
+		assert(node_ != nullptr);
 		return ((flist_node*)node_)->data;
 	}
 
@@ -146,9 +147,11 @@ private:
 	void fill_init(size_type n, const value_type& value);  
 	template<typename Iter>
 	void copy_init(Iter first, Iter last);
+
+	iterator fill_insert(const_iterator pos, size_type n, const value_type& value);
+	template<typename Iter>
+	iterator copy_insert(const_iterator pos, Iter first, Iter last);
 	
-	template<class ...Args>
-	void insert_after(iterator pos,Args&& ...args);
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
 	forward_list();
@@ -216,6 +219,11 @@ public:
 		return iterator(static_cast<node_ptr>(&head_));
 	}
 
+	data_allocator get_allocator()
+	{
+		return data_allocator();
+	}
+
 public:
 	reference front() 
 	{
@@ -257,7 +265,15 @@ public:
 	template<class ...Args>
 	void emplace_front(Args&& ...args);
 
-	//在pos后面删除
+	iterator insert_after(const_iterator pos, const value_type& value);
+	iterator insert_after(const_iterator pos, value_type&& value);
+	iterator insert_after(const_iterator pos, size_type n, const value_type& value);
+	template<typename Iter, typename std::enable_if<
+		JStl::is_input_iterator<Iter>::value, int>::type = 0 >
+	iterator insert_after(const_iterator pos, Iter begin, Iter end);
+	iterator insert_after(const_iterator pos, std::initializer_list<value_type> l);
+
+	//在pos后面删除 返回删除之后的iter
 	iterator erase_after(iterator pos);
 
 	void clear();
@@ -325,11 +341,47 @@ void forward_list<T, Alloc>::copy_init(Iter first, Iter last)
 }
 
 template<typename T, typename Alloc = allocator<T>>
-template<class ...Args>
-void forward_list<T, Alloc>::insert_after(iterator pos,Args&& ...args)
+typename forward_list<T, Alloc>::iterator 
+forward_list<T, Alloc>::fill_insert(const_iterator pos, size_type n, const value_type& value)
 {
-	node_ptr new_node = create_node(JStl::forward<Args>(args)...);
-	_flist_make_link(pos.node_, new_node);
+	auto p = pos.node_;
+	size_type n2 = n;
+	try{
+		for (; n > 0; --n){
+			auto node = create_node(value);
+			p = _flist_make_link(p, node);
+		}
+	}
+	catch (...){
+		for (n = n2 - n; n > 0; --n){
+			erase_after(pos);
+		}
+		throw;
+	}
+	return iterator((++pos).node_);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template<typename Iter>
+typename forward_list<T, Alloc>::iterator
+forward_list<T, Alloc>::copy_insert(const_iterator pos, Iter first, Iter last)
+{
+	auto p = pos.node_;
+	size_type n = JStl::distance(first, last), n2 = n;
+	try{
+		for (; n > 0; --n){
+			auto node = create_node(*first);
+			p = _flist_make_link(p, node);
+			++first;
+		}
+	}
+	catch (...){
+		for (n = n2 - n; n > 0; --n){
+			erase_after(pos);
+		}
+		throw;
+	}
+	return iterator((++pos).node_);
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -435,7 +487,8 @@ template<class ...Args>
 typename forward_list<T, Alloc>::iterator 
 forward_list<T, Alloc>::emplace_after(iterator pos, Args&& ...args)
 {
-	insert_after(pos, JStl::forward<Args>(args)...);
+	node_ptr new_node = create_node(JStl::forward<Args>(args)...);
+	_flist_make_link(pos.node_, new_node);
 	return pos;
 }
 
@@ -443,19 +496,46 @@ template<typename T, typename Alloc = allocator<T>>
 template<class ...Args>
 void forward_list<T, Alloc>::emplace_front(Args&& ...args)
 {
-	insert_after(before_begin(), JStl::forward<Args>(args)...);
+	emplace_after(before_begin(), JStl::forward<Args>(args)...);
 }
 
 template<typename T, typename Alloc = allocator<T>>
-void forward_list<T, Alloc>::clear()
+typename forward_list<T, Alloc>::iterator
+forward_list<T, Alloc>::insert_after(const_iterator pos, const value_type& value)
 {
-	auto p = head_.next;
-	while (p != nullptr){
-		auto pnext = p->next;
-		destroy_node(static_cast<node_ptr>(p));
-		p = pnext;
-	}
-	head_.next = nullptr;
+	return fill_insert(pos, 1, value);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename forward_list<T, Alloc>::iterator
+forward_list<T, Alloc>::insert_after(const_iterator pos, value_type&& value)
+{
+	auto node = create_node(JStl::move(value));
+	_flist_make_link(pos.node_, node);
+	return iterator(static_cast<node_ptr>((++pos).node_));
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename forward_list<T, Alloc>::iterator
+forward_list<T, Alloc>::insert_after(const_iterator pos, size_type n, const value_type& value)
+{
+	return fill_insert(pos, n, value);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template<typename Iter, typename std::enable_if<
+	JStl::is_input_iterator<Iter>::value, int>::type = 0 >
+typename forward_list<T, Alloc>::iterator
+forward_list<T, Alloc>::insert_after(const_iterator pos, Iter begin, Iter end)
+{
+	return copy_insert(pos, begin, end);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+typename forward_list<T, Alloc>::iterator
+forward_list<T, Alloc>::insert_after(const_iterator pos, std::initializer_list<value_type> l)
+{
+	return copy_insert(pos, l.begin(), l.end());
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -468,6 +548,18 @@ forward_list<T, Alloc>::erase_after(iterator pos)
 		destroy_node(static_cast<node_ptr>(p));
 	}
 	return iterator(++pos);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::clear()
+{
+	auto p = head_.next;
+	while (p != nullptr){
+		auto pnext = p->next;
+		destroy_node(static_cast<node_ptr>(p));
+		p = pnext;
+	}
+	head_.next = nullptr;
 }
 
 }
