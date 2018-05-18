@@ -9,6 +9,7 @@
 #include "uninitialized.h"
 #include "allocator.h"
 #include "util.h"
+#include "functional.h"
 
 //包含forwara_list 单向链表
 
@@ -151,6 +152,9 @@ private:
 	iterator fill_insert(const_iterator pos, size_type n, const value_type& value);
 	template<typename Iter>
 	iterator copy_insert(const_iterator pos, Iter first, Iter last);
+
+	void splice_after_aux(const_iterator pos, forward_list& other,
+		const_iterator first, const_iterator last);
 	
 public:
 	//构造，拷贝构造，移动构造，析构，拷贝赋值，移动赋值
@@ -240,15 +244,21 @@ public:
 		JStl::swap(head_, rhs.head_);
 	}
 
-	bool empty()
+	bool empty() const
 	{
 		return head_.next == nullptr;
 	}
 
-	size_type size()
+	size_type size() const
 	{
 		return _flist_size(&head_);
 	}
+
+	size_type max_size() const
+	{
+		return ((size_t)(-1) / sizeof(flist_node));
+	}
+
 
 public:
 	void assign(size_type n, const value_type& value);
@@ -277,6 +287,17 @@ public:
 	iterator erase_after(iterator pos);
 
 	void clear();
+
+public:
+	void splice_after(const_iterator pos, forward_list& other);
+	void splice_after(const_iterator pos, forward_list& other, 
+		const_iterator it);
+	void splice_after(const_iterator pos, forward_list& other, 
+		const_iterator first, const_iterator last);
+
+	void merge(forward_list& x);
+	template <class Compared>
+	void merge(forward_list& x, Compared comp);
 };
 
 template<typename T, typename Alloc = allocator<T>>
@@ -383,6 +404,16 @@ forward_list<T, Alloc>::copy_insert(const_iterator pos, Iter first, Iter last)
 	}
 	return iterator((++pos).node_);
 }
+
+//template<typename T, typename Alloc = allocator<T>>
+//void forward_list<T, Alloc>::splice_after_aux(const_iterator pos, forward_list& other,
+//	const_iterator before_first, const_iterator last)
+//{
+//	pos.node_->next = (++before_first).node_;
+//	before_first.node_->next = last.node_->next;
+//	last.node_->next = nullptr;
+//}
+
 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::forward_list()
@@ -561,6 +592,50 @@ void forward_list<T, Alloc>::clear()
 	}
 	head_.next = nullptr;
 }
+
+//template<typename T, typename Alloc = allocator<T>>
+//void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other)
+//{
+//	auto en = other.begin();
+//	for (; en.node_->next != nullptr; ++en)
+//		;
+//	splice_after_aux(pos, other, other.before_begin(), en);
+//}
+//
+//template<typename T, typename Alloc = allocator<T>>
+//void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other, 
+//	const_iterator it)
+//{
+//
+//}
+//
+//template<typename T, typename Alloc = allocator<T>>
+//void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other,
+//	const_iterator first, const_iterator last)
+//{
+//
+//}
+//
+//template<typename T, typename Alloc = allocator<T>>
+//void forward_list<T, Alloc>::merge(forward_list& x)
+//{
+//	merge(x, JStl::less<>());
+//}
+//
+//template<typename T, typename Alloc = allocator<T>>
+//template <class Compared>
+//void forward_list<T, Alloc>::merge(forward_list& x, Compared comp)
+//{
+//	auto begin1 = before_begin();
+//	auto after1 = begin();
+//	auto end1 = end();
+//	auto begin2 = x.before_begin();
+//	auto after2 = x.begin();
+//	auto end2 = x.end();
+//	for (; be1 != en, be2 != en;){
+//
+//	}
+//}
 
 }
 
