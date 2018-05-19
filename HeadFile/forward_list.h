@@ -56,6 +56,7 @@ struct _flist_iterator_base:public forward_iterator_tag
 	
 	void incr()
 	{
+		assert(node_ != nullptr);
 		node_ = node_->next;
 	}
 
@@ -405,14 +406,25 @@ forward_list<T, Alloc>::copy_insert(const_iterator pos, Iter first, Iter last)
 	return iterator((++pos).node_);
 }
 
-//template<typename T, typename Alloc = allocator<T>>
-//void forward_list<T, Alloc>::splice_after_aux(const_iterator pos, forward_list& other,
-//	const_iterator before_first, const_iterator last)
-//{
-//	pos.node_->next = (++before_first).node_;
-//	before_first.node_->next = last.node_->next;
-//	last.node_->next = nullptr;
-//}
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::splice_after_aux(const_iterator pos, forward_list& other,
+	const_iterator first, const_iterator last)
+{
+	if (this != &other)
+	{	
+		const_iterator next = first;
+		auto old_pos_after = pos.node_->next;
+		for (++next; next != last;)
+		{	 
+			const_iterator iter = next++;
+			pos.node_->next = iter.node_;
+			first.node_->next = next.node_;
+			iter = next;
+			++pos;
+		}
+		pos.node_->next = old_pos_after;
+	}	
+}
 
 
 template<typename T, typename Alloc = allocator<T>>
@@ -593,28 +605,25 @@ void forward_list<T, Alloc>::clear()
 	head_.next = nullptr;
 }
 
-//template<typename T, typename Alloc = allocator<T>>
-//void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other)
-//{
-//	auto en = other.begin();
-//	for (; en.node_->next != nullptr; ++en)
-//		;
-//	splice_after_aux(pos, other, other.before_begin(), en);
-//}
-//
-//template<typename T, typename Alloc = allocator<T>>
-//void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other, 
-//	const_iterator it)
-//{
-//
-//}
-//
-//template<typename T, typename Alloc = allocator<T>>
-//void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other,
-//	const_iterator first, const_iterator last)
-//{
-//
-//}
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other)
+{
+	splice_after_aux(pos, other, other.before_begin(), end());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other, 
+	const_iterator it)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other,
+	const_iterator first, const_iterator last)
+{
+
+}
 //
 //template<typename T, typename Alloc = allocator<T>>
 //void forward_list<T, Alloc>::merge(forward_list& x)
