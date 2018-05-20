@@ -24,7 +24,7 @@ int main()
 	std::forward_list<int> a(d.begin(),d.end());
 	forward_list<int> g{ 1, 2 };
 	forward_list<int> b{ 7, 8, 9 };
-	g.splice_after(g.begin(), b);
+	g.merge(b);
 	for (auto c : g)
 		cout << c;
 	

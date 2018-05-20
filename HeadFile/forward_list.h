@@ -430,7 +430,7 @@ void forward_list<T, Alloc>::splice_after_aux(const_iterator pos, forward_list& 
 template<typename T, typename Alloc = allocator<T>>
 forward_list<T, Alloc>::forward_list()
 {
-	fill_init(0, value_type);
+	fill_init(0, value_type());
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -615,36 +615,48 @@ template<typename T, typename Alloc = allocator<T>>
 void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other, 
 	const_iterator it)
 {
-
+	splice_after_aux(pos, other, it, end());
 }
 
 template<typename T, typename Alloc = allocator<T>>
 void forward_list<T, Alloc>::splice_after(const_iterator pos, forward_list& other,
 	const_iterator first, const_iterator last)
 {
-
+	splice_after_aux(pos, other, first, last);
 }
-//
-//template<typename T, typename Alloc = allocator<T>>
-//void forward_list<T, Alloc>::merge(forward_list& x)
-//{
-//	merge(x, JStl::less<>());
-//}
-//
-//template<typename T, typename Alloc = allocator<T>>
-//template <class Compared>
-//void forward_list<T, Alloc>::merge(forward_list& x, Compared comp)
-//{
-//	auto begin1 = before_begin();
-//	auto after1 = begin();
-//	auto end1 = end();
-//	auto begin2 = x.before_begin();
-//	auto after2 = x.begin();
-//	auto end2 = x.end();
-//	for (; be1 != en, be2 != en;){
-//
-//	}
-//}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::merge(forward_list& x)
+{
+	merge(x, JStl::less<T>());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Compared>
+void forward_list<T, Alloc>::merge(forward_list& x, Compared comp)
+{
+	if (&x != this){
+		auto begin1 = before_begin();
+		auto begin2 = x.before_begin();
+		auto iter1 = begin();
+		auto next2 = begin2;
+		for (++next2; iter1 != end(), next2 != x.end();){
+			auto iter2 = next2++;
+			if (comp(*iter2, *iter1)){	
+				splice_after_aux(begin1, x, iter2, next2);
+			}
+			else{
+				++begin1;
+				++iter1;
+				next2 = iter2;
+				iter2 = begin2;
+			}
+		}
+		if (iter1 == end()){
+			splice_after(begin1,x);
+		}
+	}
+}
 
 }
 
