@@ -22,10 +22,10 @@ int main()
 {
 	std::forward_list<int> d{ 1, 2 };
 	std::forward_list<int> a(d.begin(),d.end());
-	forward_list<int> g{ 1, 2 };
-	forward_list<int> b{ 7, 8, 9 };
-	g.merge(b);
-	for (auto c : g)
+	forward_list<int> g{ 1, 2, 5, 7 };
+	forward_list<int> b{ 0, 4, 5, 8, 9 };
+	b.pop_front();
+	for (auto c : b)
 		cout << c;
 	
 	system("pause");

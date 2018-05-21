@@ -260,6 +260,15 @@ public:
 		return ((size_t)(-1) / sizeof(flist_node));
 	}
 
+	void push_front(T &&value)
+	{
+		insert_after(before_begin(), value);
+	}
+
+	void pop_front()
+	{
+		erase_after(before_begin());
+	}
 
 public:
 	void assign(size_type n, const value_type& value);
@@ -285,7 +294,7 @@ public:
 	iterator insert_after(const_iterator pos, std::initializer_list<value_type> l);
 
 	//在pos后面删除 返回删除之后的iter
-	iterator erase_after(iterator pos);
+	iterator erase_after(const_iterator pos);
 
 	void clear();
 
@@ -380,7 +389,7 @@ forward_list<T, Alloc>::fill_insert(const_iterator pos, size_type n, const value
 		}
 		throw;
 	}
-	return iterator((++pos).node_);
+	return iterator(static_cast<node_ptr>(((++pos).node_)));
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -403,7 +412,7 @@ forward_list<T, Alloc>::copy_insert(const_iterator pos, Iter first, Iter last)
 		}
 		throw;
 	}
-	return iterator((++pos).node_);
+	return iterator(static_cast<node_ptr>(((++pos).node_)));
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -583,14 +592,14 @@ forward_list<T, Alloc>::insert_after(const_iterator pos, std::initializer_list<v
 
 template<typename T, typename Alloc = allocator<T>>
 typename forward_list<T, Alloc>::iterator
-forward_list<T, Alloc>::erase_after(iterator pos)
+forward_list<T, Alloc>::erase_after(const_iterator pos)
 {
 	if (pos.node_->next != nullptr){
 		auto p = pos.node_->next;
 		pos.node_->next = p->next;
 		destroy_node(static_cast<node_ptr>(p));
 	}
-	return iterator(++pos);
+	return iterator(static_cast<node_ptr>(((++pos).node_)));
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -640,10 +649,12 @@ void forward_list<T, Alloc>::merge(forward_list& x, Compared comp)
 		auto begin2 = x.before_begin();
 		auto iter1 = begin();
 		auto next2 = begin2;
-		for (++next2; iter1 != end(), next2 != x.end();){
+		for (++next2; iter1 != end() && next2 != x.end();){
 			auto iter2 = next2++;
+			assert(comp(*iter2, *next2));		
 			if (comp(*iter2, *iter1)){	
-				splice_after_aux(begin1, x, iter2, next2);
+				splice_after_aux(begin1, x, begin2, next2);
+				begin1 = iter2;
 			}
 			else{
 				++begin1;
@@ -653,7 +664,7 @@ void forward_list<T, Alloc>::merge(forward_list& x, Compared comp)
 			}
 		}
 		if (iter1 == end()){
-			splice_after(begin1,x);
+			splice_after(begin1, x);
 		}
 	}
 }
