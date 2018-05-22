@@ -296,6 +296,9 @@ public:
 	//在pos后面删除 返回删除之后的iter
 	iterator erase_after(const_iterator pos);
 
+	void resize(size_type new_size);
+	void resize(size_type new_size, const value_type& value);
+
 	void clear();
 
 public:
@@ -308,6 +311,17 @@ public:
 	void merge(forward_list& x);
 	template <class Compared>
 	void merge(forward_list& x, Compared comp);
+
+	void remove(const value_type& value);
+	template <class UnaryPredicate>
+	void remove_if(UnaryPredicate pred);
+
+	void sort();
+	template <class Compared>
+	void sort(Compared comp);
+
+	void reverse();
+
 };
 
 template<typename T, typename Alloc = allocator<T>>
@@ -667,6 +681,67 @@ void forward_list<T, Alloc>::merge(forward_list& x, Compared comp)
 			splice_after(begin1, x);
 		}
 	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::resize(size_type new_size)
+{
+	resize(new_size, value_type());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::resize(size_type new_size, const value_type& value)
+{
+	size_type n = _flist_size(head_.next);
+	if (new_size == n)
+		return;
+	auto p = before_begin();
+	if (new_size > n){
+		for (size_t i = 0; i < n; ++i){
+			++p;
+		}
+		new_size -= n;
+		insert_after(p, new_size, value);
+	}
+	else{
+		for (size_t i = 0; i < new_size; ++i){
+			++p;
+		}
+		for (;erase_after(p) != end();)
+			;	//如果p的下一个为空就停止
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::remove(const value_type& value)
+{
+	remove_if([&](const value_type& v) {return v == value; });
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class UnaryPredicate>
+void forward_list<T, Alloc>::remove_if(UnaryPredicate pred)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::sort()
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class Compared>
+void forward_list<T, Alloc>::sort(Compared comp)
+{
+
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::reverse()
+{
+
 }
 
 }

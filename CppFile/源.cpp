@@ -20,11 +20,11 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	std::forward_list<int> d{ 1, 2 };
+	std::forward_list<int> d{ 1, 2 ,4,5};
 	std::forward_list<int> a(d.begin(),d.end());
 	forward_list<int> g{ 1, 2, 5, 7 };
 	forward_list<int> b{ 0, 4, 5, 8, 9 };
-	b.pop_front();
+	b.remove(3);
 	for (auto c : b)
 		cout << c;
 	
