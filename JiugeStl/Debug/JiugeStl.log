@@ -1,4 +1,4 @@
-﻿生成启动时间为 2018/5/23 0:52:55。
+﻿生成启动时间为 2018/5/24 0:49:55。
      1>项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\CppFile\源.cpp"
@@ -109,11 +109,41 @@
                  f:\github\jiugestl\headfile\forward_list.h(721) : 参见“Alloc”的声明
      1>f:\github\jiugestl\headfile\forward_list.h(739): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
                  f:\github\jiugestl\headfile\forward_list.h(734) : 参见“Alloc”的声明
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\github\JiugeStl\Debug\JiugeStl.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\github\JiugeStl\Debug\JiugeStl.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\github\JiugeStl\Debug\JiugeStl.lib" /MACHINE:X86 "Debug\源.obj"
-         JiugeStl.vcxproj -> F:\github\JiugeStl\Debug\JiugeStl.exe
-     1>已完成生成项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”(Build 个目标)的操作。
+     1>f:\github\jiugestl\headfile\forward_list.h(745): error C3861: “before”:  找不到标识符
+                 f:\github\jiugestl\headfile\forward_list.h(743): 编译类 模板 成员函数“void JStl::forward_list<int,JStl::allocator<T>>::reverse(void)”时
+                 with
+                 [
+                     T=int
+                 ]
+                 f:\github\jiugestl\cppfile\源.cpp(27): 参见对正在编译的函数 模板 实例化“void JStl::forward_list<int,JStl::allocator<T>>::reverse(void)”的引用
+                 with
+                 [
+                     T=int
+                 ]
+                 f:\github\jiugestl\cppfile\源.cpp(25): 参见对正在编译的类 模板 实例化“JStl::forward_list<int,JStl::allocator<T>>”的引用
+                 with
+                 [
+                     T=int
+                 ]
+     1>f:\github\jiugestl\headfile\forward_list.h(747): error C2784: “bool JStl::operator !=(JStl::array<T,Size> &,JStl::array<T,Size> &)”: 未能从“unknown-type”为“JStl::array<T,Size> &”推导 模板 参数
+                 f:\github\jiugestl\headfile\array.h(417) : 参见“JStl::operator !=”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(747): error C2784: “bool JStl::operator !=(const JStl::deque<T,Alloc> &,const JStl::deque<T,Alloc> &)”: 未能从“unknown-type”为“const JStl::deque<T,Alloc> &”推导 模板 参数
+                 f:\github\jiugestl\headfile\deque.h(1146) : 参见“JStl::operator !=”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(747): error C2784: “bool JStl::operator !=(const JStl::list<T,JStl::allocator<T>> &,const JStl::list<T,JStl::allocator<T>> &)”: 未能从“unknown-type”为“const JStl::list<T,JStl::allocator<T>> &”推导 模板 参数
+                 f:\github\jiugestl\headfile\list.h(1150) : 参见“JStl::operator !=”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(747): error C2784: “bool JStl::operator !=(const JStl::vector<T,Alloc> &,const JStl::vector<T,Alloc> &)”: 未能从“unknown-type”为“const JStl::vector<T,Alloc> &”推导 模板 参数
+                 f:\github\jiugestl\headfile\vector.h(675) : 参见“JStl::operator !=”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(747): error C2784: “bool JStl::operator !=(const JStl::pair<Arg1,Arg2> &,const JStl::pair<Arg1,Arg2> &)”: 未能从“unknown-type”为“const JStl::pair<Arg1,Arg2> &”推导 模板 参数
+                 f:\github\jiugestl\headfile\util.h(192) : 参见“JStl::operator !=”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(747): error C2784: “reverse_iterator<Iterator>::difference_type JStl::operator !=(const JStl::reverse_iterator<Iterator> &,const JStl::reverse_iterator<Iterator> &)”: 未能从“unknown-type”为“const JStl::reverse_iterator<Iterator> &”推导 模板 参数
+                 f:\github\jiugestl\headfile\iterator.h(303) : 参见“JStl::operator !=”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(747): error C2677: 二进制“!=”: 没有找到接受“JStl::flist_iterator<T,T &,T *>”类型的全局运算符(或没有可接受的转换)
+                 with
+                 [
+                     T=int
+                 ]
+     1>已完成生成项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”(Build 个目标)的操作 - 失败。
 
-生成成功。
+生成失败。
 
-已用时间 00:00:02.23
+已用时间 00:00:01.98

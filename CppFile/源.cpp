@@ -24,7 +24,7 @@ int main()
 	std::forward_list<int> a(d.begin(),d.end());
 	forward_list<int> g{ 1, 2, 5, 7 };
 	forward_list<int> b{ 0, 4, 5, 8, 9 };
-	b.remove(3);
+	b.reverse();
 	for (auto c : b)
 		cout << c;
 	

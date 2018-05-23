@@ -728,7 +728,7 @@ void forward_list<T, Alloc>::remove_if(UnaryPredicate pred)
 template<typename T, typename Alloc = allocator<T>>
 void forward_list<T, Alloc>::sort()
 {
-
+	sort(less<T>());
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -741,7 +741,18 @@ void forward_list<T, Alloc>::sort(Compared comp)
 template<typename T, typename Alloc = allocator<T>>
 void forward_list<T, Alloc>::reverse()
 {
-
+	auto first = before_begin();
+	auto next = before();
+	iterator it;
+	for (; next != end();){
+		it = next++;
+		it.node_->next = first.node_;
+		first = it;
+		it = next;
+		++next;
+	}
+	it.node_->next = first.node_;
+	head_.next = it.node_;
 }
 
 }
