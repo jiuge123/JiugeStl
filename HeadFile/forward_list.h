@@ -722,7 +722,19 @@ template<typename T, typename Alloc = allocator<T>>
 template <class UnaryPredicate>
 void forward_list<T, Alloc>::remove_if(UnaryPredicate pred)
 {
-	
+	auto first = before_begin();
+	auto it = begin();
+	while (it != end()){
+		if (pred(*it)){
+			erase_after(first);
+			it = first;
+			++it;
+		}
+		else{
+			++first;
+			++it;
+		}
+	}
 }
 
 template<typename T, typename Alloc = allocator<T>>
