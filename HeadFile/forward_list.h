@@ -722,7 +722,7 @@ template<typename T, typename Alloc = allocator<T>>
 template <class UnaryPredicate>
 void forward_list<T, Alloc>::remove_if(UnaryPredicate pred)
 {
-
+	
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -741,17 +741,19 @@ void forward_list<T, Alloc>::sort(Compared comp)
 template<typename T, typename Alloc = allocator<T>>
 void forward_list<T, Alloc>::reverse()
 {
+	if (before_begin() == end() || begin() == end())
+		return;
 	auto first = before_begin();
-	auto next = before();
-	iterator it;
-	for (; next != end();){
-		it = next++;
+	auto old = begin(), it = begin();
+	auto next = it;
+	for (++next; next != end();){	
 		it.node_->next = first.node_;
 		first = it;
 		it = next;
 		++next;
 	}
 	it.node_->next = first.node_;
+	old.node_->next = nullptr;
 	head_.next = it.node_;
 }
 

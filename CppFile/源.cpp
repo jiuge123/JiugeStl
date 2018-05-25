@@ -23,7 +23,7 @@ int main()
 	std::forward_list<int> d{ 1, 2 ,4,5};
 	std::forward_list<int> a(d.begin(),d.end());
 	forward_list<int> g{ 1, 2, 5, 7 };
-	forward_list<int> b{ 0, 4, 5, 8, 9 };
+	forward_list<int> b{ 2,3,45,6,7,78};
 	b.reverse();
 	for (auto c : b)
 		cout << c;
