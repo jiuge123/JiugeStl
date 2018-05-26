@@ -21,11 +21,12 @@ using namespace JStl;
 int main()
 {
 	std::forward_list<int> d{ 1, 2 ,4,5};
-	std::forward_list<int> a(d.begin(),d.end());
-	forward_list<int> g{ 1, 2, 5, 7 };
-	forward_list<int> b{ 3,2,3,5,6,3,7,8};
-	b.remove(3);
-	for (auto c : b)
+	std::forward_list<int> a{ 1, 2, 4, 5 };
+	forward_list<int> g(10,10);
+	forward_list<int> b{ };
+	g.sort();
+	g.unique();
+	for (auto c :g)
 		cout << c;
 	
 	system("pause");

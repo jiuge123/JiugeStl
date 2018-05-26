@@ -2,7 +2,7 @@
 #define  JIUGESTL_HEADFILE_FORWARDLIST
 
 #include <cassert>
-#include<iostream>
+
 #include <initializer_list>
 
 #include "iterator.h"
@@ -311,6 +311,10 @@ public:
 	void merge(forward_list& x);
 	template <class Compared>
 	void merge(forward_list& x, Compared comp);
+
+	void unique();
+	template <class BinaryPredicate>
+	void unique(BinaryPredicate pred);
 
 	void remove(const value_type& value);
 	template <class UnaryPredicate>
@@ -665,7 +669,6 @@ void forward_list<T, Alloc>::merge(forward_list& x, Compared comp)
 		auto next2 = begin2;
 		for (++next2; iter1 != end() && next2 != x.end();){
 			auto iter2 = next2++;
-			assert(comp(*iter2, *next2));		
 			if (comp(*iter2, *iter1)){	
 				splice_after_aux(begin1, x, begin2, next2);
 				begin1 = iter2;
@@ -738,6 +741,36 @@ void forward_list<T, Alloc>::remove_if(UnaryPredicate pred)
 }
 
 template<typename T, typename Alloc = allocator<T>>
+void forward_list<T, Alloc>::unique()
+{
+	unique(equal_to<T>());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+template <class BinaryPredicate>
+void forward_list<T, Alloc>::unique(BinaryPredicate pred)
+{	
+	auto be = before_begin();
+	auto en = end();
+	auto next = begin();
+	if (next == en){
+		return;
+	}
+	while (true){
+		auto it = next++;
+		if (next == en){
+			return;
+		}
+		if (pred(*it, *next)){
+			erase_after(be);
+		}
+		else{
+			++be;
+		}
+	}
+}
+
+template<typename T, typename Alloc = allocator<T>>
 void forward_list<T, Alloc>::sort()
 {
 	sort(less<T>());
@@ -747,7 +780,29 @@ template<typename T, typename Alloc = allocator<T>>
 template <class Compared>
 void forward_list<T, Alloc>::sort(Compared comp)
 {
-
+	if (before_begin() != end() && begin() != end()){
+		auto be = before_begin(); 
+		forward_list<T, Alloc> carry;
+		forward_list<T, Alloc> counter[64];
+		int fill = 0;
+		while (!empty() && begin() != end()){
+			auto en = ++begin();
+			carry.splice_after(carry.before_begin(), *this, be, en);
+			int i = 0;
+			while (i < fill && !counter[i].empty())	{
+				counter[i].merge(carry);
+				carry.swap(counter[i++]);
+			}
+			carry.swap(counter[i]);
+			if (i == fill)
+				++fill;
+		}
+		int i = 1;
+		for (; i < fill; ++i)
+			counter[i].merge(counter[i - 1]);
+		counter[i - 1].swap(*this);
+	}
+	
 }
 
 template<typename T, typename Alloc = allocator<T>>
@@ -767,6 +822,54 @@ void forward_list<T, Alloc>::reverse()
 	it.node_->next = first.node_;
 	old.node_->next = nullptr;
 	head_.next = it.node_;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator==(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+{
+	auto be1 = lhs.cbegin();
+	auto be2 = rhs.cbegin();
+	auto en1 = lhs.cend();
+	auto en2 = rhs.cend();
+	for (; be1 != en1 && be2 != en2 && *be1 == *be2; ++be1, ++be2)
+		;
+	return be1 == en1 && be2 == en2;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator<(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+{
+	return JStl::lexicographical_compare(lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend());
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator!=(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+{
+	return !(lhs == rhs);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator>(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+{
+	return rhs < lhs;
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator<=(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+{
+	return !(rhs < lhs);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+bool operator>=(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+{
+	return !(lhs < rhs);
+}
+
+template<typename T, typename Alloc = allocator<T>>
+void swap(forward_list<T, Alloc>& lhs, forward_list<T, Alloc>& rhs)
+{
+	lhs.swap(rhs);
 }
 
 }

@@ -1128,8 +1128,8 @@ void list<T, Alloc>::reverse()
 	}
 }
 
-template <typename T>
-bool operator==(const list<T>& lhs, const list<T>& rhs)
+template<typename T, typename Alloc = allocator<T>>
+bool operator==(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
 {
 	auto be1 = lhs.cbegin();
 	auto be2 = rhs.cbegin();
@@ -1140,39 +1140,38 @@ bool operator==(const list<T>& lhs, const list<T>& rhs)
 	return be1 == en1 && be2 == en2;//两个都到终点则==
 }
 
-template <class T>
-bool operator<(const list<T>& lhs, const list<T>& rhs)
+template<typename T, typename Alloc = allocator<T>>
+bool operator<(const list<T, Alloc>& lhs, const list<T,Alloc>& rhs)
 {
 	return JStl::lexicographical_compare(lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend());
 }
 
-template <class T>
-bool operator!=(const list<T>& lhs, const list<T>& rhs)
+template<typename T, typename Alloc = allocator<T>>
+bool operator!=(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
 {
 	return !(lhs == rhs);
 }
 
-template <class T>
-bool operator>(const list<T>& lhs, const list<T>& rhs)
+template<typename T, typename Alloc = allocator<T>>
+bool operator>(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
 {
 	return rhs < lhs;
 }
 
-template <class T>
-bool operator<=(const list<T>& lhs, const list<T>& rhs)
+template<typename T, typename Alloc = allocator<T>>
+bool operator<=(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
 {
 	return !(rhs < lhs);
 }
 
-template <class T>
-bool operator>=(const list<T>& lhs, const list<T>& rhs)
+template<typename T, typename Alloc = allocator<T>>
+bool operator>=(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
 {
 	return !(lhs < rhs);
 }
 
-// 重载 mystl 的 swap
-template <class T>
-void swap(list<T>& lhs, list<T>& rhs)
+template<typename T, typename Alloc = allocator<T>>
+void swap(list<T,Alloc>& lhs, list<T,Alloc>& rhs)
 {
 	lhs.swap(rhs);
 }
