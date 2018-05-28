@@ -231,6 +231,8 @@ struct deque_iterator:public random_access_iterator_tag
 
 template <class T, class Alloc = allocator<T>>
 class deque{
+
+public:
 	typedef JStl::allocator<T>                       data_allocator;
 	typedef JStl::allocator<T*>                      map_allocator;
 

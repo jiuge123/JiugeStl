@@ -332,17 +332,17 @@ public:
 		JStl::swap(size_, rhs.size_);
 	}
 
-	bool empty()
+	bool empty() const
 	{
 		return node_->next == node_;
 	}
 
-	size_type size()
+	size_type size() const
 	{
 		return size_;
 	}
 
-	size_type max_size()
+	size_type max_size()  const
 	{
 		return size_type(-1);
 	}
@@ -362,13 +362,13 @@ public:
 	reference back()
 	{
 		assert(!empty());
-		return node_->value;
+		return node_->next->value;
 	}
 
 	const_reference back() const
 	{
 		assert(!empty());
-		return node_->value;
+		return node_->next->value;
 	}
 
 public:

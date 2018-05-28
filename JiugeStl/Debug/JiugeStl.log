@@ -1,10 +1,121 @@
-﻿生成启动时间为 2018/5/27 1:30:49。
+﻿生成启动时间为 2018/5/29 0:38:14。
      1>项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”在节点 2 上(Build 个目标)。
-     1>Link:
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\CppFile\源.cpp"
+         源.cpp
+     1>f:\github\jiugestl\headfile\vector.h(294): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(288) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(294): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(289) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\vector.h(390): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(374) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(390): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(376) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\vector.h(455): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(434) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(469): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(457) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(600): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(571) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\vector.h(600): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\vector.h(573) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\list.h(458): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(442) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(553): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(532) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(586): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(571) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(659): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(624) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(685): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(679) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(685): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(681) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\list.h(755): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(749) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(755): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(751) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\list.h(770): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(763) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(779): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(772) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(790): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(781) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(873): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(865) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(873): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(867) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\list.h(1010): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(996) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(1033): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(1018) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(1071): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(1041) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\list.h(1113): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\list.h(1081) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(578): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(570) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(594): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(580) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(625): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(609) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(642): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(627) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(743): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(723) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(769): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(763) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(769): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(765) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\deque.h(873): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(867) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(873): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(869) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\deque.h(888): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(875) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(903): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(890) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(919): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(905) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(1049): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(1030) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\deque.h(1049): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\deque.h(1032) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(346): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(331) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(390): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(372) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(434): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(413) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(481): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(475) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(481): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(477) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(546): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(539) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(546): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(541) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(563): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(555) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(570): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(565) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(602): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(595) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(602): warning C4544: “unnamed-parameter”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(597) : 参见“unnamed-parameter”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(687): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(661) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(741): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(724) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(771): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(749) : 参见“Alloc”的声明
+     1>f:\github\jiugestl\headfile\forward_list.h(806): warning C4544: “Alloc”: 此模板声明中忽略的默认模板参数
+                 f:\github\jiugestl\headfile\forward_list.h(779) : 参见“Alloc”的声明
+       Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\github\JiugeStl\Debug\JiugeStl.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\github\JiugeStl\Debug\JiugeStl.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\github\JiugeStl\Debug\JiugeStl.lib" /MACHINE:X86 "Debug\源.obj"
          JiugeStl.vcxproj -> F:\github\JiugeStl\Debug\JiugeStl.exe
      1>已完成生成项目“F:\github\JiugeStl\JiugeStl\JiugeStl.vcxproj”(Build 个目标)的操作。
 
 生成成功。
 
-已用时间 00:00:00.52
+已用时间 00:00:01.72

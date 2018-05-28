@@ -14,6 +14,8 @@ namespace JStl{
 
 template<class T,size_t Size>
 class array{
+
+public:
 	typedef     allocator<T>					data_allocator;
 	typedef		T								value_type;
 	typedef		T*								pointer;
