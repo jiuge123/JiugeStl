@@ -362,13 +362,13 @@ public:
 	reference back()
 	{
 		assert(!empty());
-		return node_->next->value;
+		return node_->prev->value;
 	}
 
 	const_reference back() const
 	{
 		assert(!empty());
-		return node_->next->value;
+		return node_->prev->value;
 	}
 
 public:

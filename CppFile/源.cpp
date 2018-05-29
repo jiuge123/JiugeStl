@@ -8,6 +8,7 @@
 #include"../HeadFile/array.h"
 #include"../HeadFile/forward_list.h"
 #include"../HeadFile/stack.h"
+#include"../HeadFile/queue.h"
 #include<iostream>
 #include<deque>
 #include<string>
@@ -15,6 +16,7 @@
 #include<list>
 #include<array>
 #include<stack>
+#include<queue>
 #include<algorithm>
 #include<forward_list>
 using std::cout;
@@ -22,8 +24,10 @@ using std::endl;
 using namespace JStl;
 int main()
 {
-	stack<int, list<int>> b{ 1, 2, 3 };
-	cout << b.size();
-	cout << b.top();
+	queue<int, list<int>> b{ 1, 2, 3 };
+	std::queue<int, std::list<int>> d;
+	cout<<b.front();
+	cout << b.back();
+	
 	system("pause");
 }

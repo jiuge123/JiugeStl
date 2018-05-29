@@ -39,8 +39,8 @@ public:
 		: c_(first, last)
 	{}
 
-	stack(std::initializer_list<T> ilist)
-		:c_(ilist.begin(), ilist.end())
+	stack(std::initializer_list<T> l)
+		:c_(l.begin(), l.end())
 	{}
 
 	stack(const Container& c)
@@ -71,9 +71,9 @@ public:
 		return *this;
 	}
 
-	stack& operator=(std::initializer_list<T> ilist)
+	stack& operator=(std::initializer_list<T> l)
 	{
-		c_ = ilist;
+		c_ = l;
 		return *this;
 	}
 
@@ -100,7 +100,79 @@ public:
 		return c_.size(); 
 	}
 
+public:
+	template<typename... Args>
+	void emplace_back(Args&& ...args)
+	{
+		c_.emplace_back(JStl::forward<Args>(args)...);
+	}
+
+	void push(const value_type &v)
+	{
+		c_.push_back(v);
+	}
+
+	void push(value_type &&v)
+	{
+		c_.push_back(JStl::move(v));
+	}
+
+	void pop()
+	{
+		c_.pop_back();
+	}
+
+	void clear()
+	{
+		while (!empty())
+			pop();
+	}
+
+	void swap(stack& rhs) 
+	{
+		JStl::swap(c_, rhs.c_);
+	}
+
+	friend bool operator==(const stack& lhs, const stack& rhs) 
+	{ 
+		return lhs.c_ == rhs.c_; 
+	}
+
+	friend bool operator<(const stack& lhs, const stack& rhs) 
+	{ 
+		return lhs.c_ <  rhs.c_; 
+	}
 };
+
+template <class T, class Container>
+bool operator!=(const stack<T, Container>& lhs, const stack<T, Container>& rhs)
+{
+	return !(lhs == rhs);
+}
+
+template <class T, class Container>
+bool operator>(const stack<T, Container>& lhs, const stack<T, Container>& rhs)
+{
+	return rhs < lhs;
+}
+
+template <class T, class Container>
+bool operator<=(const stack<T, Container>& lhs, const stack<T, Container>& rhs)
+{
+	return !(rhs < lhs);
+}
+
+template <class T, class Container>
+bool operator>=(const stack<T, Container>& lhs, const stack<T, Container>& rhs)
+{
+	return !(lhs < rhs);
+}
+
+template <class T, class Container>
+void swap(stack<T, Container>& lhs, stack<T, Container>& rhs)
+{
+	lhs.swap(rhs);
+}
 
 }//namesapce JStl
 #endif
