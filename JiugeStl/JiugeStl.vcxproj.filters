@@ -63,5 +63,8 @@
     <ClInclude Include="..\HeadFile\queue.h">
       <Filter>HeadFile</Filter>
     </ClInclude>
+    <ClInclude Include="..\HeadFile\heap_algo.h">
+      <Filter>HeadFile</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

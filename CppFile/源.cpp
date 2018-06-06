@@ -9,6 +9,7 @@
 #include"../HeadFile/forward_list.h"
 #include"../HeadFile/stack.h"
 #include"../HeadFile/queue.h"
+#include"../HeadFile/heap_algo.h"
 #include<iostream>
 #include<deque>
 #include<string>
@@ -20,14 +21,17 @@
 #include<algorithm>
 #include<forward_list>
 using std::cout;
+using std::ends;
 using std::endl;
 using namespace JStl;
 int main()
 {
-	queue<int, list<int>> b{ 1, 2, 3 };
-	std::queue<int, std::list<int>> d;
-	cout<<b.front();
-	cout << b.back();
-	
+	vector <int > a{ 1,2,3,4,5,6,7,8,9};
+	make_heap(a.begin(), a.end(),greater<int>());
+	a[0] = 10;
+	sink_aux(a.begin(), a.end(), greater<int>());
+	for (auto c : a)
+		cout << c << ends;
+	cout << endl;
 	system("pause");
 }

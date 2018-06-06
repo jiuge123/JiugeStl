@@ -7,7 +7,7 @@
 // priority_queue : 优先队列
 
 namespace JStl{
-template <class T, class Container = JStl::deque<T>>
+template <typename T, typename Container = JStl::deque<T>>
 class queue
 {
 public:
@@ -186,6 +186,30 @@ void swap(queue<T, Container>& lhs, queue<T, Container>& rhs)
 {
 	lhs.swap(rhs);
 }
+
+/****************************************************************************/
+//priority_queue
+//默认使用less作为比较对象
+template<typename T, typename Container = JStl::vector<T>, 
+	typename Compare = JStl::less<typename Container::value_type >>
+class priority_queue{
+public:
+	typedef Container                           container_type;
+	typedef Compare                             value_compare;
+
+	typedef typename Container::value_type      value_type;
+	typedef typename Container::size_type       size_type;
+	typedef typename Container::reference       reference;
+	typedef typename Container::const_reference const_reference;
+
+	static_assert(std::is_same<T, value_type>::value,
+		"the value_type of Container should be same with T");
+
+private:
+	container_type c_;     // 底层容器
+	value_compare  comp_;  // 比较标准
+
+};
 
 }//namesapce JStl
 #endif

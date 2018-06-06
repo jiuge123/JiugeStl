@@ -76,6 +76,7 @@
     <ClInclude Include="..\HeadFile\deque.h" />
     <ClInclude Include="..\HeadFile\forward_list.h" />
     <ClInclude Include="..\HeadFile\functional.h" />
+    <ClInclude Include="..\HeadFile\heap_algo.h" />
     <ClInclude Include="..\HeadFile\iterator.h" />
     <ClInclude Include="..\HeadFile\list.h" />
     <ClInclude Include="..\HeadFile\queue.h" />
